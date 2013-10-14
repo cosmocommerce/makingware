@@ -315,16 +315,14 @@ abstract class Mage_Catalog_Block_Product_Abstract extends Mage_Core_Block_Templ
                 if ($product->getPrice() != $product->getFinalPrice()) {
                     if ($price['price']<$product->getFinalPrice()) {
                         $price['savePercent'] = ceil(100 - (( 100/$product->getFinalPrice() ) * $price['price'] ));
-                        $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'])));
-                        $price['formated_price_incl_tax'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'], true)));
+                        $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice($price['website_price']));
                         $res[] = $price;
                     }
                 }
                 else {
                     if ($price['price']<$product->getPrice()) {
                         $price['savePercent'] = ceil(100 - (( 100/$product->getPrice() ) * $price['price'] ));
-                        $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'])));
-                        $price['formated_price_incl_tax'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'], true)));
+                        $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice($price['website_price']));
                         $res[] = $price;
                     }
                 }
@@ -347,7 +345,6 @@ abstract class Mage_Catalog_Block_Product_Abstract extends Mage_Core_Block_Templ
         return $collection
             ->addMinimalPrice()
             ->addFinalPrice()
-            ->addTaxPercents()
             ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
             ->addUrlRewrite();
     }
@@ -517,5 +514,18 @@ abstract class Mage_Catalog_Block_Product_Abstract extends Mage_Core_Block_Templ
         }
 
         return $this;
+    }
+
+    /**
+     * get product sell status
+     *
+     * @return varchar
+     */
+    public function getSellStatusHtml($product)
+    {
+		return $this->getLayout()
+               ->createBlock('catalog/product_view_sellstatus')
+               ->setProduct($product)
+               ->toHtml();
     }
 }

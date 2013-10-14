@@ -51,7 +51,7 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
 
     /**
      * Initialize multishipping checkout.
-     * Split virtual/not virtual items between default billing/shipping addresses
+     * Split virtual/not virtual items between default shipping addresses
      *
      * @return Mage_Checkout_Model_Type_Multishipping
      */
@@ -87,19 +87,6 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                         continue;
                     }
                     $quote->getShippingAddress()->addItem($item);
-                }
-            }
-
-            if ($this->getCustomerDefaultBillingAddress()) {
-                $quote->getBillingAddress()
-                    ->importCustomerAddress($this->getCustomerDefaultBillingAddress());
-                foreach ($this->getQuoteItems() as $item) {
-                    if ($item->getParentItemId()) {
-                        continue;
-                    }
-                    if ($item->getProduct()->getIsVirtual()) {
-                        $quote->getBillingAddress()->addItem($item);
-                    }
                 }
             }
             $this->save();
@@ -246,12 +233,8 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                 }
             }
 
-            if ($billingAddress = $quote->getBillingAddress()) {
-                $quote->removeAddress($billingAddress->getId());
-            }
-
-            if ($customerDefaultBilling = $this->getCustomerDefaultBillingAddress()) {
-                $quote->getBillingAddress()->importCustomerAddress($customerDefaultBilling);
+            if ($customerDefaultShipping = $this->getCustomerDefaultShippingAddress()) {
+                $quote->getShippingAddress()->importCustomerAddress($customerDefaultShipping);
             }
 
             foreach ($quote->getAllItems() as $_item) {
@@ -262,7 +245,7 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                 if (isset($itemsInfo[$_item->getId()]['qty'])) {
                     if ($qty = (int)$itemsInfo[$_item->getId()]['qty']) {
                         $_item->setQty($qty);
-                        $quote->getBillingAddress()->addItem($_item);
+                        $quote->getShippingAddress()->addItem($_item);
                     } else {
                         $_item->setQty(0);
                         $_item->delete();
@@ -345,15 +328,15 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
     }
 
     /**
-     * Reimport customer billing address to quote
+     * Reimport customer shipping address to quote
      *
      * @param int $addressId customer address id
      * @return Mage_Checkout_Model_Type_Multishipping
      */
-    public function setQuoteCustomerBillingAddress($addressId)
+    public function setQuoteCustomerShippingAddress($addressId)
     {
         if ($address = $this->getCustomer()->getAddressById($addressId)) {
-            $this->getQuote()->getBillingAddress($addressId)
+            $this->getQuote()->getShippingAddress($addressId)
                 ->importCustomerAddress($address)
                 ->collectTotals();
             $this->getQuote()->collectTotals()->save();
@@ -417,15 +400,11 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
         $quote->reserveOrderId();
         $convertQuote = Mage::getSingleton('sales/convert_quote');
         $order = $convertQuote->addressToOrder($address);
-        $order->setBillingAddress(
-            $convertQuote->addressToOrderAddress($quote->getBillingAddress())
+        $order->setShippingAddress(
+            $convertQuote->addressToOrderAddress($quote->getShippingAddress())
         );
 
-        if ($address->getAddressType() == 'billing') {
-            $order->setIsVirtual(1);
-        } else {
-            $order->setShippingAddress($convertQuote->addressToOrderAddress($address));
-        }
+        $order->setShippingAddress($convertQuote->addressToOrderAddress($address));
 
         $order->setPayment($convertQuote->paymentToOrderPayment($quote->getPayment()));
         if (Mage::app()->getStore()->roundPrice($address->getGrandTotal()) == 0) {
@@ -473,9 +452,9 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                 Mage::throwException($helper->__('Please specify shipping methods for all addresses.'));
             }
         }
-        $addressValidation = $quote->getBillingAddress()->validate();
+        $addressValidation = $quote->getShippingAddress()->validate();
         if ($addressValidation !== true) {
-            Mage::throwException($helper->__('Please check billing address information.'));
+            Mage::throwException($helper->__('Please check shipping address information.'));
         }
         return $this;
     }
@@ -493,7 +472,7 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
         $orders = array();
 
         if ($this->getQuote()->hasVirtualItems()) {
-            $shippingAddresses[] = $this->getQuote()->getBillingAddress();
+            $shippingAddresses[] = $this->getQuote()->getShippingAddress();
         }
 
         try {

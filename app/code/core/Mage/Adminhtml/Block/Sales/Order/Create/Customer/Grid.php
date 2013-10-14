@@ -47,11 +47,11 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Customer_Grid extends Mage_Adminht
             ->addNameToSelect()
             ->addAttributeToSelect('email')
             ->addAttributeToSelect('created_at')
-            ->joinAttribute('billing_postcode', 'customer_address/postcode', 'default_billing', null, 'left')
-            ->joinAttribute('billing_city', 'customer_address/city', 'default_billing', null, 'left')
-            ->joinAttribute('billing_telephone', 'customer_address/telephone', 'default_billing', null, 'left')
-            ->joinAttribute('billing_regione', 'customer_address/region', 'default_billing', null, 'left')
-            ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing', null, 'left')
+            ->joinAttribute('shipping_postcode', 'customer_address/postcode', 'default_shipping', null, 'left')
+            ->joinAttribute('shipping_city', 'customer_address/city', 'default_shipping', null, 'left')
+            ->joinAttribute('shipping_telephone', 'customer_address/telephone', 'default_shipping', null, 'left')
+            ->joinAttribute('shipping_regione', 'customer_address/region', 'default_shipping', null, 'left')
+            ->joinAttribute('shipping_country_id', 'customer_address/country_id', 'default_shipping', null, 'left')
             ->joinField('store_name', 'core/store', 'name', 'store_id=store_id', null, 'left');
 
         $this->setCollection($collection);
@@ -79,23 +79,23 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Customer_Grid extends Mage_Adminht
         $this->addColumn('Telephone', array(
             'header'    =>Mage::helper('sales')->__('Telephone'),
             'width'     =>'100px',
-            'index'     =>'billing_telephone'
+            'index'     =>'shipping_telephone'
         ));
-        $this->addColumn('billing_postcode', array(
+        $this->addColumn('shipping_postcode', array(
             'header'    =>Mage::helper('sales')->__('ZIP/Post Code'),
             'width'     =>'120px',
-            'index'     =>'billing_postcode',
+            'index'     =>'shipping_postcode',
         ));
-        $this->addColumn('billing_country_id', array(
+        $this->addColumn('shipping_country_id', array(
             'header'    =>Mage::helper('sales')->__('Country'),
             'width'     =>'100px',
             'type'      =>'country',
-            'index'     =>'billing_country_id',
+            'index'     =>'shipping_country_id',
         ));
-        $this->addColumn('billing_regione', array(
+        $this->addColumn('shipping_regione', array(
             'header'    =>Mage::helper('sales')->__('State/Province'),
             'width'     =>'100px',
-            'index'     =>'billing_regione',
+            'index'     =>'shipping_regione',
         ));
 
         $this->addColumn('store_name', array(

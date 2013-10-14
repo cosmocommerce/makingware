@@ -57,12 +57,66 @@ class Mage_AdminNotification_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_latestNotice;
 
+    protected $_version;
+
     /**
      * count of unread notes by type
      *
      * @var array
      */
     protected $_unreadNoticeCounts;
+
+    public function __construct()
+    {
+		$session=Mage::getSingleton('admin/session');
+		$this->_version=$session->getLatestVersion();
+
+		if(is_null($this->_version)){
+			$this->_version=$this->getUpdateInformation();
+		}
+    }
+
+    public function getUpdateVersion()
+    {
+   	    $currentVersion= Mage::getCNVersion();
+
+		return $this->_version>$currentVersion;
+    }
+
+    public function getUpdateInformation()
+    {
+     	$information = array(
+       		 'SESSION_ID'	   => session_id(),
+             'CN_VERSION'      => Mage::getCNVersion(),
+             'PHP_VERSION'	   => PHP_VERSION,
+             'SERVER_SOFTWARE' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : (isset($_SERVER['SERVER_SIGNATURE']) ? $_SERVER['SERVER_SIGNATURE'] : ''),
+             'HTTP_HOST'	   => isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : ''),
+             'REMOTE_ADDR'	   => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : ''),
+             'REQUEST_TIME'    => isset($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIME'] : time(),
+             'HTTP_USER_AGENT' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : ''
+         );
+
+         $connection = Mage::getModel('core/resource_setup', 'core_setup')->getConnection();
+
+         if ($connection) {
+			 $information['MYSQL_VERSION'] = $connection->query('SELECT VERSION();')->fetchColumn();
+		 };
+
+    	$version=file_get_contents('http://ce.makingware.com/updateNotify/?'.http_build_query($information));
+
+    	if(!$version){
+			return false;
+    	}
+
+    	if (!preg_match('/[0-9.]+/', $version)) {
+  			return false;
+		}
+
+        Mage::getSingleton('admin/session')->setLatestVersion($version);
+
+		return $version;
+
+    }
 
     /**
      * Retrieve latest notice model

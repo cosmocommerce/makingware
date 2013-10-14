@@ -118,8 +118,7 @@ class Mage_Bundle_Model_Observer
             ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
             ->addStoreFilter()
             ->addMinimalPrice()
-            ->addFinalPrice()
-            ->addTaxPercents();
+            ->addFinalPrice();
 
         Mage::getSingleton('catalog/product_visibility')
             ->addVisibleInCatalogFilterToCollection($bundleCollection);

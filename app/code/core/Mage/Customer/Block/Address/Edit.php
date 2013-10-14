@@ -113,25 +113,12 @@ class Mage_Customer_Block_Address_Edit extends Mage_Directory_Block_Data
         return count(Mage::getSingleton('customer/session')->getCustomer()->getAddresses());
     }
 
-    public function canSetAsDefaultBilling()
-    {
-        if (!$this->getAddress()->getId()) {
-            return $this->getCustomerAddressCount();
-        }
-        return !$this->isDefaultBilling();
-    }
-
     public function canSetAsDefaultShipping()
     {
         if (!$this->getAddress()->getId()) {
             return $this->getCustomerAddressCount();
         }
         return !$this->isDefaultShipping();;
-    }
-
-    public function isDefaultBilling()
-    {
-        return $this->getAddress()->getId() && $this->getAddress()->getId()==Mage::getSingleton('customer/session')->getCustomer()->getDefaultBilling();
     }
 
     public function isDefaultShipping()
@@ -151,5 +138,10 @@ class Mage_Customer_Block_Address_Edit extends Mage_Directory_Block_Data
         } else {
             return $this->getUrl('customer/account/');
         }
+    }
+    
+	public function getCountryMore()
+    {
+    	return Mage::helper('directory')->getMoreCountry();
     }
 }

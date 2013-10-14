@@ -54,11 +54,6 @@ class Mage_Install_Block_End extends Mage_Install_Block_Abstract
      */
     public function getIframeSourceUrl()
     {
-        if (!Mage_AdminNotification_Model_Survey::isSurveyUrlValid()
-            || Mage::getSingleton('install/installer')->getHideIframe())
-        {
-            return null;
-        }
-        return Mage_AdminNotification_Model_Survey::getSurveyUrl();
+    	return null;
     }
 }

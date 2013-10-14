@@ -28,7 +28,7 @@
 <config>
     <modules>
         <Mage_Review>
-            <version>0.7.6</version>
+            <version>0.7.8</version>
         </Mage_Review>
     </modules>
     <global>
@@ -149,7 +149,11 @@
     <default>
         <catalog>
             <review>
+                <enable>0</enable>
                 <allow_guest>1</allow_guest>
+                <allow_buy>1</allow_buy>
+                <allow_securecode>1</allow_securecode>
+                <allow_verify>1</allow_verify>
             </review>
         </catalog>
     </default>

@@ -325,7 +325,9 @@ class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Core_Block_Template
 
         if (!isset($orders[$defaultOrder])) {
             $keys = array_keys($orders);
-            $defaultOrder = $keys[0];
+            if (isset($keys[0])) {
+            	$defaultOrder = $keys[0];
+            }
         }
 
         $order = $this->getRequest()->getParam($this->getOrderVarName());

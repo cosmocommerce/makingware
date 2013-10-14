@@ -54,6 +54,12 @@ class Mage_Adminhtml_Block_Cms_Block_Grid extends Mage_Adminhtml_Block_Widget_Gr
     {
         $baseUrl = $this->getUrl();
 
+        $this->addColumn('id', array(
+        	'header'    => Mage::helper('cms')->__('ID'),
+            'align'     => 'left',
+            'index'     => 'block_id',
+        ));
+        
         $this->addColumn('title', array(
             'header'    => Mage::helper('cms')->__('Title'),
             'align'     => 'left',

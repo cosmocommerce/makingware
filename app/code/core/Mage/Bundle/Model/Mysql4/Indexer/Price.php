@@ -169,13 +169,6 @@ class Mage_Bundle_Model_Mysql4_Indexer_Price
         $statusCond = $write->quoteInto('=?', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
         $this->_addAttributeToSelect($select, 'status', 'e.entity_id', 'cs.store_id', $statusCond, true);
 
-        if ($priceType == Mage_Bundle_Model_Product_Price::PRICE_TYPE_DYNAMIC) {
-            $select->columns(array('tax_class_id' => new Zend_Db_Expr('0')));
-        } else {
-            $taxClassId = $this->_addAttributeToSelect($select, 'tax_class_id', 'e.entity_id', 'cs.store_id');
-            $select->columns(array('tax_class_id' => new Zend_Db_Expr("IF($taxClassId IS NOT NULL, $taxClassId, 0)")));
-        }
-
         $priceTypeCond = $write->quoteInto('=?', $priceType);
         $this->_addAttributeToSelect($select, 'price_type', 'e.entity_id', 'cs.store_id', $priceTypeCond);
 
@@ -280,7 +273,7 @@ class Mage_Bundle_Model_Mysql4_Indexer_Price
                     . ' AND i.website_id = io.website_id',
                 array())
             ->group(array('io.entity_id', 'io.customer_group_id', 'io.website_id'))
-            ->columns(array('i.tax_class_id',
+            ->columns(array(
                 'orig_price'    => 'i.orig_price',
                 'price'         => 'i.price',
                 'min_price'     => $minPrice,

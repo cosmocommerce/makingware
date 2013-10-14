@@ -65,6 +65,10 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
         if ($customer->getId()) {
             $form->getElement('website_id')->setDisabled('disabled');
             $form->getElement('created_in')->setDisabled('disabled');
+            if ($form->getElement('username')) {
+            	$form->getElement('username')->setDisabled('disabled');
+            }
+
         } else {
             $fieldset->removeField('created_in');
         }

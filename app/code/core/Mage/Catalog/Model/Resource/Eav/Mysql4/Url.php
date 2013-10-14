@@ -871,7 +871,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Url extends Mage_Core_Model_Mysql4_
         }
         $select = $this->_getWriteAdapter()->select()
             ->useStraightJoin(true)
-            ->from(array('e' => $this->getTable('catalog/product')), array('entity_id'))
+            ->from(array('e' => $this->getTable('catalog/product')), array('entity_id', 'sku'))
             ->join(
                 array('w' => $this->getTable('catalog/product_website')),
                 $this->_getWriteAdapter()->quoteInto('e.entity_id=w.product_id AND w.website_id=?', $websiteId),

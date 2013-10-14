@@ -81,7 +81,7 @@
         <eav_frontendclasses>
         </eav_frontendclasses>
         <eav_attributes>
-            <!-- 
+            <!--
                 <entity_type>
                     <unique_node_name>
                         <code>attribute_code</code>

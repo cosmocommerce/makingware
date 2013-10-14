@@ -24,38 +24,113 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<div class="page-title">
-    <h1><?php echo $this->__('Checkout') ?></h1>
+<div class="onepages">
+<div class="cartpage-title clearfix">
+	<h1 class="flh1"><?php echo $this->__('Fill up the order information');?></h1>
+	<?php echo $this->getChildHtml('shopcar_guid');?>
 </div>
-<script type="text/javascript" src="<?php echo $this->getJsUrl('varien/accordion.js') ?>"></script>
-<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout.js') ?>"></script>
-<script type="text/javascript">countryRegions = <?php echo $this->helper('directory')->getRegionJson() ?></script>
-<ol class="opc" id="checkoutSteps">
-<?php $i=0; foreach($this->getSteps() as $_stepId => $_stepInfo): ?>
-<?php if (!$this->getChild($_stepId) || !$this->getChild($_stepId)->isShow()): continue; endif; $i++ ?>
-    <li id="opc-<?php echo $_stepId ?>" class="section<?php echo !empty($_stepInfo['allow'])?' allow':'' ?><?php echo !empty($_stepInfo['complete'])?' saved':'' ?>">
-        <div class="step-title">
-            <span class="number"><?php echo $i ?></span>
-            <h2><?php echo $_stepInfo['label'] ?></h2>
-            <a href="#"><?php echo $this->__('Edit') ?></a>
-        </div>
-        <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item" style="display:none;">
-            <?php echo $this->getChildHtml($_stepId) ?>
-        </div>
-    </li>
-<?php endforeach ?>
-</ol>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?> <?php echo $this->getChildHtml('form_before');?>
+<div class="mk_onepage clearfix">
+	<div class="onepage">
+		
+		<!--Shipping Begin-->
+			<?php echo $this->getChildHtml('shipping');?>
+		<!--Shipping End-->
+
+		<!--Payment and Shipping Begin-->
+			<?php echo $this->getChildHtml('method');?>
+		<!--Payment and Shipping End-->
+
+		<!--Bill Begin-->
+			<?php echo $this->getChildHtml('bill');?>
+		<!--Bill End-->
+		<?php echo $this->getChildHtml('agreements') ?>
+	
+		<!--Before_totals Begin-->
+			<?php echo $this->getChildHtml('before_totals');?>
+		<!--Before_totals End-->
+		
+		<div class="comment-form onepage_items clearfix">
+			<?php echo $this->getChildHtml('product');?>
+			<form id="comment-form">
+				<label>
+					<strong><?php echo $this->__('Order Remark');?>：</strong><br />
+					<textarea name="customer_comment" cols="60" rows="3"><?php echo $this->getCustomerComment();?></textarea>
+				</label>
+			</form>
+			<!--Order Totals Begin-->
+				<?php echo $this->getChildHtml('totals');?>
+			<!--Order Totals End-->
+		</div>
+
+		<!--After_totals Begin-->
+			<?php echo $this->getChildHtml('after_totals');?>
+		<!--After_totals End-->
+		
+		<form id="order-form" style="display:block;clear:both">
+			<ul class="order_totals">
+				<li>
+					<input type="submit" value="<?php echo $this->__('Submit Order');?>" id="send_order" class="get_oreder alterni" />
+					<span class="gray12"><?php echo $this->__('Please carefully verify the above information, click on \'Confirm Order\'.');?></span>
+					<input type="hidden" name="customer_comment" value="" />
+					<input type="hidden" name="bill" value="0" />
+				</li>
+			</ul>
+		</form>
+	</div>
+</div>
+<div id="loading" style="display: none"><div class="item">&nbsp;</div></div>
 <script type="text/javascript">
 //<![CDATA[
-    var accordion = new Accordion('checkoutSteps', '.step-title', true);
-    <?php if($this->getActiveStep()): ?>
-    accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
-    <?php endif ?>
-    var checkout = new Checkout(accordion,{
-        progress: '<?php echo $this->getUrl('checkout/onepage/progress') ?>',
-        review: '<?php echo $this->getUrl('checkout/onepage/review') ?>',
-        saveMethod: '<?php echo $this->getUrl('checkout/onepage/saveMethod') ?>',
-        failure: '<?php echo $this->getUrl('checkout/cart') ?>'}
-    );
+    $(function(){
+        $("#loading").ajaxStart(function(){
+            $(this).dialog({modal: true, closeOnEscape: false,stack: false,dialogClass: 'alert'});
+			$("#send_order").attr("disabled","disabled");
+
+        }).ajaxStop(function(){
+            $(this).dialog('close');
+			$("#send_order").removeAttr("disabled");
+        });
+
+        $('#order-form').submit(function() {
+            $("#order-form input[name^=agreement]:checkbox").remove();
+            $("#checkout-agreements input:checkbox").clone().appendTo('#order-form');
+            $("#order-form input[name^=agreement]:checkbox").hide();
+    		$this = $(this);
+    		// check information
+    		var error = [];
+    		if($('#address-form').size() && !($.trim($("#address-text").html()))){
+    			error.push("<?php echo $this->__('Please make sure the consignee information');?>");
+        	}
+    		if(!($.trim($('#payment-shipping-method-text').html()))){
+    			error.push("<?php echo $this->__('Please make sure the payment and delivery mode');?>");
+        	}
+        	if(error.length > 0){
+        		alertDialog(error.join(', '));
+            	return false;
+            }
+
+        	var obj = $('#comment-form textarea[name="customer_comment"]');
+            if(obj.length > 0){$this.find('input[name="customer_comment"]').val(obj.val());}
+
+            var obj = $('#bill-switch');
+            if(obj.length > 0 && obj.attr('checked')){$this.find('input[name="bill"]').val('1');}
+
+    		$.post('<?php echo $this->getUrl('*/*/saveOrder');?>', $(this).serialize(), function(data) {
+    			if(data){data = $.parseJSON(data);}else{data = {};}
+    			if (data.error) {
+    				if(data.error_messages){alertDialog(data.error_messages);}
+					else if(data.message){alertDialog(data.message);}
+					else{alertDialog(data.error);}
+    			}else {
+    				url = '<?php echo $this->getUrl('*/*/success');?>';
+    				if (data.redirect) {url = data.redirect;}
+    				setLocation(url);
+    			}
+    		});
+    		return false;
+    	});
+    });
 //]]>
 </script>
+</div>

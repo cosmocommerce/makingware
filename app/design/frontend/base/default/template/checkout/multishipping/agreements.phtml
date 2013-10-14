@@ -20,7 +20,7 @@
  *
  * @category    design
  * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
@@ -33,17 +33,73 @@
 <?php if (!$this->getAgreements()) return; ?>
 <ol id="checkout-agreements" class="checkout-agreements">
 <?php foreach ($this->getAgreements() as $_a): ?>
-    <li>
-        <div class="agreement-content"<?php echo ($_a->getContentHeight() ? ' style="height:' . $_a->getContentHeight() . '"' : '')?>>
-            <?php if ($_a->getIsHtml()):?>
-                <?php echo $_a->getContent() ?>
-            <?php else:?>
-                <?php echo nl2br($this->htmlEscape($_a->getContent())) ?>
-            <?php endif; ?>
-        </div>
-        <p class="agree">
-            <input type="checkbox" id="agreement-<?php echo $_a->getId()?>" name="agreement[<?php echo $_a->getId()?>]" value="1" title="<?php echo $this->htmlEscape($_a->getCheckboxText()) ?>" class="checkbox" /><label for="agreement-<?php echo $_a->getId()?>"><?php echo $this->htmlEscape($_a->getCheckboxText()) ?></label>
-        </p>
-    </li>
+	<li>
+		<div class="agreement-content"<?php echo ($_a->getContentHeight() ? ' style="height:' . $_a->getContentHeight() . '"' : '')?>>
+			<?php if ($_a->getIsHtml()):?>
+				<?php echo $_a->getContent() ?>
+			<?php else:?>
+				<?php echo nl2br($this->htmlEscape($_a->getContent())) ?>
+			<?php endif; ?>
+		</div>
+		<p class="agree">
+			<input type="checkbox" id="agreement-<?php echo $_a->getId()?>" name="agreement[<?php echo $_a->getId()?>]" value="1" title="<?php echo $this->htmlEscape($_a->getCheckboxText()) ?>" class="checkbox" /><label for="agreement-<?php echo $_a->getId()?>"><?php echo $this->htmlEscape($_a->getCheckboxText()) ?></label>
+		</p>
+	</li>
 <?php endforeach ?>
 </ol>
+<?php
+/**
+ * START ADDITIONAL HTML for Community-Extension Makingware_OrderComment.
+ * (Add textarea form field to the agreements formular of multishipping checkout)
+ */
+?>
+<?php if (Mage::getStoreConfig('makingwareordercomment/settings/useordercomment')): ?>
+<ol class="checkout-agreements">
+	<li>
+	<input type="checkbox" name="first" value="1"  onclick="showOrderComment()">
+	<?php echo Mage::helper('makingwareordercomment')->__('Your Comments') ?>
+	<div id="allow_customer_order_comment" style="display: none;">
+	<textarea name="makingwareOrderComment" id="makingwareOrderComment" style="width:450px;height:100px;" onclick="a()">
+	<?php echo Mage::helper('makingwareordercomment')->__('Your Comment for this Order') ?>
+	</textarea>
+	</div>
+	</li>
+</ol>
+<?php endif; ?>
+<script type="text/javascript">
+//<![CDATA[
+   function showOrderComment()
+   {
+		obj=document.getElementById('allow_customer_order_comment');
+		if(obj.style.display=='none')
+		{
+			obj.style.display='';
+		}
+		else
+		{
+			obj.style.display='none';
+
+		}
+
+   }
+   flag=false;
+   function clearComment()
+   {
+	  obj=document.getElementById('makingwareOrderComment');
+	  if(!flag)
+	  {
+		   obj.value='';
+		   flag=true;
+
+	  }
+
+
+   }
+//]]>
+</script>
+<?php
+/**
+ * END ADDITIONAL HTML for Community-Extension Biebersdorf_CustomerOrderComment.
+ * (Add textarea form field to the agreements formular of multishipping checkout)
+ */
+?>

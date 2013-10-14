@@ -51,6 +51,10 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setStoreId($quote->getStoreId())
             ->setQuoteId($quote->getId())
             ->setCustomer($quote->getCustomer());
+        
+        if ($namespace = $quote->getNamespace()) {
+        	$order->setNamespace($namespace);
+        }
 
         Mage::helper('core')->copyFieldset('sales_convert_quote', 'to_order', $quote, $order);
         Mage::dispatchEvent('sales_convert_quote_to_order', array('order'=>$order, 'quote'=>$quote));
@@ -85,7 +89,6 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
     {
         $orderAddress = Mage::getModel('sales/order_address')
             ->setStoreId($address->getStoreId())
-            ->setAddressType($address->getAddressType())
             ->setCustomerId($address->getCustomerId())
             ->setCustomerAddressId($address->getCustomerAddressId());
 

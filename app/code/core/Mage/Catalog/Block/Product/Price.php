@@ -87,9 +87,7 @@ class Mage_Catalog_Block_Product_Price extends Mage_Core_Block_Template
 
                 if ($price['price']<$productPrice) {
                     $price['savePercent'] = ceil(100 - (( 100/$productPrice ) * $price['price'] ));
-                    $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'])));
-                    $price['formated_price_incl_tax'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'], true)));
-
+                    $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice($price['website_price']));
                     $res[] = $price;
                 }
             }
@@ -109,5 +107,22 @@ class Mage_Catalog_Block_Product_Price extends Mage_Core_Block_Template
             return '';
         }
         return parent::_toHtml();
+    }
+    
+    /**
+     * If there is a special offer
+     * @param Mage_Catalog_Model_Product $product
+     * @param Mage_Core_Model_Store $store
+     * @return string|string
+     */
+    protected function isSpecial($product = null, $store = null)
+    {
+    	if (is_null($product)) {
+            $product = $this->getProduct();
+        }
+    	if ($product->getSpecialPrice() && Mage::app()->getLocale()->isStoreDateInInterval($store, $product->getSpecialFromDate(), $product->getSpecialToDate())) {
+    		return true;
+    	}
+    	return false;
     }
 }

@@ -92,8 +92,7 @@ class Mage_Newsletter_Model_Mysql4_Problem_Collection extends Mage_Core_Model_My
             $problems = $this->getItemsByColumnValue('customer_id', $customer->getId());
             foreach ($problems as $problem) {
                 $problem->setCustomerName($customer->getName())
-                    ->setCustomerFirstName($customer->getFirstName())
-                    ->setCustomerLastName($customer->getLastName());
+                    ->setCustomerName($customer->getName());
             }
         }
 

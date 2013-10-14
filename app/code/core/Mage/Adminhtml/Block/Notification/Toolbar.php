@@ -58,12 +58,15 @@ class Mage_Adminhtml_Block_Notification_Toolbar extends Mage_Adminhtml_Block_Tem
      */
     public function isShow()
     {
+
         if (!$this->isOutputEnabled('Mage_AdminNotification')) {
             return false;
         }
+
         if ($this->getRequest()->getControllerName() == 'notification') {
             return false;
         }
+
         if ($this->getCriticalCount() == 0 && $this->getMajorCount() == 0 && $this->getMinorCount() == 0
             && $this->getNoticeCount() == 0
         ) {
@@ -113,8 +116,7 @@ class Mage_Adminhtml_Block_Notification_Toolbar extends Mage_Adminhtml_Block_Tem
      */
     public function getNoticeCount()
     {
-        return $this->_getHelper()
-            ->getUnreadNoticeCount(Mage_AdminNotification_Model_Inbox::SEVERITY_NOTICE);
+    	 return  $this->_getHelper()->getUpdateVersion();
     }
 
     /**
@@ -134,8 +136,11 @@ class Mage_Adminhtml_Block_Notification_Toolbar extends Mage_Adminhtml_Block_Tem
      */
     public function getLatestNotice()
     {
-        return  $this->_getHelper()
-            ->getLatestNotice()->getTitle();
+        $session=Mage::getSingleton('admin/session');
+		$version=$session->getLatestVersion();
+    	$message="Makingware CE ".$version." ". Mage::helper('adminnotification')->__("is now available")." ";
+
+    	return $message;
     }
 
     /**
@@ -145,7 +150,7 @@ class Mage_Adminhtml_Block_Notification_Toolbar extends Mage_Adminhtml_Block_Tem
      */
     public function getLatestNoticeUrl()
     {
-        return $this->_getHelper()->getLatestNotice()->getUrl();
+        return 'http://www.makingware.com/software.html';
     }
 
     /**

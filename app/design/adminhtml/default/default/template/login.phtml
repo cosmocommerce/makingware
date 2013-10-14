@@ -20,7 +20,7 @@
  *
  * @category    design
  * @package     default_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
@@ -36,7 +36,6 @@
 
     <script type="text/javascript" src="<?php echo $this->getJsUrl('prototype/prototype.js') ?>"></script>
     <script type="text/javascript" src="<?php echo $this->getJsUrl('prototype/validation.js') ?>"></script>
-    <script type="text/javascript" src="<?php echo $this->getJsUrl('scriptaculous/effects.js') ?>"></script>
     <script type="text/javascript" src="<?php echo $this->getJsUrl('mage/adminhtml/form.js') ?>"></script>
 
     <!--[if IE]> <link rel="stylesheet" href="<?php echo $this->getSkinUrl('iestyles.css') ?>" type="text/css" media="all" /> <![endif]-->
@@ -50,7 +49,7 @@
                 <div class="login-form">
                     <input name="form_key" type="hidden" value="<?php echo $this->getFormKey() ?>" />
                     <h2><?php echo Mage::helper('adminhtml')->__('Log in to Admin Panel') ?></h2>
-                    <div id="messages">
+                    <div id="messages" class="alertmessages">
                         <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
                     </div>
                     <div class="input-box input-left"><label for="username"><?php echo Mage::helper('adminhtml')->__('User Name:') ?></label><br/>
@@ -58,17 +57,20 @@
                     <div class="input-box input-right"><label for="login"><?php echo Mage::helper('adminhtml')->__('Password:') ?></label><br />
                         <input type="password" id="login" name="login[password]" class="required-entry input-text" value="" /></div>
                     <div class="clear"></div>
+                    
                     <div class="form-buttons">
                         <a class="left" href="<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/index/forgotpassword', array('_nosecret' => true)) ?>"><?php echo Mage::helper('adminhtml')->__('Forgot your password?') ?></a>
                         <input type="submit" class="form-button" value="<?php echo Mage::helper('adminhtml')->__('Login') ?>" title="<?php echo Mage::helper('adminhtml')->__('Login') ?>" /></div>
                 </div>
-                <p class="legal"><?php echo Mage::helper('adminhtml')->__('Magento is a trademark of Magento Inc. Copyright &copy; %s Magento Inc.', date('Y')) ?></p>
+                
             </form>
             <div class="bottom"></div>
             <script type="text/javascript">
                  var loginForm = new varienForm('loginForm');
             </script>
+           
         </div>
+         <p class="legal"><?php echo Mage::helper('adminhtml')->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y')) ?></p>
     </div>
 </body>
 </html>

@@ -59,7 +59,8 @@ $orderStoreDate = $this->formatDate($_order->getCreatedAtStoreDate(), 'medium', 
             <?php endif;?>
             <tr>
                 <td class="label"><label><?php echo Mage::helper('sales')->__('Order Status') ?></label></td>
-                <td class="value"><strong><span id="order_status"><?php echo $_order->getStatusLabel() ?></span></strong></td>
+                <td class="value"><strong><span id="order_status"><?php echo $_order->getStatusLabel() ?></span></strong>
+                <strong><span>(<?php echo Mage::helper('sales')->__($this->getOrderStatusDetail());?>)</span></strong></td>
             </tr>
             <tr>
                 <td class="label"><label><?php echo Mage::helper('sales')->__('Purchased From') ?></label></td>
@@ -145,21 +146,8 @@ $orderStoreDate = $this->formatDate($_order->getCreatedAtStoreDate(), 'medium', 
     </div>
 </div>
 <div class="clear"></div>
-
-<div class="box-left">
-    <!--Billing Address-->
-    <div class="entry-edit">
-        <div class="entry-edit-head">
-            <h4 class="icon-head head-billing-address"><?php echo Mage::helper('sales')->__('Billing Address') ?></h4>
-            <div class="tools"><?php echo $this->getAddressEditLink($_order->getBillingAddress())?></div>
-        </div>
-        <fieldset>
-            <address><?php echo $_order->getBillingAddress()->getFormated(true) ?></address>
-        </fieldset>
-    </div>
-</div>
 <?php if (!$this->getOrder()->getIsVirtual()): ?>
-<div class="box-right">
+<div class="">
     <!--Shipping Address-->
     <div class="entry-edit">
         <div class="entry-edit-head">

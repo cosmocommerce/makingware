@@ -34,6 +34,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
     protected $_customer;
     protected $_checkout;
     protected $_quote;
+    protected $_addRess;
     protected $_countryCollection;
     protected $_regionCollection;
     protected $_addressesCollection;
@@ -76,6 +77,22 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
         }
         return $this->_quote;
     }
+    
+	/**
+     * Return Sales Quote Address model (shipping address)
+     *
+     * @return Mage_Sales_Model_Quote_Address
+     */
+    public function getAddress()
+    {
+        if (empty($this->_addRess)) {
+        	$this->_addRess = $this->getQuote()->getShippingAddress();
+        	if (empty($this->_addRess)) {
+            	$this->_addRess = Mage::getModel('sales/quote_address');
+        	}
+        }
+        return $this->_addRess;
+    }
 
     public function isCustomerLoggedIn()
     {
@@ -107,7 +124,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
     }
 
 /* */
-    public function getAddressesHtmlSelect($type)
+    public function getAddressesHtmlSelect()
     {
         if ($this->isCustomerLoggedIn()) {
             $options = array();
@@ -120,11 +137,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
 
             $addressId = $this->getAddress()->getCustomerAddressId();
             if (empty($addressId)) {
-                if ($type=='billing') {
-                    $address = $this->getCustomer()->getPrimaryBillingAddress();
-                } else {
-                    $address = $this->getCustomer()->getPrimaryShippingAddress();
-                }
+                $address = $this->getCustomer()->getPrimaryShippingAddress();
                 if ($address) {
                     $addressId = $address->getId();
                 }
@@ -145,32 +158,30 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
         return '';
     }
 
-    public function getCountryHtmlSelect($type)
+    public function getCountryHtmlSelect()
     {
         $countryId = $this->getAddress()->getCountryId();
         if (is_null($countryId)) {
             $countryId = Mage::helper('core')->getDefaultCountry();
         }
         $select = $this->getLayout()->createBlock('core/html_select')
-            ->setName($type.'[country_id]')
-            ->setId($type.':country_id')
+            ->setName('country_id')
+            ->setId('country_id')
             ->setTitle(Mage::helper('checkout')->__('Country'))
             ->setClass('validate-select')
             ->setValue($countryId)
+            ->setExtraParams('validate="required:true"')
             ->setOptions($this->getCountryOptions());
-        if ($type === 'shipping') {
-            $select->setExtraParams('onchange="shipping.setSameAsBilling(false);"');
-        }
 
         return $select->getHtml();
     }
 
 
-    public function getRegionHtmlSelect($type)
+    public function getRegionHtmlSelect()
     {
         $select = $this->getLayout()->createBlock('core/html_select')
-            ->setName($type.'[region]')
-            ->setId($type.':region')
+            ->setName(region)
+            ->setId('region')
             ->setTitle(Mage::helper('checkout')->__('State/Province'))
             ->setClass('required-entry validate-state')
             ->setValue($this->getAddress()->getRegionId())

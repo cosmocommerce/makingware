@@ -57,11 +57,14 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
             return;
         }
 
+        set_time_limit(0);
         /* Collect Data */
         $inventoryData      = $this->getRequest()->getParam('inventory', array());
         $attributesData     = $this->getRequest()->getParam('attributes', array());
         $websiteRemoveData  = $this->getRequest()->getParam('remove_website_ids', array());
         $websiteAddData     = $this->getRequest()->getParam('add_website_ids', array());
+		$productData = $this->getRequest()->getParam('product');
+		$productOptionsData = $productData['options'];
 
         /* Prepare inventory data item options (use config settings) */
         foreach (Mage::helper('cataloginventory')->getConfigItemOptions() as $option) {
@@ -150,6 +153,37 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
                     $this->__('Please refresh "Catalog URL Rewrites" and "Product Attributes" in System -> <a href="%s">Index Management</a>', $this->getUrl('adminhtml/process/list'))
                 );
             }
+
+			if ($productOptionsData) {
+				$productIds = $this->_getHelper()->getProductIds();
+
+				$product = Mage::getModel('catalog/product');
+				$optionInstance = $product->getOptionInstance();
+				$optionInstance->setProduct($product);
+
+				foreach ($productIds as $productId)
+				{
+					$product->load($productId);
+					$options = $product->getOptions();
+					$optionInstance->unsetOptions();
+
+					foreach ($options as $option)
+					{
+						$optionInstance->addOption(array(
+							'option_id' => $option->getId(),
+							'is_delete' => 1,
+							'is_require' => 0,
+						));
+					}
+
+					$optionInstance->saveOptions();
+
+					$product = Mage::getModel('catalog/product')->load($productId);
+					$product->setProductOptions($productOptionsData);
+					$product->setCanSaveCustomOptions(true);
+					$product->save();
+				}
+			}
 
             $this->_getSession()->addSuccess(
                 $this->__('Total of %d record(s) were updated',

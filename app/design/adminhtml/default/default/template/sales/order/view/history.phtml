@@ -71,6 +71,9 @@
             <?php if ($_item->getComment()): ?>
                 <br/><?php echo $this->escapeHtml($_item->getComment(), array('b','br','strong','i','u')) ?>
             <?php endif; ?>
+            <?php if ($_item->getUserId() && ($name = $_item->getName()) && ($username = $_item->getUsername())):?>
+            	<br/> <span style="float:right;"> -- <?php echo $name . '(' . $username . ')';?></span>
+            <?php endif;?>
         </li>
     <?php endforeach; ?>
     </ul>

@@ -59,6 +59,16 @@ class Mage_Review_Block_Product_View_List extends Mage_Review_Block_Product_View
             ->addRateVotes();
         return parent::_beforeToHtml();
     }
+    
+    protected function isDisplayReview()
+    {
+    	return Mage::helper('review')->isDisplayReview($this->getProduct());
+    }
+    
+    protected function getReviewNotice()
+    {
+    	return Mage::helper('review')->getReviewNotice();
+    }
 
     public function getReviewUrl($id)
     {

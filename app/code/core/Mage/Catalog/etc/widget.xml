@@ -53,6 +53,10 @@
                         <value>catalog/product/widget/new/content/new_list.phtml</value>
                         <label>New Products List Template</label>
                     </list>
+                    <index translate="label">
+                        <value>catalog/product/widget/new/content/new_index.phtml</value>
+                        <label>New Products Index Template</label>
+                    </index>
                 </values>
             </template>
             <cache_lifetime translate="label description">
@@ -61,6 +65,21 @@
                 <visible>1</visible>
                 <type>text</type>
             </cache_lifetime>
+            <category_id translate="label">
+                <visible>1</visible>
+                <required>0</required>
+                <label>Choose Category</label>
+                <type>label</type>
+                <helper_block>
+                    <type>adminhtml/catalog_category_widget_chooser</type>
+                    <data>
+                        <button translate="open">
+                            <open>Select Category...</open>
+                        </button>
+                    </data>
+                </helper_block>
+                <sort_order>10</sort_order>
+            </category_id>
         </parameters>
     </new_products>
 

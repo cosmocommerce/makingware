@@ -8073,7 +8073,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 
 			s = extend({
 				theme : "simple",
-				language : "en"
+				language : "zh"
 			}, s);
 
 			t.settings = s;

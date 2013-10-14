@@ -128,14 +128,6 @@ class Mage_Bundle_Model_Sales_Order_Pdf_Items_Invoice extends Mage_Bundle_Model_
                     'font'  => 'bold',
                 );
 
-                $tax = $order->formatPriceTxt($_item->getTaxAmount());
-                $line[] = array(
-                    'text'  => $tax,
-                    'feed'  => 495,
-                    'font'  => 'bold',
-                    'align' => 'right'
-                );
-
                 $row_total = $order->formatPriceTxt($_item->getRowTotal());
                 $line[] = array(
                     'text'  => $row_total,

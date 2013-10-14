@@ -38,6 +38,8 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
      */
     private $_order;
 
+    protected $_notAllowOnlinePayment = array('free', 'cod','bankremittance','exchangepayment');
+
     /**
      * Retrieve identifier of created order
      *
@@ -47,6 +49,16 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
     public function getOrderId()
     {
         return $this->_getData('order_id');
+    }
+
+    /**
+     * Get order
+     *
+     * @return Mage_Sales_Model_Order
+     */
+    public function getOrder()
+    {
+    	return $this->_getData('order');
     }
 
     /**
@@ -102,13 +114,18 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
         return $this->getUrl('sales/recurring_profile/view', array('profile' => $profile->getId()));
     }
 
+	public function canOnlinePayment()
+    {
+    	return !in_array($this->getOrder()->getPayment()->getMethodInstance()->getCode(), $this->_notAllowOnlinePayment);
+    }
+
     /**
      * Initialize data and prepare it for output
      */
     protected function _beforeToHtml()
     {
         $this->_prepareLastOrder();
-        $this->_prepareLastBillingAgreement();
+        $this->_prepareLastShippingAgreement();
         $this->_prepareLastRecurringProfiles();
         return parent::_beforeToHtml();
     }
@@ -130,6 +147,7 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
                     'print_url' => $this->getUrl('sales/order/print', array('order_id'=> $orderId)),
                     'can_print_order' => $isVisible,
                     'can_view_order'  => Mage::getSingleton('customer/session')->isLoggedIn() && $isVisible,
+                	'order' => $order,
                     'order_id'  => $order->getIncrementId(),
                 ));
             }
@@ -137,18 +155,18 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
     }
 
     /**
-     * Prepare billing agreement data from an identifier in the session
+     * Prepare shipping agreement data from an identifier in the session
      */
-    protected function _prepareLastBillingAgreement()
+    protected function _prepareLastShippingAgreement()
     {
-        $agreementId = Mage::getSingleton('checkout/session')->getLastBillingAgreementId();
+        $agreementId = Mage::getSingleton('checkout/session')->getLastShippingAgreementId();
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
         if ($agreementId && $customerId) {
-            $agreement = Mage::getModel('sales/billing_agreement')->load($agreementId);
+            $agreement = Mage::getModel('sales/shipping_agreement')->load($agreementId);
             if ($agreement->getId() && $customerId == $agreement->getCustomerId()) {
                 $this->addData(array(
                     'agreement_ref_id' => $agreement->getReferenceId(),
-                    'agreement_url' => $this->getUrl('sales/billing_agreement/view',
+                    'agreement_url' => $this->getUrl('sales/shipping_agreement/view',
                         array('agreement' => $agreementId)
                     ),
                 ));
@@ -177,5 +195,14 @@ class Mage_Checkout_Block_Onepage_Success extends Mage_Core_Block_Template
                 }
             }
         }
+    }
+
+    public function getReturnUrl()
+    {
+    	if(Mage::getSingleton('customer/session')->isLoggedIn()){
+    		return $this->getUrl('sales/order/view', array('order_id' =>Mage::getSingleton('checkout/session')->getLastOrderId()));
+    	}
+
+        return  Mage::getUrl('searchorder/order/order',array('order_id' => $this->getOrderId()));
     }
 }

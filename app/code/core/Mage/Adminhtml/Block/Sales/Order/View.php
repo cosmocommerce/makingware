@@ -168,6 +168,13 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
                 'class'     => 'go'
             ));
         }
+        
+        // add print order button
+        $this->_addButton('order_print', array(
+                'label'     => Mage::helper('sales')->__('Print Order'),
+                'onclick'   => 'setLocation(\'' . $this->getPrintOrderUrl() . '\')',
+                'class'     => 'go'
+            ));
     }
 
     /**
@@ -204,6 +211,10 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
     {
         $params2['order_id'] = $this->getOrderId();
         return parent::getUrl($params, $params2);
+    }
+    
+    public function getPrintOrderUrl(){
+    	return $this->getUrl('*/*/printOrder');
     }
 
     public function getEditUrl()

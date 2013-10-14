@@ -41,7 +41,7 @@ class Mage_Checkout_Block_Onepage extends Mage_Checkout_Block_Onepage_Abstract
             $steps['login'] = $this->getCheckout()->getStepData('login');
         }
 
-        $stepCodes = array('billing', 'shipping', 'shipping_method', 'payment', 'review');
+        $stepCodes = array('shipping', 'shipping_method', 'payment', 'review');
 
         foreach ($stepCodes as $step) {
             $steps[$step] = $this->getCheckout()->getStepData($step);
@@ -51,144 +51,97 @@ class Mage_Checkout_Block_Onepage extends Mage_Checkout_Block_Onepage_Abstract
 
     public function getActiveStep()
     {
-        return $this->isCustomerLoggedIn() ? 'billing' : 'login';
+        return 'login';
     }
-
-/*
-    // ADDRESSES
-
-    public function getAddressesHtmlSelect($address, $type)
+    
+    public function getShippingRates()
     {
-        if ($this->isCustomerLoggedIn()) {
-            $options = array();
-            foreach ($this->getCustomer()->getAddresses() as $a) {
-                $options[] = array(
-                    'value'=>$a->getId(),
-                    'label'=>$a->getStreet(-1).', '.$a->getCity().', '.$a->getRegion().' '.$a->getPostcode(),
-                );
-            }
-
-            $addressId = $address->getId();
-            if (empty($addressId)) {
-                if ($type=='billing') {
-                    $address = $this->getCustomer()->getPrimaryBillingAddress();
+        if (empty($this->_rates)) {
+        	$quoteAddress = $this->getAddress();
+        	if (count($quoteAddress->getShippingRatesCollection()) == 0) {
+        		$quoteAddress->setCollectShippingRates(true)
+        			->collectShippingRates()
+        			->save();
+        	}
+            $this->_rates = $this->getAddress()->getGroupedAllShippingRates();
+        }
+        return $this->_rates;
+    }
+    
+	/**
+     * Check and prepare payment method model
+     *
+     * Redeclare this method in child classes for declaring method info instance
+     *
+     * @return bool
+     */
+    protected function _assignMethod($method)
+    {
+        $method->setInfoInstance($this->getQuote()->getPayment());
+        return $this;
+    }
+    
+	protected function _canUseMethod($method)
+    {
+        if (! $method->canUseForCurrency(Mage::app()->getStore()->getBaseCurrencyCode())) {
+            return false;
+        }
+        
+        /**
+         * Checking for min/max order total for assigned payment method
+         */
+        $total = $this->getQuote()->getBaseGrandTotal();
+        $minTotal = $method->getConfigData('min_order_total');
+        $maxTotal = $method->getConfigData('max_order_total');
+        
+        if ((! empty($minTotal) && ($total < $minTotal)) || (! empty($maxTotal) && ($total > $maxTotal))) {
+            return false;
+        }
+        return true;
+    }
+    
+	/**
+     * Retrieve availale payment methods
+     *
+     * @return array
+     */
+    public function getMethods()
+    {
+        $methods = $this->getData('methods');
+        if (is_null($methods)) {
+        	Mage::dispatchEvent('checkout_onepage_block_payment_methods', array('quote' => $this->getQuote()));
+        	
+            $store = $this->getQuote() ? $this->getQuote()->getStoreId() : null;
+            $methods = $this->helper('payment')->getStoreMethods($store, $this->getQuote());
+            
+            foreach ($methods as $key => $method) {
+                if ($this->_canUseMethod($method)) {
+                    $this->_assignMethod($method);
                 } else {
-                    $address = $this->getCustomer()->getPrimaryShippingAddress();
-                }
-                if ($address) {
-                    $addressId = $address->getId();
+                    unset($methods[$key]);
                 }
             }
-
-            $select = $this->getLayout()->createBlock('core/html_select')
-                ->setName($type.'_address_id')
-                ->setId($type.'-address-select')
-                ->setExtraParams('onchange="'.$type.'.newAddress(!this.value)"')
-                ->setValue($addressId)
-                ->setOptions($options);
-
-            $select->addOption('', 'New Address');
-
-            return $select->getHtml();
+            
+            $this->setData('methods', $methods);
         }
-        return '';
+        return $methods;
     }
-
-    public function getCountryHtmlSelect($address, $type)
+    
+	public function getCarrierName($carrierCode)
     {
-        $select = $this->getLayout()->createBlock('core/html_select')
-            ->setName($type.'[country_id]')
-            ->setId($type.':country_id')
-            ->setTitle(Mage::helper('checkout')->__('Country'))
-            ->setClass('validate-select')
-            ->setValue($address->getCountryId())
-            ->setOptions($this->getCountryCollection()->toOptionArray());
-
-        if ($type==='shipping') {
-            $select->setExtraParams('onchange="shipping.setSameAsBilling(false);"');
+        if ($name = Mage::getStoreConfig('carriers/' . $carrierCode . '/title')) {
+            return $name;
         }
-
-        return $select->getHtml();
+        return $carrierCode;
     }
-
-
-    public function getRegionHtmlSelect($address, $type)
+    
+    public function getCouponCode()
     {
-        $select = $this->getLayout()->createBlock('core/html_select')
-            ->setName($type.'[region]')
-            ->setId($type.':region')
-            ->setTitle(Mage::helper('checkout')->__('State/Province'))
-            ->setClass('required-entry validate-state')
-            ->setValue($address->getRegionId())
-            ->setOptions($this->getRegionCollection()->toOptionArray());
-
-        return $select->getHtml();
+        return $this->getQuote()->getCouponCode();
     }
-
-    // LOGIN STEP
-
-    public function getMessages()
+    
+    public function isAllowedGuestCheckout()
     {
-        return Mage::getSingleton('customer/session')->getMessages(true);
+        return $this->getQuote()->isAllowedGuestCheckout();
     }
-
-    public function getLoginPostAction()
-    {
-        return Mage::getUrl('customer/account/loginPost', array('_secure'=>true));
-    }
-
-    public function getSuccessUrl()
-    {
-        return $this->getUrl('* /*');////////////
-    }
-
-    public function getErrorUrl()
-    {
-        return $this->getUrl('* /*');////////////
-    }
-
-    public function getMethod()
-    {
-        return $this->getQuote()->getCheckoutMethod();
-    }
-
-    public function getMethodData()
-    {
-        return $this->getCheckout()->getMethodData();
-    }
-
-    // BILLING STEP
-
-    public function getBillingAddress() {
-        if (!$this->isCustomerLoggedIn()) {
-            return $this->getQuote()->getBillingAddress();
-        } else {
-            return Mage::getModel('sales/quote_address');
-        }
-    }
-
-    // SHIPPING STEP
-
-    public function getShippingAddress()
-    {
-        if (!$this->isCustomerLoggedIn()) {
-            return $this->getQuote()->getShippingAddress();
-        } else {
-            return Mage::getModel('sales/quote_address');
-        }
-    }
-
-    // PAYMENT STEP
-
-    public function getPayment()
-    {
-        $payment = $this->getQuote()->getPayment();
-        if (empty($payment)) {
-            $payment = Mage::getModel('sales/quote_payment');
-        } else {
-            $payment->setCcNumber(null)->setCcCid(null);
-        }
-        return $payment;
-    }
-    */
 }

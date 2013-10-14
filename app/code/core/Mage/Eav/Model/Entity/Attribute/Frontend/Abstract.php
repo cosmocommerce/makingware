@@ -138,9 +138,14 @@ abstract class Mage_Eav_Model_Entity_Attribute_Frontend_Abstract implements Mage
      *
      * @return array
      */
-    public function getSelectOptions()
+    public function getSelectOptions($productId=null,$type=null)
     {
-        return $this->getAttribute()->getSource()->getAllOptions();
+        if(get_class($this->getAttribute()->getSource())=='Mage_Eav_Model_Entity_Attribute_Source_Color' || !empty($type)){
+              return $this->getAttribute()->getSource()->getAllOptions(true,false,$productId,$type);
+        }else{
+              return $this->getAttribute()->getSource()->getAllOptions();
+        }
+
     }
 
     public function getOption($optionId)

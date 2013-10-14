@@ -123,7 +123,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
         if ($item instanceof Mage_Sales_Model_Quote_Address_Item) {
             $address = $item->getAddress();
         } elseif ($item->getQuote()->isVirtual()) {
-            $address = $item->getQuote()->getBillingAddress();
+            return null;
         } else {
             $address = $item->getQuote()->getShippingAddress();
         }
@@ -209,8 +209,11 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
     public function processFreeShipping(Mage_Sales_Model_Quote_Item_Abstract $item)
     {
         $address = $this->_getAddress($item);
+        if (empty($address)) {
+        	return $this;
+        }
+        
         $item->setFreeShipping(false);
-
         foreach ($this->_getRules() as $rule) {
             /* @var $rule Mage_SalesRule_Model_Rule */
             if (!$this->_canProcessRule($rule, $address)) {
@@ -262,11 +265,15 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
      */
     public function process(Mage_Sales_Model_Quote_Item_Abstract $item)
     {
+    	$address = $this->_getAddress($item);
+    	if (empty($address)) {
+    		return $this;
+    	}
+    	
         $item->setDiscountAmount(0);
         $item->setBaseDiscountAmount(0);
         $item->setDiscountPercent(0);
         $quote      = $item->getQuote();
-        $address    = $this->_getAddress($item);
 
         $itemPrice  = $this->_getItemPrice($item);
         $baseItemPrice = $this->_getItemBasePrice($item);
@@ -423,10 +430,6 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
                 $baseDiscountAmount = $quote->getStore()->roundPrice($baseDiscountAmount);
             }
 
-            /**
-             * We can't use row total here because row total not include tax
-             * Discount can be applied on price included tax
-             */
             $discountAmount     = min($item->getDiscountAmount()+$discountAmount, $itemPrice*$qty);
             $baseDiscountAmount = min($item->getBaseDiscountAmount()+$baseDiscountAmount, $baseItemPrice*$qty);
 

@@ -51,6 +51,25 @@ class Mage_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         return array();
     }
 
+    public function encodeTrackingHash($model){
+    	if(empty($model) || !is_object($model)){
+    		return;
+    	}
+
+    	if ($model instanceof Mage_Sales_Model_Order) {
+            //return $this->_getTrackingUrl('order_id', $model);
+            //echo 'TTTTTT: '."order_id:{$model->getId()}:{$model->getProtectCode()}";
+            return Mage::helper('core')->urlEncode("order_id:{$model->getId()}:{$model->getProtectCode()}");
+        } elseif ($model instanceof Mage_Sales_Model_Order_Shipment) {
+            //return $this->_getTrackingUrl('ship_id', $model);
+            return Mage::helper('core')->urlEncode("ship_id:{$model->getId()}:{$model->getProtectCode()}");
+        } elseif ($model instanceof Mage_Sales_Model_Order_Shipment_Track) {
+            //return $this->_getTrackingUrl('track_id', $model, 'getEntityId');
+            return Mage::helper('core')->urlEncode("track_id:{$model->getEntityId()}:{$model->getProtectCode()}");
+        }
+        return '';
+    }
+
     /**
      * Retrieve tracking url with params
      *
@@ -71,6 +90,8 @@ class Mage_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
              $param = array(
                  'hash' => Mage::helper('core')->urlEncode("{$key}:{$model->$method()}:{$model->getProtectCode()}")
              );
+
+             //echo 'TTTTTT: '."{$key}:{$model->$method()}:{$model->getProtectCode()}";
          }
          $storeId = is_object($model) ? $model->getStoreId() : null;
          $storeModel = Mage::app()->getStore($storeId);
@@ -158,5 +179,30 @@ class Mage_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         }
         $freeMethod = Mage::getStoreConfig('carriers/' . $arr[0] . '/free_method', $storeId);
         return $freeMethod == $arr[1];
+    }
+
+     /**
+     * Retreive shipping method form html
+     *
+     * @param    Mage_Shipping_Model_Carrier_Abstract $method
+     * @return  Mage_Shipping_Block_Form
+     */
+    public function getMethodFormBlock( Mage_Shipping_Model_Carrier_Abstract $method)
+    {
+        $block = false;
+        $shippingTime=$method->getConfigData('enable_shipping_time');
+
+        if(!$shippingTime){
+			return $block;
+        }
+
+        $blockType = $method->getFormBlockType();
+
+        if ($this->getLayout()) {
+            $block = $this->getLayout()->createBlock($blockType);
+            $block->setMethod($method);
+        }
+
+        return $block;
     }
 }

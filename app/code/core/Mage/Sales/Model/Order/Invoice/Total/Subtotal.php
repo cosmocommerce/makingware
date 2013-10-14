@@ -37,8 +37,6 @@ class Mage_Sales_Model_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Ord
     {
         $subtotal       = 0;
         $baseSubtotal   = 0;
-        $subtotalInclTax= 0;
-        $baseSubtotalInclTax = 0;
 
         $order = $invoice->getOrder();
 
@@ -51,31 +49,21 @@ class Mage_Sales_Model_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Ord
 
             $subtotal       += $item->getRowTotal();
             $baseSubtotal   += $item->getBaseRowTotal();
-            $subtotalInclTax+= $item->getRowTotalInclTax();
-            $baseSubtotalInclTax += $item->getBaseRowTotalInclTax();
         }
 
         $allowedSubtotal = $order->getSubtotal() - $order->getSubtotalInvoiced();
         $baseAllowedSubtotal = $order->getBaseSubtotal() -$order->getBaseSubtotalInvoiced();
-        $allowedSubtotalInclTax = $allowedSubtotal + $order->getTaxAmount() - $order->getTaxInvoiced();
-        $baseAllowedSubtotalInclTax = $baseAllowedSubtotal + $order->getBaseTaxAmount() - $order->getBaseTaxInvoiced();
 
         if ($invoice->isLast()) {
             $subtotal = $allowedSubtotal;
             $baseSubtotal = $baseAllowedSubtotal;
-            $subtotalInclTax = $allowedSubtotalInclTax;
-            $baseSubtotalInclTax  = $baseAllowedSubtotalInclTax;
         } else {
             $subtotal = min($allowedSubtotal, $subtotal);
             $baseSubtotal = min($baseAllowedSubtotal, $baseSubtotal);
-            $subtotalInclTax = min($allowedSubtotalInclTax, $subtotalInclTax);
-            $baseSubtotalInclTax = min($baseAllowedSubtotalInclTax, $baseSubtotalInclTax);
         }
 
         $invoice->setSubtotal($subtotal);
         $invoice->setBaseSubtotal($baseSubtotal);
-        $invoice->setSubtotalInclTax($subtotalInclTax);
-        $invoice->setBaseSubtotalInclTax($baseSubtotalInclTax);
 
         $invoice->setGrandTotal($invoice->getGrandTotal() + $subtotal);
         $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() + $baseSubtotal);

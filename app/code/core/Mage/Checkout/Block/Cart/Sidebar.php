@@ -102,77 +102,13 @@ class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
 
     /**
      * Get shopping cart subtotal.
-     *
-     * It will include tax, if required by config settings.
-     *
-     * @param   bool $skipTax flag for getting price with tax or not. Ignored in case when we display just subtotal incl.tax
-     * @return  decimal
+     * 
      */
-    public function getSubtotal($skipTax = true)
+    public function getSubtotal()
     {
         $subtotal = 0;
         $totals = $this->getTotals();
-        $config = Mage::getSingleton('tax/config');
-        if (isset($totals['subtotal'])) {
-            if ($config->displayCartSubtotalBoth()) {
-                if ($skipTax) {
-                    $subtotal = $totals['subtotal']->getValueExclTax();
-                } else {
-                    $subtotal = $totals['subtotal']->getValueInclTax();
-                }
-            } elseif($config->displayCartSubtotalInclTax()) {
-                $subtotal = $totals['subtotal']->getValueInclTax();
-            } else {
-                $subtotal = $totals['subtotal']->getValue();
-                if (!$skipTax && isset($totals['tax'])) {
-                    $subtotal+= $totals['tax']->getValue();
-                }
-            }
-        }
-        return $subtotal;
-    }
-
-    /**
-     * Get subtotal, including tax.
-     * Will return > 0 only if appropriate config settings are enabled.
-     *
-     * @return decimal
-     */
-    public function getSubtotalInclTax()
-    {
-        if (!Mage::getSingleton('tax/config')->displayCartSubtotalBoth()) {
-            return 0;
-        }
-        return $this->getSubtotal(false);
-    }
-
-    /**
-     * Add tax to amount
-     *
-     * @param float $price
-     * @param bool $exclShippingTax
-     * @return float
-     */
-    private function _addTax($price, $exclShippingTax=true) {
-        $totals = $this->getTotals();
-        if (isset($totals['tax'])) {
-            if ($exclShippingTax) {
-                $price += $totals['tax']->getValue()-$this->_getShippingTaxAmount();
-            } else {
-                $price += $totals['tax']->getValue();
-            }
-        }
-        return $price;
-    }
-
-    /**
-     * Get shipping tax amount
-     *
-     * @return float
-     */
-    protected function _getShippingTaxAmount()
-    {
-        return $this->getQuote()->getShippingAddress()->getShippingTaxAmount();
+        return $totals['subtotal']->getValue();
     }
 
     /**
@@ -183,18 +119,6 @@ class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
     public function getSummaryCount()
     {
         return Mage::getSingleton('checkout/cart')->getSummaryQty();
-    }
-
-    /**
-     * Get incl/excl tax label
-     *
-     * @param bool $flag
-     * @return string
-     */
-    public function getIncExcTax($flag)
-    {
-        $text = Mage::helper('tax')->getIncExcText($flag);
-        return $text ? ' ('.$text.')' : '';
     }
 
     /**

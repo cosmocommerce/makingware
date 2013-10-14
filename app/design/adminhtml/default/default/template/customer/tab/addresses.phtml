@@ -50,10 +50,6 @@
             </address>
             <div class="address-type">
                 <span class="address-type-line">
-                    <input type="radio" <?php if ($this->isReadonly()):?> disabled="disabled"<?php endif;?> value="<?php echo $_address->getId() ?>" id="address_item_billing<?php echo $_address->getId() ?>" name="account[default_billing]" title="<?php echo Mage::helper('customer')->__('Set as Default Billing Address') ?>"<?php if($_address->getId()==$customer->getDefaultBilling()): ?> checked="checked"<?php endif; ?>/>
-                    &nbsp;<label for="address_item_billing<?php echo $_address->getId() ?>"><?php echo Mage::helper('customer')->__('Default Billing Address') ?></label>
-                </span>
-                <span class="address-type-line">
                     <input type="radio"  <?php if ($this->isReadonly()):?> disabled="disabled"<?php endif;?> value="<?php echo $_address->getId() ?>" id="address_item_shipping<?php echo $_address->getId() ?>" name="account[default_shipping]" title="<?php echo Mage::helper('customer')->__('Set as Default Shipping Address') ?>"<?php if($_address->getId()==$customer->getDefaultShipping()): ?> checked="checked"<?php endif; ?>/>
                     &nbsp;<label for="address_item_shipping<?php echo $_address->getId() ?>"><?php echo Mage::helper('customer')->__('Default Shipping Address') ?></label>
                 </span>
@@ -96,10 +92,6 @@
         <?php endif;?>
         <address><?php echo Mage::helper('customer')->__('New Customer Address') ?></address>
         <div class="address-type">
-            <span class="address-type-line">
-                <input  <?php if ($this->isReadonly()):?> disabled="disabled"<?php endif;?> type="radio" value="<?php echo $_templatePrefix ?>" id="address_item_billing<?php echo $_templatePrefix ?>" name="account[default_billing]" title="<?php echo Mage::helper('customer')->__('Set as Default Billing Address') ?>"/>
-                &nbsp;<label for="address_item_billing<?php echo $_templatePrefix ?>"><?php echo Mage::helper('customer')->__('Default Billing Address') ?></label>
-            </span>
             <span class="address-type-line">
                 <input  <?php if ($this->isReadonly()):?> disabled="disabled"<?php endif;?> type="radio" value="<?php echo $_templatePrefix ?>" id="address_item_shipping<?php echo $_templatePrefix ?>" name="account[default_shipping]" title="<?php echo Mage::helper('customer')->__('Set as Default Shipping Address') ?>"/>
                 &nbsp;<label for="address_item_shipping<?php echo $_templatePrefix ?>"><?php echo Mage::helper('customer')->__('Default Shipping Address') ?></label>
@@ -216,8 +208,7 @@ addressesModel.prototype = {
 
             var newForm = $('form_' + this.baseItemId + this.itemCount);
 
-            $('_item'+this.itemCount+'firstname').value = $('_accountfirstname').value;
-            $('_item'+this.itemCount+'lastname').value = $('_accountlastname').value;
+            $('_item'+this.itemCount+'name').value = $('_accountname').value;
 
             if ($('_accountwebsite_id').value !== '' && undefined !== this.defaultCountries[$('_accountwebsite_id').value]) {
                 $('_item'+this.itemCount+'country_id').value = this.defaultCountries[$('_accountwebsite_id').value];
@@ -241,8 +232,7 @@ addressesModel.prototype = {
             this.setActiveItem(newItem);
             this.bindCountryRegionRelation(newForm.id);
 
-            if( $('_item'+this.itemCount+'firstname').value ) this.syncFormData($('_item'+this.itemCount+'firstname'));
-            if( $('_item'+this.itemCount+'lastname').value ) this.syncFormData($('_item'+this.itemCount+'lastname'));
+            if( $('_item'+this.itemCount+'name').value ) this.syncFormData($('_item'+this.itemCount+'name'));
         }
         this.reloadItemList();
         //Event.stop(event);

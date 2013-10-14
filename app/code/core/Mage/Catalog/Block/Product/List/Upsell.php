@@ -62,7 +62,9 @@ class Mage_Catalog_Block_Product_List_Upsell extends Mage_Catalog_Block_Product_
             $this->_itemCollection->setPageSize($this->getItemLimit('upsell'));
         }
 
-        $this->_itemCollection->load();
+        $this->_itemCollection
+        	->setAutomaticScreening(true)
+			->load();
 
         /**
          * Updating collection with desired items

@@ -216,7 +216,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
      *
      * @return Mage_Sales_Model_Quote
      */
-    public function loadByCustomer($customer)
+    public function loadByCustomer($customer, $namespace = null)
     {
         if ($customer instanceof Mage_Customer_Model_Customer) {
             $customerId = $customer->getId();
@@ -224,7 +224,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         else {
             $customerId = (int) $customer;
         }
-        $this->_getResource()->loadByCustomerId($this, $customerId);
+        $this->_getResource()->loadByCustomerId($this, $customerId, $namespace);
         $this->_afterLoad();
         return $this;
     }
@@ -267,38 +267,25 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Assign customer model to quote with billing and shipping address change
+     * Assign customer model to quote with shipping and shipping address change
      *
      * @param  Mage_Customer_Model_Customer    $customer
-     * @param  Mage_Sales_Model_Quote_Address  $billingAddress
      * @param  Mage_Sales_Model_Quote_Address  $shippingAddress
      * @return Mage_Sales_Model_Quote
      */
     public function assignCustomerWithAddressChange(
         Mage_Customer_Model_Customer    $customer,
-        Mage_Sales_Model_Quote_Address  $billingAddress  = null,
         Mage_Sales_Model_Quote_Address  $shippingAddress = null
     )
     {
         if ($customer->getId()) {
             $this->setCustomer($customer);
 
-            if (!is_null($billingAddress)) {
-                $this->setBillingAddress($billingAddress);
-            } else {
-                $defaultBillingAddress = $customer->getDefaultBillingAddress();
-                if ($defaultBillingAddress && $defaultBillingAddress->getId()) {
-                    $billingAddress = Mage::getModel('sales/quote_address')
-                        ->importCustomerAddress($defaultBillingAddress);
-                    $this->setBillingAddress($billingAddress);
-                }
-            }
-
             if (is_null($shippingAddress)) {
                 $defaultShippingAddress = $customer->getDefaultShippingAddress();
                 if ($defaultShippingAddress && $defaultShippingAddress->getId()) {
                     $shippingAddress = Mage::getModel('sales/quote_address')
-                    ->importCustomerAddress($defaultShippingAddress);
+                    	->importCustomerAddress($defaultShippingAddress);
                 } else {
                     $shippingAddress = Mage::getModel('sales/quote_address');
                 }
@@ -357,19 +344,6 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         }
     }
 
-    public function getCustomerTaxClassId()
-    {
-        /*
-        * tax class can vary at any time. so instead of using the value from session, we need to retrieve from db everytime
-        * to get the correct tax class
-        */
-        //if (!$this->getData('customer_group_id') && !$this->getData('customer_tax_class_id')) {
-            $classId = Mage::getModel('customer/group')->getTaxClassId($this->getCustomerGroupId());
-            $this->setCustomerTaxClassId($classId);
-        //}
-        return $this->getData('customer_tax_class_id');
-    }
-
     /**
      * Retrieve quote address collection
      *
@@ -391,50 +365,28 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve quote address by type
-     *
-     * @param   string $type
-     * @return  Mage_Sales_Model_Quote_Address
-     */
-    protected function _getAddressByType($type)
-    {
-        foreach ($this->getAddressesCollection() as $address) {
-            if ($address->getAddressType() == $type && !$address->isDeleted()) {
-                return $address;
-            }
-        }
-
-        $address = Mage::getModel('sales/quote_address')->setAddressType($type);
-        $this->addAddress($address);
-        return $address;
-    }
-
-    /**
-     * Retrieve quote billing address
-     *
-     * @return Mage_Sales_Model_Quote_Address
-     */
-    public function getBillingAddress()
-    {
-        return $this->_getAddressByType(Mage_Sales_Model_Quote_Address::TYPE_BILLING);
-    }
-
-    /**
      * retrieve quote shipping address
      *
      * @return Mage_Sales_Model_Quote_Address
      */
     public function getShippingAddress()
     {
-        return $this->_getAddressByType(Mage_Sales_Model_Quote_Address::TYPE_SHIPPING);
+    	foreach ($this->getAddressesCollection() as $address) {
+            if (!$address->isDeleted()) {
+                return $address;
+            }
+        }
+
+        $address = Mage::getModel('sales/quote_address');
+        $this->addAddress($address);
+        return $address;
     }
 
     public function getAllShippingAddresses()
     {
         $addresses = array();
         foreach ($this->getAddressesCollection() as $address) {
-            if ($address->getAddressType()==Mage_Sales_Model_Quote_Address::TYPE_SHIPPING
-                && !$address->isDeleted()) {
+            if (!$address->isDeleted()) {
                 $addresses[] = $address;
             }
         }
@@ -480,8 +432,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
     public function getShippingAddressByCustomerAddressId($addressId)
     {
         foreach ($this->getAddressesCollection() as $address) {
-            if (!$address->isDeleted() && $address->getAddressType()==Mage_Sales_Model_Quote_Address::TYPE_SHIPPING
-                && $address->getCustomerAddressId()==$addressId) {
+            if (!$address->isDeleted() && $address->getCustomerAddressId()==$addressId) {
                 return $address;
             }
         }
@@ -522,28 +473,10 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
      * @param Mage_Sales_Model_Quote_Address $address
      * @return Mage_Sales_Model_Quote
      */
-    public function setBillingAddress(Mage_Sales_Model_Quote_Address $address)
-    {
-        $old = $this->getBillingAddress();
-
-        if (!empty($old)) {
-            $old->addData($address->getData());
-        } else {
-            $this->addAddress($address->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_BILLING));
-        }
-        return $this;
-    }
-
-    /**
-     * Enter description here...
-     *
-     * @param Mage_Sales_Model_Quote_Address $address
-     * @return Mage_Sales_Model_Quote
-     */
     public function setShippingAddress(Mage_Sales_Model_Quote_Address $address)
     {
         if ($this->getIsMultiShipping()) {
-            $this->addAddress($address->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_SHIPPING));
+            $this->addAddress($address);
         }
         else {
             $old = $this->getShippingAddress();
@@ -551,7 +484,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
             if (!empty($old)) {
                 $old->addData($address->getData());
             } else {
-                $this->addAddress($address->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_SHIPPING));
+                $this->addAddress($address);
             }
         }
         return $this;
@@ -588,10 +521,51 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         $items = array();
         foreach ($this->getItemsCollection() as $item) {
             if (!$item->isDeleted()) {
+            	/* 该错误会导致购物车item复制到订单item时把简单商品给过虑掉(只当商品类型为configurable时)
+            	if($this->isConfigurableChildProduct($item)){
+            		continue;
+            	}*/
                 $items[] =  $item;
             }
         }
         return $items;
+    }
+
+    public function isConfigurableChildProduct($current_item)
+    {
+       if($current_item->getParentItemId())
+       {
+	       $productItem = Mage::getModel('sales/quote_item')->load($current_item->getParentItemId());
+
+           if($productItem)
+           {
+			   if($productItem->getData('product_type')=='configurable')
+		       {
+            		return true;
+		       }
+		       else
+		       {
+				   return false;
+		       }
+           }
+
+       }
+
+	   return false;
+    }
+
+    public function getChildProductItem($current_item)
+    {
+		if($current_item->getProductType()=='configurable')
+		{
+			$childProductItem = Mage::getModel('sales/quote_item')->load($current_item->getId());
+
+			if($childProductItem)
+			{
+
+			}
+
+		}
     }
 
     /**
@@ -1158,11 +1132,11 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
     public function getTotals()
     {
         /**
-         * If quote is virtual we are using totals of billing address because
+         * If quote is virtual we are using totals of shipping address because
          * all items assigned to it
          */
         if ($this->isVirtual()) {
-            return $this->getBillingAddress()->getTotals();
+            return $this->getShippingAddress()->getTotals();
         }
 
         $shippingAddress = $this->getShippingAddress();
@@ -1182,7 +1156,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         }
 
         $sortedTotals = array();
-        foreach ($this->getBillingAddress()->getTotalModels() as $total) {
+        foreach ($this->getShippingAddress()->getTotalModels() as $total) {
             /* @var $total Mage_Sales_Model_Quote_Address_Total_Abstract */
             if (isset($totals[$total->getCode()])) {
                 $sortedTotals[$total->getCode()] = $totals[$total->getCode()];
@@ -1364,11 +1338,10 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Init shipping and billing address if quote is new
+         * Init shipping address if quote is new
          */
         if (!$this->getId()) {
             $this->getShippingAddress();
-            $this->getBillingAddress();
         }
 
         if ($quote->getCouponCode()) {

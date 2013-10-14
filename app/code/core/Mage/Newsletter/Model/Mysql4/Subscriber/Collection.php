@@ -91,8 +91,7 @@ class Mage_Newsletter_Model_Mysql4_Subscriber_Collection extends Mage_Core_Model
         $this->_init('newsletter/subscriber');
 
         // defining mapping for fields represented in several tables
-        $this->_map['fields']['customer_lastname'] = 'customer_lastname_table.value';
-        $this->_map['fields']['customer_firstname'] = 'customer_firstname_table.value';
+        $this->_map['fields']['customer_name'] = 'customer_name_table.value';
         $this->_map['fields']['type'] = 'IF(main_table.customer_id = 0, 1, 2)';
         $this->_map['fields']['website_id'] = 'store.website_id';
         $this->_map['fields']['group_id'] = 'store.group_id';
@@ -133,28 +132,19 @@ class Mage_Newsletter_Model_Mysql4_Subscriber_Collection extends Mage_Core_Model
     {
         $customer = Mage::getModel('customer/customer');
         /* @var $customer Mage_Customer_Model_Customer */
-        $firstname  = $customer->getAttribute('firstname');
-        $lastname   = $customer->getAttribute('lastname');
+        $name  = $customer->getAttribute('name');
 
 //        $customersCollection = Mage::getModel('customer/customer')->getCollection();
 //        /* @var $customersCollection Mage_Customer_Model_Entity_Customer_Collection */
-//        $firstname = $customersCollection->getAttribute('firstname');
-//        $lastname  = $customersCollection->getAttribute('lastname');
+//        $name = $customersCollection->getAttribute('name');
 
         $this->getSelect()
-            ->joinLeft(
-                array('customer_lastname_table'=>$lastname->getBackend()->getTable()),
-                'customer_lastname_table.entity_id=main_table.customer_id
-                 AND customer_lastname_table.attribute_id = '.(int) $lastname->getAttributeId() . '
-                 ',
-                array('customer_lastname'=>'value')
-             )
              ->joinLeft(
-                array('customer_firstname_table'=>$firstname->getBackend()->getTable()),
-                'customer_firstname_table.entity_id=main_table.customer_id
-                 AND customer_firstname_table.attribute_id = '.(int) $firstname->getAttributeId() . '
+                array('customer_name_table'=>$name->getBackend()->getTable()),
+                'customer_name_table.entity_id=main_table.customer_id
+                 AND customer_name_table.attribute_id = '.(int) $name->getAttributeId() . '
                  ',
-                array('customer_firstname'=>'value')
+                array('customer_name'=>'value')
              );
 
         return $this;

@@ -229,7 +229,9 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
                if (!($productAttribute instanceof Mage_Eav_Model_Entity_Attribute_Abstract)) {
                    continue;
                }
-               $options = $productAttribute->getFrontend()->getSelectOptions();
+             
+           
+               $options = $productAttribute->getFrontend()->getSelectOptions($this->getProduct()->getId());
                foreach ($options as $option) {
                    foreach ($this->getProduct()->getTypeInstance(true)->getUsedProducts(null, $this->getProduct()) as $associatedProduct) {
                         if (!empty($option['value'])
@@ -242,11 +244,15 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
                                     'product_super_attribute_id' => $item->getId(),
                                     'value_index'                => $option['value'],
                                     'label'                      => $option['label'],
+                                    'color_value'                 => isset($option['colorValue'])?$option['colorValue']:'',
+                                    'image_url'                   => isset($option['imageUrl'])?$option['imageUrl']:'',
                                     'default_label'              => $option['label'],
                                     'store_label'                => $option['label'],
                                     'is_percent'                 => 0,
                                     'pricing_value'              => null,
-                                    'use_default_value'          => true
+                                    'use_default_value'          => true,
+                                    'color_text'                 => isset($option['color_text'])?$option['color_text']:'',
+                                    'color_pic'                 => isset($option['color_pic'])?$option['color_pic']:''
                                 );
                             }
                         }

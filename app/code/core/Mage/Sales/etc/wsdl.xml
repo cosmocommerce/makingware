@@ -14,7 +14,6 @@
                     <element name="updated_at" type="xsd:string" minOccurs="0" />
                     <element name="is_active" type="xsd:string" minOccurs="0" />
                     <element name="customer_id" type="xsd:string" minOccurs="0" />
-                    <element name="tax_amount" type="xsd:string" minOccurs="0" />
                     <element name="shipping_amount" type="xsd:string" minOccurs="0" />
                     <element name="discount_amount" type="xsd:string" minOccurs="0" />
                     <element name="subtotal" type="xsd:string" minOccurs="0" />
@@ -26,7 +25,6 @@
                     <element name="total_invoiced" type="xsd:string" minOccurs="0" />
                     <element name="total_online_refunded" type="xsd:string" minOccurs="0" />
                     <element name="total_offline_refunded" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_shipping_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_discount_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_subtotal" type="xsd:string" minOccurs="0" />
@@ -38,13 +36,8 @@
                     <element name="base_total_invoiced" type="xsd:string" minOccurs="0" />
                     <element name="base_total_online_refunded" type="xsd:string" minOccurs="0" />
                     <element name="base_total_offline_refunded" type="xsd:string" minOccurs="0" />
-                    <element name="billing_address_id" type="xsd:string" minOccurs="0" />
-                    <element name="billing_firstname" type="xsd:string" minOccurs="0" />
-                    <element name="billing_lastname" type="xsd:string" minOccurs="0" />
                     <element name="shipping_address_id" type="xsd:string" minOccurs="0" />
-                    <element name="shipping_firstname" type="xsd:string" minOccurs="0" />
-                    <element name="shipping_lastname" type="xsd:string" minOccurs="0" />
-                    <element name="billing_name" type="xsd:string" minOccurs="0" />
+                    <element name="shipping_name" type="xsd:string" minOccurs="0" />
                     <element name="shipping_name" type="xsd:string" minOccurs="0" />
                     <element name="store_to_base_rate" type="xsd:string" minOccurs="0" />
                     <element name="store_to_order_rate" type="xsd:string" minOccurs="0" />
@@ -63,8 +56,7 @@
                     <element name="shipping_method" type="xsd:string" minOccurs="0" />
                     <element name="shipping_description" type="xsd:string" minOccurs="0" />
                     <element name="customer_email" type="xsd:string" minOccurs="0" />
-                    <element name="customer_firstname" type="xsd:string" minOccurs="0" />
-                    <element name="customer_lastname" type="xsd:string" minOccurs="0" />
+                    <element name="customer_name" type="xsd:string" minOccurs="0" />
                     <element name="quote_id" type="xsd:string" minOccurs="0" />
                     <element name="is_virtual" type="xsd:string" minOccurs="0" />
                     <element name="customer_group_id" type="xsd:string" minOccurs="0" />
@@ -75,7 +67,6 @@
                     <element name="gift_message_id" type="xsd:string" minOccurs="0" />
                     <element name="gift_message" type="xsd:string" minOccurs="0" />
                     <element name="shipping_address" type="typens:salesOrderAddressEntity" minOccurs="0" />
-                    <element name="billing_address" type="typens:salesOrderAddressEntity" minOccurs="0" />
                     <element name="items" type="typens:salesOrderItemEntityArray" minOccurs="0" />
                     <element name="payment" type="typens:salesOrderPaymentEntity" minOccurs="0" />
                     <element name="status_history" type="typens:salesOrderStatusHistoryEntityArray" minOccurs="0" />
@@ -95,9 +86,7 @@
                     <element name="created_at" type="xsd:string" minOccurs="0" />
                     <element name="updated_at" type="xsd:string" minOccurs="0" />
                     <element name="is_active" type="xsd:string" minOccurs="0" />
-                    <element name="address_type" type="xsd:string" minOccurs="0" />
-                    <element name="firstname" type="xsd:string" minOccurs="0" />
-                    <element name="lastname" type="xsd:string" minOccurs="0" />
+                    <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="company" type="xsd:string" minOccurs="0" />
                     <element name="street" type="xsd:string" minOccurs="0" />
                     <element name="city" type="xsd:string" minOccurs="0" />
@@ -138,11 +127,6 @@
                     <element name="base_price" type="xsd:string" minOccurs="0" />
                     <element name="original_price" type="xsd:string" minOccurs="0" />
                     <element name="base_original_price" type="xsd:string" minOccurs="0" />
-                    <element name="tax_percent" type="xsd:string" minOccurs="0" />
-                    <element name="tax_amount" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_amount" type="xsd:string" minOccurs="0" />
-                    <element name="tax_invoiced" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_invoiced" type="xsd:string" minOccurs="0" />
                     <element name="discount_percent" type="xsd:string" minOccurs="0" />
                     <element name="discount_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_discount_amount" type="xsd:string" minOccurs="0" />
@@ -158,17 +142,6 @@
                     <element name="gift_message_id" type="xsd:string" minOccurs="0" />
                     <element name="gift_message" type="xsd:string" minOccurs="0" />
                     <element name="gift_message_available" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_before_discount" type="xsd:string" minOccurs="0" />
-                    <element name="tax_before_discount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied_amount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied_row_amount" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_applied_amount" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_applied_row_amount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_row_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_row_disposition" type="xsd:string" minOccurs="0" />
                 </all>
             </complexType>
             <complexType name="salesOrderItemEntityArray">
@@ -204,14 +177,7 @@
                     <element name="base_shipping_amount" type="xsd:string" minOccurs="0" />
                     <element name="method" type="xsd:string" minOccurs="0" />
                     <element name="po_number" type="xsd:string" minOccurs="0" />
-                    <element name="cc_type" type="xsd:string" minOccurs="0" />
-                    <element name="cc_number_enc" type="xsd:string" minOccurs="0" />
-                    <element name="cc_last4" type="xsd:string" minOccurs="0" />
-                    <element name="cc_owner" type="xsd:string" minOccurs="0" />
-                    <element name="cc_exp_month" type="xsd:string" minOccurs="0" />
-                    <element name="cc_exp_year" type="xsd:string" minOccurs="0" />
-                    <element name="cc_ss_start_month" type="xsd:string" minOccurs="0" />
-                    <element name="cc_ss_start_year" type="xsd:string" minOccurs="0" />
+                    <element name="cod_type" type="xsd:string" minOccurs="0" />
                     <element name="payment_id" type="xsd:string" minOccurs="0" />
                 </all>
             </complexType>
@@ -243,8 +209,7 @@
                     <element name="updated_at" type="xsd:string" minOccurs="0" />
                     <element name="is_active" type="xsd:string" minOccurs="0" />
                     <element name="shipping_address_id" type="xsd:string" minOccurs="0" />
-                    <element name="shipping_firstname" type="xsd:string" minOccurs="0" />
-                    <element name="shipping_lastname" type="xsd:string" minOccurs="0" />
+                    <element name="shipping_name" type="xsd:string" minOccurs="0" />
                     <element name="order_id" type="xsd:string" minOccurs="0" />
                     <element name="order_increment_id" type="xsd:string" minOccurs="0" />
                     <element name="order_created_at" type="xsd:string" minOccurs="0" />
@@ -349,11 +314,8 @@
                     <element name="base_discount_amount" type="xsd:string" minOccurs="0" />
                     <element name="shipping_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_shipping_amount" type="xsd:string" minOccurs="0" />
-                    <element name="tax_amount" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_amount" type="xsd:string" minOccurs="0" />
-                    <element name="billing_address_id" type="xsd:string" minOccurs="0" />
-                    <element name="billing_firstname" type="xsd:string" minOccurs="0" />
-                    <element name="billing_lastname" type="xsd:string" minOccurs="0" />
+                    <element name="shipping_address_id" type="xsd:string" minOccurs="0" />
+                    <element name="shipping_name" type="xsd:string" minOccurs="0" />
                     <element name="order_id" type="xsd:string" minOccurs="0" />
                     <element name="order_increment_id" type="xsd:string" minOccurs="0" />
                     <element name="order_created_at" type="xsd:string" minOccurs="0" />
@@ -378,23 +340,12 @@
                     <element name="created_at" type="xsd:string" minOccurs="0" />
                     <element name="updated_at" type="xsd:string" minOccurs="0" />
                     <element name="is_active" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied" type="xsd:string" minOccurs="0" />
                     <element name="qty" type="xsd:string" minOccurs="0" />
                     <element name="cost" type="xsd:string" minOccurs="0" />
                     <element name="price" type="xsd:string" minOccurs="0" />
-                    <element name="tax_amount" type="xsd:string" minOccurs="0" />
                     <element name="row_total" type="xsd:string" minOccurs="0" />
                     <element name="base_price" type="xsd:string" minOccurs="0" />
-                    <element name="base_tax_amount" type="xsd:string" minOccurs="0" />
                     <element name="base_row_total" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_applied_amount" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_applied_row_amount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied_amount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_applied_row_amount" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="weee_tax_row_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_disposition" type="xsd:string" minOccurs="0" />
-                    <element name="base_weee_tax_row_disposition" type="xsd:string" minOccurs="0" />
                     <element name="sku" type="xsd:string" minOccurs="0" />
                     <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="order_item_id" type="xsd:string" minOccurs="0" />

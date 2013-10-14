@@ -33,7 +33,7 @@
  */
 class Mage_Customer_Block_Form_Login extends Mage_Core_Block_Template
 {
-    private $_username = -1;
+    private $_username = '';
 
     protected function _prepareLayout()
     {
@@ -82,9 +82,35 @@ class Mage_Customer_Block_Form_Login extends Mage_Core_Block_Template
      */
     public function getUsername()
     {
-        if (-1 === $this->_username) {
+        if (empty($this->_username)) {
             $this->_username = Mage::getSingleton('customer/session')->getUsername(true);
         }
         return $this->_username;
+    }
+    
+    public function isRegisterRequireLoginAttribute($code)
+    {
+    	return $this->helper('customer')->isRegisterRequireLoginAttribute($code);
+    }
+    
+    public function getAllowLoginAttributeOptions($separator = null)
+    {
+    	$result = $this->helper('customer')->getAllowLoginAttributeOptions();
+    	if (empty($separator) || !is_string($separator)) {
+    		return $result;
+    	}
+    	return array(
+    		'value' => implode($separator, array_keys($result)),
+    		'label'	=> implode($separator, array_values($result))
+    	);
+    }
+    
+    public function getAllowLoginAttributeText($separator = '/')
+    {
+    	$result = $this->getAllowLoginAttributeOptions($separator);
+    	if (empty($result) || empty($result['label'])) {
+    		return '';
+    	}
+    	return $result['label'];
     }
 }

@@ -69,6 +69,22 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Link_Product_Collection
      * @var bool
      */
     protected $_hasLinkFilter = false;
+    
+    /**
+     * Custom Automatic screening.
+     */
+    protected $_automaticScreening = false;
+    
+    public function setAutomaticScreening($bool = true)
+    {
+    	$this->_automaticScreening = (boolean)$bool;
+    	return $this;
+    }
+    
+    public function getAutomaticScreening()
+    {
+    	return $this->_automaticScreening;
+    }
 
     /**
      * Declare link model and initialize type attributes join
@@ -257,6 +273,40 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Link_Product_Collection
             );
             $this->joinAttributes();
         }
+        
+        if ($this->_automaticScreening && $this->getProduct() && $this->getProduct()->getId()) {
+        	$category = $this->getProduct()->getCategory();
+        	if ($category instanceof Mage_Catalog_Model_Category && $category->getId()) {
+        		$this->addCategoryFilter($category);
+        		
+        		$part = $this->getSelect()->getPart(Varien_Db_Select::FROM);
+        		if (isset($part['links']) && isset($part['links']['joinType']) && $part['links']['joinType'] == Varien_Db_Select::INNER_JOIN) {
+        			$part['links']['joinType'] = Varien_Db_Select::LEFT_JOIN;
+        			$this->getSelect()->setPart(Varien_Db_Select::FROM, $part);
+        			 
+        			$setFlag = false;
+        			$part = $this->getSelect()->getPart(Varien_Db_Select::WHERE);
+        			foreach ($part as $key => $where) {
+        				if (false !== strpos($where, 'links.product_id')) {
+        					unset($part[$key]);
+        					$setFlag = true;
+        					break;
+        				}
+        			}
+        			if ($setFlag) {
+        				$this->getSelect()->setPart(Varien_Db_Select::WHERE, $part);
+        			}
+        			
+        			$this->getSelect()->group('e.entity_id');
+        			
+        			$this->getSelect()->order('link_id ' . Varien_Db_Select::SQL_DESC);
+        			$part = $this->getSelect()->getPart(Varien_Db_Select::ORDER);
+        			array_unshift($part, array_pop($part));
+        			$this->getSelect()->setPart(Varien_Db_Select::ORDER, $part);
+        		}
+        	}
+        }
+        
         return $this;
     }
 

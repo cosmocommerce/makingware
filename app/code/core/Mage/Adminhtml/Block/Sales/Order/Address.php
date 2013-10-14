@@ -48,12 +48,8 @@ class Mage_Adminhtml_Block_Sales_Order_Address extends Mage_Adminhtml_Block_Widg
     {
         $address = Mage::registry('order_address');
         $orderId = $address->getOrder()->getIncrementId();
-        if ($address->getAddressType() == 'shipping') {
-            $type = Mage::helper('sales')->__('Shipping');
-        } else {
-            $type = Mage::helper('sales')->__('Billing');
-        }
-        return Mage::helper('sales')->__('Edit Order %s %s Address', $orderId, $type);
+
+        return Mage::helper('sales')->__('Edit Order %s Shipping Address', $orderId);
     }
 
     /**

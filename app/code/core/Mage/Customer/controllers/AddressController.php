@@ -130,7 +130,6 @@ class Mage_Customer_AddressController extends Mage_Core_Controller_Front_Action
             try {
                 $addressForm->compactData($addressData);
                 $address->setCustomerId($customer->getId())
-                    ->setIsDefaultBilling($this->getRequest()->getParam('default_billing', false))
                     ->setIsDefaultShipping($this->getRequest()->getParam('default_shipping', false));
 
                 $addressErrors = $address->validate();

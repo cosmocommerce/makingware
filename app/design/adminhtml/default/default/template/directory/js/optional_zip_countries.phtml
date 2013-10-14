@@ -50,14 +50,19 @@ function onAddressCountryChanged (countryElement) {
 }
 
 function setPostcodeOptional(zipElement, country) {
+	var labelElement = zipElement.up(1).down('label > span.required');
     if (optionalZipCountries.indexOf(country) != -1) {
         while (zipElement.hasClassName('required-entry')) {
             zipElement.removeClassName('required-entry');
         }
-        zipElement.up(1).down('label > span.required').hide();
+        if (labelElement) {
+        	labelElement.hide();
+        }
     } else {
         zipElement.addClassName('required-entry');
-        zipElement.up(1).down('label > span.required').show();
+        if(labelElement){
+        	labelElement.show();
+        }
     }
 }
 

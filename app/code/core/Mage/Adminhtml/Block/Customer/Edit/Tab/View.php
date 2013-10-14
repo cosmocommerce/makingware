@@ -149,14 +149,14 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View
         return $this->getCustomer()->getStoreId();
     }
 
-    public function getBillingAddressHtml()
+    public function getShippingAddressHtml()
     {
         $html = '';
-        if ($address = $this->getCustomer()->getPrimaryBillingAddress()) {
+        if ($address = $this->getCustomer()->getPrimaryShippingAddress()) {
             $html = $address->format('html');
         }
         else {
-            $html = Mage::helper('customer')->__('The customer does not have default billing address.');
+            $html = Mage::helper('customer')->__('The customer does not have default shipping address.');
         }
         return $html;
     }

@@ -63,19 +63,11 @@ class Mage_Adminhtml_Block_Api_User_Edit_Tab_Main extends Mage_Adminhtml_Block_W
             'required' => true,
         ));
 
-        $fieldset->addField('firstname', 'text', array(
-            'name'  => 'firstname',
-            'label' => Mage::helper('adminhtml')->__('First Name'),
-            'id'    => 'firstname',
-            'title' => Mage::helper('adminhtml')->__('First Name'),
-            'required' => true,
-        ));
-
-        $fieldset->addField('lastname', 'text', array(
-            'name'  => 'lastname',
-            'label' => Mage::helper('adminhtml')->__('Last Name'),
-            'id'    => 'lastname',
-            'title' => Mage::helper('adminhtml')->__('Last Name'),
+        $fieldset->addField('name', 'text', array(
+            'name'  => 'name',
+            'label' => Mage::helper('adminhtml')->__('Name'),
+            'id'    => 'name',
+            'title' => Mage::helper('adminhtml')->__('Name'),
             'required' => true,
         ));
 

@@ -211,11 +211,6 @@ abstract class Mage_Sales_Model_Order_Pdf_Abstract extends Varien_Object
         $page->drawRectangle(25, 755, 275, 730);
         $page->drawRectangle(275, 755, 570, 730);
 
-        /* Calculate blocks info */
-
-        /* Billing Address */
-        $billingAddress = $this->_formatAddress($order->getBillingAddress()->format('pdf'));
-
         /* Payment */
         $paymentInfo = Mage::helper('payment')->getInfoBlock($order->getPayment())
             ->setIsSecureMode(true)
@@ -247,25 +242,13 @@ abstract class Mage_Sales_Model_Order_Pdf_Abstract extends Varien_Object
             $page->drawText(Mage::helper('sales')->__('Payment Method:'), 285, 740 , 'UTF-8');
         }
 
-        if (!$order->getIsVirtual()) {
-            $y = 730 - (max(count($billingAddress), count($shippingAddress)) * 10 + 5);
-        }
-        else {
-            $y = 730 - (count($billingAddress) * 10 + 5);
-        }
+        $y = 730 - (count($shippingAddress) * 10 + 5);
 
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(1));
         $page->drawRectangle(25, 730, 570, $y);
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
         $this->_setFontRegular($page);
         $this->y = 720;
-
-        foreach ($billingAddress as $value){
-            if ($value!=='') {
-                $page->drawText(strip_tags(ltrim($value)), 35, $this->y, 'UTF-8');
-                $this->y -=10;
-            }
-        }
 
         if (!$order->getIsVirtual()) {
             $this->y = 720;
@@ -574,6 +557,7 @@ abstract class Mage_Sales_Model_Order_Pdf_Abstract extends Varien_Object
     protected function _setFontRegular($object, $size = 7)
     {
         $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/LinLibertineC_Re-2.8.0.ttf');
+        $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/simkai.ttf');
         $object->setFont($font, $size);
         return $font;
     }
@@ -581,6 +565,7 @@ abstract class Mage_Sales_Model_Order_Pdf_Abstract extends Varien_Object
     protected function _setFontBold($object, $size = 7)
     {
         $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/LinLibertine_Bd-2.8.1.ttf');
+        $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/simkai.ttf');
         $object->setFont($font, $size);
         return $font;
     }
@@ -588,6 +573,7 @@ abstract class Mage_Sales_Model_Order_Pdf_Abstract extends Varien_Object
     protected function _setFontItalic($object, $size = 7)
     {
         $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/LinLibertine_It-2.8.2.ttf');
+        $font = Zend_Pdf_Font::fontWithPath(Mage::getBaseDir() . '/lib/LinLibertineFont/simkai.ttf');
         $object->setFont($font, $size);
         return $font;
     }

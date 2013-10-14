@@ -297,8 +297,18 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
             return false;
         }
 
-        // Load product current category
+    	// Load product current category
         $categoryId = $params->getCategoryId();
+        
+        # 改变当前分类为最后子分类.
+        $categoryIds = $product->getCategoryIds();
+        if (is_array($categoryIds)) {
+        	$_categoryId = end($categoryIds);
+        	if (is_numeric($_categoryId) && $product->canBeShowInCategory($_categoryId)) {
+        		$categoryId = $_categoryId;
+        	}
+        }
+        
         if (!$categoryId && ($categoryId !== false)) {
             $lastId = Mage::getSingleton('catalog/session')->getLastVisitedCategoryId();
             if ($product->canBeShowInCategory($lastId)) {

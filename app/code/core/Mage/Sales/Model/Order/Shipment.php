@@ -121,16 +121,6 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
     }
 
     /**
-     * Retrieve billing address
-     *
-     * @return Mage_Sales_Model_Order_Address
-     */
-    public function getBillingAddress()
-    {
-        return $this->getOrder()->getBillingAddress();
-    }
-
-    /**
      * Retrieve shipping address
      *
      * @return Mage_Sales_Model_Order_Address
@@ -304,7 +294,14 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
     public function getCommentsCollection($reload=false)
     {
         if (is_null($this->_comments) || $reload) {
-            $this->_comments = Mage::getResourceModel('sales/order_shipment_comment_collection')
+        	$collection = Mage::getResourceModel('sales/order_shipment_comment_collection');
+        	$collection->getSelect()
+        	->joinLeft(
+        		array('admin_user' => $collection->getTable('admin/user')),
+                'main_table.user_id = admin_user.user_id',
+                array('username', 'name', 'email')
+            );
+            $this->_comments = $collection
                 ->setShipmentFilter($this->getId())
                 ->setCreatedAtOrder();
 
@@ -367,7 +364,7 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($order->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $order->getBillingAddress()->getName();
+            $customerName = $order->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_TEMPLATE, $storeId);
             $customerName = $order->getCustomerName();
@@ -403,7 +400,7 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
                 'order'        => $order,
                 'shipment'     => $this,
                 'comment'      => $comment,
-                'billing'      => $order->getBillingAddress(),
+                'shipping'      => $order->getShippingAddress(),
                 'payment_html' => $paymentBlockHtml
             )
         );
@@ -438,7 +435,7 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($order->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $order->getBillingAddress()->getName();
+            $customerName = $order->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_TEMPLATE, $storeId);
             $customerName = $order->getCustomerName();
@@ -474,7 +471,7 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
                 'order'    => $order,
                 'shipment' => $this,
                 'comment'  => $comment,
-                'billing'  => $order->getBillingAddress()
+                'shipping'  => $order->getShippingAddress()
             )
         );
         $mailer->send();
@@ -507,6 +504,10 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Sales_Model_Abstract
         if (!$this->getOrderId() && $this->getOrder()) {
             $this->setOrderId($this->getOrder()->getId());
             $this->setShippingAddressId($this->getOrder()->getShippingAddress()->getId());
+        }
+        
+    	if (is_null($this->getUserId()) && Mage::getSingleton('admin/session')->getUser()) {
+        	$this->setUserId(Mage::getSingleton('admin/session')->getUser()->getId());
         }
 
         return parent::_beforeSave();

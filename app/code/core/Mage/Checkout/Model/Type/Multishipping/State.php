@@ -35,7 +35,6 @@ class Mage_Checkout_Model_Type_Multishipping_State extends Varien_Object
 {
     const STEP_SELECT_ADDRESSES = 'multishipping_addresses';
     const STEP_SHIPPING         = 'multishipping_shipping';
-    const STEP_BILLING          = 'multishipping_billing';
     const STEP_OVERVIEW         = 'multishipping_overview';
     const STEP_SUCCESS          = 'multishipping_success';
 
@@ -66,9 +65,6 @@ class Mage_Checkout_Model_Type_Multishipping_State extends Varien_Object
             )),
             self::STEP_SHIPPING => new Varien_Object(array(
                 'label' => Mage::helper('checkout')->__('Shipping Information')
-            )),
-            self::STEP_BILLING => new Varien_Object(array(
-                'label' => Mage::helper('checkout')->__('Billing Information')
             )),
             self::STEP_OVERVIEW => new Varien_Object(array(
                 'label' => Mage::helper('checkout')->__('Place Order')

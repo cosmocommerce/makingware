@@ -317,8 +317,9 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </price_range_calculation>
-                        <price_range_step translate="label">
+                        <price_range_step translate="label comment">
                             <label>Default Price Navigation Step</label>
+                            <comment>英文半角逗号分隔价格区间(参考: 100,300,500,1000).</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
@@ -391,6 +392,149 @@
                         </year_range>
                     </fields>
                 </custom_options>
+                <cloudzoom translate="label">
+                    <label>Config CloudZoom</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>710</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                     <fields>
+                        <!--<enabled>
+                            <label>Enable CloudZoom</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enabled>-->
+                        <fix_size translate="label">
+                            <label>Fixed Dimension</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>catalog/source_fixed</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </fix_size>
+                        <image_size translate="label">
+                            <label>Fit to Size</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </image_size>
+                        <zoom_width translate="label">
+                            <label>Zoom Width</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>If 'auto' is specified,the width will be the same as the small image.</comment>
+                        </zoom_width>
+                        <zoom_height translate="label">
+                            <label>Zoom Height</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>If 'auto' is specified, the height will be the same as the small image.</comment>
+                        </zoom_height>
+                        <position>
+                            <label>Position</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>catalog/source_position</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </position>
+                        <adjust_x>
+                            <label>adjustX</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </adjust_x>
+                        <adjust_y>
+                            <label>adjustY</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </adjust_y>
+                        <effect>
+                            <label>Effect</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>catalog/source_effect</source_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </effect>
+                        <tint>
+                            <label>Tint colour</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Colours should be specified in hex format, e.g. '#aa00aa'.</comment>
+                        </tint>
+                        <tint_opacity>
+                            <label>Tint Opacity</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Where 0 is fully transparent, and 1 is fully opaque.</comment>
+                        </tint_opacity>
+                        <lens_opacity>
+                            <label>Lens Opacity</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Where 0 is fully transparent, and 1 is fully opaque.</comment>
+                        </lens_opacity>
+                        <smooth_move>
+                            <label>Smooth Move</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The higher the number, the smoother/more drifty the movement will be. 1 = no smoothing.</comment>
+                        </smooth_move>
+                        <show_title>
+                            <label>Show Title</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </show_title>
+                        <title_opacity>
+                            <label>Title Opacity</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Where 0 is fully transparent, and 1 is fully opaque.</comment>
+                        </title_opacity>
+                    </fields>
+                </cloudzoom>
+
 <!--
                 <layer translate="label">
                     <label>Layered Navigation</label>

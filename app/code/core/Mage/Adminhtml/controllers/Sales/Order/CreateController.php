@@ -135,19 +135,9 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
         $this->_getOrderCreateModel()->initRuleData();
 
         /**
-         * init first billing address, need for virtual products
+         * init first shipping address, need for virtual products
          */
-        $this->_getOrderCreateModel()->getBillingAddress();
-
-        /**
-         * Flag for using billing address for shipping
-         */
-        if (!$this->_getOrderCreateModel()->getQuote()->isVirtual()) {
-            $syncFlag = $this->getRequest()->getPost('shipping_as_billing');
-            if (!is_null($syncFlag)) {
-                $this->_getOrderCreateModel()->setShippingAsBilling((int)$syncFlag);
-            }
-        }
+        $this->_getOrderCreateModel()->getShippingAddress();
 
         /**
          * Change shipping address flag

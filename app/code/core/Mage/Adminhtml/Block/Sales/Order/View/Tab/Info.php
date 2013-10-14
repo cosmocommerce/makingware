@@ -56,6 +56,40 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Info
     }
 
     /**
+     * Retrieve array of tracking info
+     *
+     * @return array
+     */
+    public function getTrackingInfo()
+    {
+    	$order = $this->getOrder();
+
+    	$shippingInfoModel = Mage::getModel('shipping/info')->loadByHash(Mage::helper('shipping')->encodeTrackingHash($order));
+
+    	return $shippingInfoModel->getTrackingInfo();
+    	//return $this->helper('shipping')->getTrackingPopupUrlBySalesModel($order);
+//    	try {
+//    		//$shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
+//    		$shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection')->setOrderFilter($order)->load();
+//	    	$temp = 'ccccccccccc';
+//		   	foreach ($shipmentCollection as $shipment){
+//		   		$tracks = $shipment->getAllTracks();
+//		   		foreach ($tracks as $track){
+//		   			$detail = $track->getNumberDetail();
+//		   			$temp = $temp.$detail['title'];
+//		   		}
+//			}
+//
+//			return $temp;
+//    	} catch (Exception $e) {
+//    		return $e;
+//    	}
+//
+//    	return 'wrong';
+    }
+
+
+    /**
      * Retrieve order totals block settings
      *
      * @return array
@@ -84,6 +118,11 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Info
     public function getItemsHtml()
     {
         return $this->getChildHtml('order_items');
+    }
+
+    public function getCustomerCommentHtml()
+    {
+    	return $this->getChildHtml('customer_comment');
     }
 
     /**
@@ -138,5 +177,28 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Info
     public function isHidden()
     {
         return false;
+    }
+
+    public function canShowShippingBestTime()
+    {
+    	$order=$this->getOrder();
+    	 $orderId=$order->getId();
+    	 $shipping_method=$order->getShippingMethod();
+    	 $methodCodes=explode('_',$shipping_method);
+    	 $methodCode=$methodCodes[0];
+    	 $modelPath='shipping/carrier_'.$methodCode.'_order';
+		 $flatrateOrderModel = Mage::getModel($modelPath);
+
+		 if($flatrateOrderModel){
+			 $flatrateOrderModel->load($orderId);
+			 $shippingBestTime=$flatrateOrderModel->getShippingBestTime();
+
+			 if($shippingBestTime){
+			 	return true;
+			 }
+
+		 }
+
+    	 return false;
     }
 }

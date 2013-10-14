@@ -65,7 +65,7 @@ function toggleApplyVisibility(select) {
 function checkOptionsPanelVisibility(){
     if($('matage-options-panel')){
         var panel = $('matage-options-panel');
-        if($('frontend_input') && ($('frontend_input').value=='select' || $('frontend_input').value=='multiselect')){
+        if($('frontend_input') && ($('frontend_input').value=='select' || $('frontend_input').value=='multiselect'|| $('frontend_input').value=='color' || $('frontend_input').value=='size')){
             panel.show();
         }
         else {
@@ -297,10 +297,25 @@ function setRowVisibility(id, isVisible)
 function checkIsConfigurableVisibility()
 {
     if (!$('is_configurable') || !$('is_global') || !$('frontend_input')) return;
-    if ($F('is_global')==1 && $F('frontend_input')=='select') {
+    if ($F('is_global')==1 && $F('frontend_input')=='select'||$F('frontend_input')=='color' ||$F('frontend_input')=='size') {
         setRowVisibility('is_configurable', true);
+        if($F('frontend_input')=='color')
+        {
+			  $('color_value').show();
+              $('upload_image').show();
+              $('upload_image_button').show();
+        }
+        else
+        {
+			$('color_value').hide();
+            $('upload_image').hide();
+            $('upload_image_button').hide();
+        }
     } else {
         setRowVisibility('is_configurable', false);
+        $('color_value').hide();
+        $('upload_image').hide();
+        $('upload_image_button').hide();
     }
 }
 

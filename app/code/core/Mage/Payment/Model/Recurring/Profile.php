@@ -106,16 +106,16 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
 
         // period unit and frequency
         if (!$this->getPeriodUnit() || !in_array($this->getPeriodUnit(), $this->getAllPeriodUnits(false), true)) {
-            $this->_errors['period_unit'][] = Mage::helper('payment')->__('Billing period unit is not defined or wrong.');
+            $this->_errors['period_unit'][] = Mage::helper('payment')->__('Shipping period unit is not defined or wrong.');
         }
         if ($this->getPeriodFrequency() && !$this->_validatePeriodFrequency('period_unit', 'period_frequency')) {
             $this->_errors['period_frequency'][] = Mage::helper('payment')->__('Period frequency is wrong.');;
         }
 
-        // trial period unit, trial frequency, trial period max cycles, trial billing amount
+        // trial period unit, trial frequency, trial period max cycles, trial shipping amount
         if ($this->getTrialPeriodUnit()) {
             if (!in_array($this->getTrialPeriodUnit(), $this->getAllPeriodUnits(false), true)) {
-                $this->_errors['trial_period_unit'][] = Mage::helper('payment')->__('Trial billing period unit is wrong.');
+                $this->_errors['trial_period_unit'][] = Mage::helper('payment')->__('Trial shipping period unit is wrong.');
             }
             if (!$this->getTrialPeriodFrequency() || !$this->_validatePeriodFrequency('trial_period_unit', 'trial_period_frequency')) {
                 $this->_errors['trial_period_frequency'][] = Mage::helper('payment')->__('Trial period frequency is wrong.');
@@ -123,16 +123,16 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
             if (!$this->getTrialPeriodMaxCycles()) {
                 $this->_errors['trial_period_max_cycles'][] = Mage::helper('payment')->__('Trial period max cycles is wrong.');
             }
-            if (!$this->getTrialBillingAmount()) {
-                $this->_errors['trial_billing_amount'][] = Mage::helper('payment')->__('Trial billing amount is wrong.');
+            if (!$this->getTrialShippingAmount()) {
+                $this->_errors['trial_shipping_amount'][] = Mage::helper('payment')->__('Trial shipping amount is wrong.');
             }
         }
 
-        // billing and other amounts
-        if (!$this->getBillingAmount() || 0 >= $this->getBillingAmount()) {
-            $this->_errors['billing_amount'][] = Mage::helper('payment')->__('Wrong or empty billing amount specified.');
+        // shipping and other amounts
+        if (!$this->getShippingAmount() || 0 >= $this->getShippingAmount()) {
+            $this->_errors['shipping_amount'][] = Mage::helper('payment')->__('Wrong or empty shipping amount specified.');
         }
-        foreach (array('trial_billing_abount', 'shipping_amount', 'tax_amount', 'init_amount') as $key) {
+        foreach (array('trial_shipping_abount', 'shipping_amount', 'init_amount') as $key) {
             if ($this->hasData($key) && 0 >= $this->getData($key)) {
                 $this->_errors[$key][] = Mage::helper('payment')->__('Wrong %s specified.', $this->getFieldLabel($key));
             }
@@ -267,7 +267,7 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
     {
         $result = array(
             new Varien_Object(array(
-                'title'    => Mage::helper('payment')->__('Billing Period'),
+                'title'    => Mage::helper('payment')->__('Shipping Period'),
                 'schedule' => $this->_renderSchedule('period_unit', 'period_frequency', 'period_max_cycles'),
             ))
         );
@@ -406,27 +406,25 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
             case 'bill_failed_later':
                 return Mage::helper('payment')->__('Auto Bill on Next Cycle');
             case 'period_unit':
-                return Mage::helper('payment')->__('Billing Period Unit');
+                return Mage::helper('payment')->__('Shipping Period Unit');
             case 'period_frequency':
-                return Mage::helper('payment')->__('Billing Frequency');
+                return Mage::helper('payment')->__('Shipping Frequency');
             case 'period_max_cycles':
-                return Mage::helper('payment')->__('Maximum Billing Cycles');
-            case 'billing_amount':
-                return Mage::helper('payment')->__('Billing Amount');
+                return Mage::helper('payment')->__('Maximum Shipping Cycles');
+            case 'shipping_amount':
+                return Mage::helper('payment')->__('Shipping Amount');
             case 'trial_period_unit':
-                return Mage::helper('payment')->__('Trial Billing Period Unit');
+                return Mage::helper('payment')->__('Trial Shipping Period Unit');
             case 'trial_period_frequency':
-                return Mage::helper('payment')->__('Trial Billing Frequency');
+                return Mage::helper('payment')->__('Trial Shipping Frequency');
             case 'trial_period_max_cycles':
-                return Mage::helper('payment')->__('Maximum Trial Billing Cycles');
-            case 'trial_billing_amount':
-                return Mage::helper('payment')->__('Trial Billing Amount');
+                return Mage::helper('payment')->__('Maximum Trial Shipping Cycles');
+            case 'trial_shipping_amount':
+                return Mage::helper('payment')->__('Trial Shipping Amount');
             case 'currency_code':
                 return Mage::helper('payment')->__('Currency');
             case 'shipping_amount':
                 return Mage::helper('payment')->__('Shipping Amount');
-            case 'tax_amount':
-                return Mage::helper('payment')->__('Tax Amount');
             case 'init_amount':
                 return Mage::helper('payment')->__('Initial Fee');
             case 'init_may_fail':
@@ -450,19 +448,19 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
             case 'subscriber_name':
                 return Mage::helper('payment')->__('Full name of the person receiving the product or service paid for by the recurring payment.');
             case 'start_datetime':
-                return Mage::helper('payment')->__('The date when billing for the profile begins.');
+                return Mage::helper('payment')->__('The date when shipping for the profile begins.');
             case 'schedule_description':
                 return Mage::helper('payment')->__('Short description of the recurring payment. By default equals to the product name.');
             case 'suspension_threshold':
                 return Mage::helper('payment')->__('The number of scheduled payments that can fail before the profile is automatically suspended.');
             case 'bill_failed_later':
-                return Mage::helper('payment')->__('Automatically bill the outstanding balance amount in the next billing cycle (if there were failed payments).');
+                return Mage::helper('payment')->__('Automatically bill the outstanding balance amount in the next shipping cycle (if there were failed payments).');
             case 'period_unit':
-                return Mage::helper('payment')->__('Unit for billing during the subscription period.');
+                return Mage::helper('payment')->__('Unit for shipping during the subscription period.');
             case 'period_frequency':
-                return Mage::helper('payment')->__('Number of billing periods that make up one billing cycle.');
+                return Mage::helper('payment')->__('Number of shipping periods that make up one shipping cycle.');
             case 'period_max_cycles':
-                return Mage::helper('payment')->__('The number of billing cycles for payment period.');
+                return Mage::helper('payment')->__('The number of shipping cycles for payment period.');
             case 'init_amount':
                 return Mage::helper('payment')->__('Initial non-recurring payment amount due immediately upon profile creation.');
             case 'init_may_fail':
@@ -522,7 +520,7 @@ class Mage_Payment_Model_Recurring_Profile extends Mage_Core_Model_Abstract
 
         // cast amounts
         foreach (array(
-            'billing_amount', 'trial_billing_amount', 'shipping_amount', 'tax_amount', 'init_amount') as $key) {
+            'trial_shipping_amount', 'shipping_amount', 'init_amount') as $key) {
             if ($this->hasData($key)) {
                 if (!$this->getData($key) || 0 == $this->getData($key)) {
                     $this->unsetData($key);

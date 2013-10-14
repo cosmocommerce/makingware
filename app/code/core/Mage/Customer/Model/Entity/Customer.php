@@ -77,20 +77,24 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
             Mage::throwException(Mage::helper('customer')->__('Customer email is required.'));
         }
 
-        $select = $this->_getWriteAdapter()->select()
-            ->from($this->getEntityTable(), array($this->getEntityIdField()))
-            ->where('email=?', $customer->getEmail());
-        if ($customer->getSharingConfig()->isWebsiteScope()) {
-            $select->where('website_id=?', (int) $customer->getWebsiteId());
-        }
-        if ($customer->getId()) {
-            $select->where('entity_id !=?', $customer->getId());
-        }
-
-        if ($this->_getWriteAdapter()->fetchOne($select)) {
-            throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This customer email already exists.'),
-                Mage_Customer_Model_Customer::EXCEPTION_EMAIL_EXISTS
-            );
+		$this->validateEmail($customer);
+		
+        /*$allowLoginType = explode(',', Mage::getStoreConfig('customer/create_account/register_required_login_attributes'));
+        foreach ($allowLoginType as $type) {
+        	if (empty($type)) {
+        		continue ;
+        	}
+        	if (!$customer->getData($type)) {
+        		Mage::throwException(Mage::helper('customer')->__('Save failed,Lack must data.'));
+        	}
+        }*/
+        
+		$types = array('username' => 'validateUsername', 'telephone' => 'validateTelephone', 'mobile' => 'validateMobile');
+        foreach ($types as $type => $method) {
+        	$result = $customer->getData($type);
+        	if ($result && $result != $customer->getOrigData($type)) {
+        		$this->$method($customer);
+        	}
         }
 
         // set confirmation key logic
@@ -107,6 +111,106 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
 
         return $this;
     }
+
+    protected function validateEmail(Varien_Object $customer)
+    {
+		 $select = $this->_getWriteAdapter()->select()
+            ->from($this->getEntityTable(), array($this->getEntityIdField()))
+            ->where('email=?', $customer->getEmail());
+        if ($customer->getSharingConfig()->isWebsiteScope()) {
+            $select->where('website_id=?', (int) $customer->getWebsiteId());
+        }
+        if ($customer->getId()) {
+            $select->where('entity_id !=?', $customer->getId());
+        }
+
+        if ($this->_getWriteAdapter()->fetchOne($select)) {
+            throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This customer email already exists.'),
+                Mage_Customer_Model_Customer::EXCEPTION_EMAIL_EXISTS
+            );
+        }
+    }
+
+    protected function validateUsername(Varien_Object $customer)
+    {
+    	$username = $customer->getUsername();
+    	if(!empty($username)){
+			$collection=Mage::getModel('customer/customer')->getResourceCollection();
+	        $collection->addFieldToFilter('username', $customer->getUsername());
+	        $item=$collection->load()->getFirstItem();
+	        $itemId=$item->getId();
+	        $customerId=$customer->getId();
+
+	        if($itemId){
+        		if ($customerId) {
+        			if($itemId!=$customerId){
+        				throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This username exists.'),
+                		Mage_Customer_Model_Customer::EXCEPTION_USERNAME_EXISTS
+                		);
+        			}
+
+        		}else{
+					throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This username exists.'),
+                		Mage_Customer_Model_Customer::EXCEPTION_USERNAME_EXISTS
+	                );
+        		}
+	        }
+    	}
+    }
+
+     protected function validateTelephone(Varien_Object $customer)
+     {
+        $telephone = $customer->getTelephone();
+        if(!empty($telephone)){
+			$collection=Mage::getModel('customer/customer')->getResourceCollection();
+	        $collection->addFieldToFilter('telephone', $customer->getTelephone());
+	        $item=$collection->load()->getFirstItem();
+	        $itemId=$item->getId();
+	        $customerId=$customer->getId();
+
+	        if($itemId){
+        		if ($customerId) {
+        			if($itemId!=$customerId){
+        				throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This telephone exists.'),
+                		Mage_Customer_Model_Customer::EXCEPTION_USERPHONE_EXISTS
+                		);
+        			}
+
+        		}else{
+					throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This telephone exists.'),
+                		Mage_Customer_Model_Customer::EXCEPTION_USERPHONE_EXISTS
+	                );
+        		}
+	        }
+        }
+     }
+
+     protected function validateMobile(Varien_Object $customer)
+     {
+     	$mobile = $customer->getMobile();
+     	if(!empty($mobile)){
+     		$collection=Mage::getModel('customer/customer')->getResourceCollection();
+     		$collection->addFieldToFilter('mobile', $customer->getMobile());
+     		$item=$collection->load()->getFirstItem();
+     		$itemId=$item->getId();
+     		$customerId=$customer->getId();
+     
+     		if($itemId){
+     			if ($customerId) {
+     				if($itemId!=$customerId){
+     					throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This mobile exists.'),
+     					Mage_Customer_Model_Customer::EXCEPTION_USERMOBILE_EXISTS
+     					);
+     				}
+     
+     			}else{
+     				throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This mobile exists.'),
+     				Mage_Customer_Model_Customer::EXCEPTION_USERMOBILE_EXISTS
+     				);
+     			}
+     		}
+     	}
+     }
 
     /**
      * Save customer addresses and set default addresses in attributes backend
@@ -128,13 +232,9 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
      */
     protected function _saveAddresses(Mage_Customer_Model_Customer $customer)
     {
-        $defaultBillingId   = $customer->getData('default_billing');
         $defaultShippingId  = $customer->getData('default_shipping');
         foreach ($customer->getAddresses() as $address) {
             if ($address->getData('_deleted')) {
-                if ($address->getId() == $defaultBillingId) {
-                    $customer->setData('default_billing', null);
-                }
                 if ($address->getId() == $defaultShippingId) {
                     $customer->setData('default_shipping', null);
                 }
@@ -144,18 +244,11 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
                     ->setStoreId($customer->getStoreId())
                     ->setIsCustomerSaveTransaction(true)
                     ->save();
-                if (($address->getIsPrimaryBilling() || $address->getIsDefaultBilling())
-                    && $address->getId() != $defaultBillingId) {
-                    $customer->setData('default_billing', $address->getId());
-                }
                 if (($address->getIsPrimaryShipping() || $address->getIsDefaultShipping())
                     && $address->getId() != $defaultShippingId) {
                     $customer->setData('default_shipping', $address->getId());
                 }
             }
-        }
-        if ($customer->dataHasChangedFor('default_billing')) {
-            $this->saveAttribute($customer, 'default_billing');
         }
         if ($customer->dataHasChangedFor('default_shipping')) {
             $this->saveAttribute($customer, 'default_shipping');
@@ -194,6 +287,7 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
             ->from($this->getEntityTable(), array($this->getEntityIdField()))
             //->where('email=?', $email);
             ->where('email=:customer_email');
+
         if ($customer->getSharingConfig()->isWebsiteScope()) {
             if (!$customer->hasData('website_id')) {
                 Mage::throwException(Mage::helper('customer')->__('Customer website ID must be specified when using the website scope.'));

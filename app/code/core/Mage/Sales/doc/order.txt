@@ -17,14 +17,12 @@
         remote_ip
         quote_id
         quote_address_id
-        billing_address_id
         shipping_address_id
         coupon_code
         weight
         shipping_method
         shipping_description
         subtotal
-        tax_amount
         shipping_amount
         discount_amount
         custbalance_amount
@@ -37,6 +35,7 @@
         customer_id
         customer_group_id
         customer_email
+        customer_comment
         customer_note
         customer_note_notify
     Events:
@@ -66,8 +65,6 @@
         cost
         discount_percent
         discount_amount
-        tax_percent
-        tax_amount
         row_total
         row_weight
         applied_rule_ids
@@ -77,12 +74,10 @@
     Attributes:
         parent_id
         quote_address_id
-        address_type
         customer_id
         customer_address_id
         email
-        firstname
-        lastname
+        name
         company
         street
         city
@@ -102,23 +97,7 @@
         amount
         method
         po_number
-        cc_type
-        cc_number_enc
-        cc_last4
-        cc_owner
-        cc_exp_month
-        cc_exp_year
-
-        cc_status
-        cc_status_description
-        cc_trans_id
-        cc_approval
-        cc_avs_status
-        cc_cid_status
-
-        cc_debug_request_body
-        cc_debug_response_body
-        cc_debug_response_serialized
+        cod_type
 
         anet_trans_method
 

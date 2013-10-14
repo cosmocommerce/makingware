@@ -86,7 +86,6 @@ class Mage_Checkout_Model_Cart_Api extends Mage_Checkout_Model_Api_Resource
 
         $result = $this->_getAttributes($quote, 'quote');
         $result['shipping_address'] = $this->_getAttributes($quote->getShippingAddress(), 'quote_address');
-        $result['billing_address']  = $this->_getAttributes($quote->getBillingAddress(), 'quote_address');
         $result['items'] = array();
 
         foreach ($quote->getAllItems() as $item) {

@@ -20,7 +20,7 @@
  *
  * @category    design
  * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -53,24 +53,18 @@ NOTE: Regarding styles - if we leave it this way, we'll move it to boxes.css
 <div class="input-box customer-dob">
 <?php
     $this->setDateInput('d',
-        '<div class="dob-day">
-             <input type="text" id="' . $this->getFieldId('day') . '" name="' . $this->getFieldName('day') . '" value="' . $this->getDay() . '" title="' . $this->__('Day') . '" class="input-text validate-custom" ' . $this->getFieldParams() . ' />
-             <label for="' . $this->getFieldId('day') . '">' . $this->__('DD') . '</label>
-         </div>'
+        '<input type="text" id="' . $this->getFieldId('day') . '" name="' . $this->getFieldName('day') . '" value="' . $this->getDay() . '" title="' . $this->__('Day') . '" class="input-text input-lit" ' . $this->getFieldParams() . ' />
+             <label for="' . $this->getFieldId('day') . '">' . $this->__('DD') . '</label>'
     );
 
     $this->setDateInput('m',
-        '<div class="dob-month">
-             <input type="text" id="' . $this->getFieldId('month') . '" name="' . $this->getFieldName('month') . '" value="' . $this->getMonth()  . '" title="' . $this->__('Month')  . '" class="input-text validate-custom" ' . $this->getFieldParams()  . ' />
-             <label for="' . $this->getFieldId('month') . '">' . $this->__('MM')  . '</label>
-         </div>'
+        '<input type="text" id="' . $this->getFieldId('month') . '" name="' . $this->getFieldName('month') . '" value="' . $this->getMonth()  . '" title="' . $this->__('Month')  . '" class="input-text input-lit" ' . $this->getFieldParams()  . ' />
+             <label for="' . $this->getFieldId('month') . '">' . $this->__('MM')  . '</label>'
     );
 
     $this->setDateInput('y',
-        '<div class="dob-year">
-             <input type="text" id="' . $this->getFieldId('year') . '" name="' . $this->getFieldName('year') . '" value="' . $this->getYear()  . '" title="' . $this->__('Year')  . '" class="input-text validate-custom" ' . $this->getFieldParams()  . ' />
-             <label for="' . $this->getFieldId('year') . '">' . $this->__('YYYY')  . '</label>
-         </div>'
+        '<input type="text" id="' . $this->getFieldId('year') . '" name="' . $this->getFieldName('year') . '" value="' . $this->getYear()  . '" title="' . $this->__('Year')  . '" class="input-text input-short" ' . $this->getFieldParams()  . ' />
+             <label for="' . $this->getFieldId('year') . '">' . $this->__('YYYY')  . '</label>'
     );
 ?>
     <?php echo $this->getSortedDateInputs() ?>
@@ -78,10 +72,5 @@ NOTE: Regarding styles - if we leave it this way, we'll move it to boxes.css
         <input type="hidden" id="<?php echo $this->getFieldId('dob')?>" name="<?php echo $this->getFieldName('dob')?>" />
     </div>
 
-    <div class="validation-advice" style="display:none;"></div>
 </div>
-<script type="text/javascript">
-//<![CDATA[
-    var customer_dob = new Varien.DOB('.customer-dob', <?php echo $this->isRequired() ? 'true' : 'false' ?>, '<?php echo $this->getDateFormat() ?>');
-//]]>
-</script>
+

@@ -41,7 +41,6 @@ class Mage_ImportExport_Model_Import_Entity_Customer_Address extends Mage_Import
     /**
      * Particular columns that contains of customer default addresses.
      */
-    const COL_NAME_DEFAULT_BILLING  = '_address_default_billing_';
     const COL_NAME_DEFAULT_SHIPPING = '_address_default_shipping_';
 
     /**
@@ -94,7 +93,6 @@ class Mage_ImportExport_Model_Import_Entity_Customer_Address extends Mage_Import
      * @var array
      */
     protected static $_defaultAddressAttrMapping = array(
-        self::COL_NAME_DEFAULT_BILLING  => 'default_billing',
         self::COL_NAME_DEFAULT_SHIPPING => 'default_shipping'
     );
 
@@ -124,7 +122,7 @@ class Mage_ImportExport_Model_Import_Entity_Customer_Address extends Mage_Import
      *
      * @var array
      */
-    protected $_particularAttributes = array(self::COL_NAME_DEFAULT_BILLING, self::COL_NAME_DEFAULT_SHIPPING);
+    protected $_particularAttributes = array(self::COL_NAME_DEFAULT_SHIPPING);
 
     /**
      * Region ID to region default name pairs.
@@ -176,7 +174,7 @@ class Mage_ImportExport_Model_Import_Entity_Customer_Address extends Mage_Import
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             $entityRows = array();
             $attributes = array();
-            $defaults   = array(); // customer default addresses (billing/shipping) data
+            $defaults   = array(); // customer default addresses (shipping) data
 
             foreach ($bunch as $rowNum => $rowData) {
                 if (!empty($rowData[Mage_ImportExport_Model_Import_Entity_Customer::COL_EMAIL])

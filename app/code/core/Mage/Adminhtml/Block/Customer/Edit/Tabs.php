@@ -66,7 +66,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tabs extends Mage_Adminhtml_Block_Widge
 
 
         // load: Orders, Shopping Cart, Wishlist, Product Reviews, Product Tags - with ajax
-
         if (Mage::registry('current_customer')->getId()) {
 
             if (Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/view')) {

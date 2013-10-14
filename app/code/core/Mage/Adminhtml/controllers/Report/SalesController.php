@@ -167,7 +167,7 @@ class Mage_Adminhtml_Report_SalesController extends Mage_Adminhtml_Controller_Ac
         $refreshStatsLink = $this->getUrl('*/*/refreshstatistics');
         $directRefreshLink = $this->getUrl('*/*/refreshRecent', array('code' => $refreshCode));
 
-        Mage::getSingleton('adminhtml/session')->addNotice(Mage::helper('adminhtml')->__('Last updated: %s. To refresh last day\'s <a href="%s">statistics</a>, click <a href="%s">here</a>.', $updatedAt, $refreshStatsLink, $directRefreshLink));
+        Mage::getSingleton('adminhtml/session')->addNotice(Mage::helper('adminhtml')->__('Last updated: %s. To refresh last day\'s <a href="%s">statistics</a>, click <a href="%s">here</a>.', $this->__($updatedAt), $refreshStatsLink, $directRefreshLink));
         return $this;
     }
 
@@ -211,49 +211,6 @@ class Mage_Adminhtml_Report_SalesController extends Mage_Adminhtml_Controller_Ac
     {
         $fileName   = 'sales.xml';
         $grid       = $this->getLayout()->createBlock('adminhtml/report_sales_sales_grid');
-        $this->_initReportAction($grid);
-        $this->_prepareDownloadResponse($fileName, $grid->getExcelFile($fileName));
-    }
-
-    public function taxAction()
-    {
-        $this->_title($this->__('Reports'))->_title($this->__('Sales'))->_title($this->__('Tax'));
-
-        $this->_showLastExecutionTime(Mage_Reports_Model_Flag::REPORT_TAX_FLAG_CODE, 'tax');
-
-        $this->_initAction()
-            ->_setActiveMenu('report/sales/tax')
-            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Tax'), Mage::helper('adminhtml')->__('Tax'));
-
-        $gridBlock = $this->getLayout()->getBlock('report_sales_tax.grid');
-        $filterFormBlock = $this->getLayout()->getBlock('grid.filter.form');
-
-        $this->_initReportAction(array(
-            $gridBlock,
-            $filterFormBlock
-        ));
-
-        $this->renderLayout();
-    }
-
-    /**
-     * Export tax report grid to CSV format
-     */
-    public function exportTaxCsvAction()
-    {
-        $fileName   = 'tax.csv';
-        $grid       = $this->getLayout()->createBlock('adminhtml/report_sales_tax_grid');
-        $this->_initReportAction($grid);
-        $this->_prepareDownloadResponse($fileName, $grid->getCsvFile());
-    }
-
-    /**
-     * Export tax report grid to Excel XML format
-     */
-    public function exportTaxExcelAction()
-    {
-        $fileName   = 'tax.xml';
-        $grid       = $this->getLayout()->createBlock('adminhtml/report_sales_tax_grid');
         $this->_initReportAction($grid);
         $this->_prepareDownloadResponse($fileName, $grid->getExcelFile($fileName));
     }
@@ -443,9 +400,6 @@ class Mage_Adminhtml_Report_SalesController extends Mage_Adminhtml_Controller_Ac
         switch ($this->getRequest()->getActionName()) {
             case 'sales':
                 return $this->_getSession()->isAllowed('report/salesroot/sales');
-                break;
-            case 'tax':
-                return $this->_getSession()->isAllowed('report/salesroot/tax');
                 break;
             case 'shipping':
                 return $this->_getSession()->isAllowed('report/salesroot/shipping');

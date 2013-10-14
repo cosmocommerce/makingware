@@ -78,9 +78,13 @@ class Mage_ImportExport_Adminhtml_ExportController extends Mage_Adminhtml_Contro
         if ($this->getRequest()->getPost(Mage_ImportExport_Model_Export::FILTER_ELEMENT_GROUP)) {
             try {
                 /** @var $export Mage_ImportExport_Model_Export */
-                $export = Mage::getModel('importexport/export');
+                $export = Mage::getModel('importexport/export')
+                		->setData($this->getRequest()->getParams());
 
-                $export->setData($this->getRequest()->getParams());
+				Mage::dispatchEvent('adminhtml_export_export', array(
+					'controller' => $this,
+					'export'	 => $export
+				));
 
                 return $this->_prepareDownloadResponse(
                     $export->getFileName(),
@@ -114,6 +118,12 @@ class Mage_ImportExport_Adminhtml_ExportController extends Mage_Adminhtml_Contro
                 $attrFilterBlock = $this->getLayout()->getBlock('export.filter');
                 /** @var $export Mage_ImportExport_Model_Export */
                 $export = Mage::getModel('importexport/export');
+                
+                Mage::dispatchEvent('adminhtml_export_getfilter', array(
+                	'controller' 	=> $this,
+                	'filter_block' 	=> $attrFilterBlock,	
+                	'request'		=> $this->getRequest()
+                ));
 
                 $export->filterAttributeCollection(
                     $attrFilterBlock->prepareCollection(

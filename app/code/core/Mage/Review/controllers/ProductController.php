@@ -31,6 +31,8 @@
  * @package    Mage_Review
  * @author     Magento Core Team <core@magentocommerce.com>
  */
+require_once('Securimage/securimage.php');//import secure code class 
+
 class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
 {
 
@@ -40,24 +42,29 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
      * @var array
      */
     protected $_cookieCheckActions = array('post');
+    
+    protected function _initNotLoggedIn()
+    {
+    	$this->setFlag('', self::FLAG_NO_DISPATCH, true);
+        Mage::getSingleton('customer/session')->setBeforeAuthUrl(Mage::getUrl('*/*/*', array('_current' => true)));
+        Mage::getSingleton('review/session')->setFormData($this->getRequest()->getPost())
+        	->setRedirectUrl($this->_getRefererUrl());
+        
+        return $this;
+    }
 
     public function preDispatch()
     {
         parent::preDispatch();
 
-        $allowGuest = Mage::helper('review')->getIsGuestAllowToWrite();
         if (!$this->getRequest()->isDispatched()) {
             return;
         }
-
-        $action = $this->getRequest()->getActionName();
-        if (!$allowGuest && $action == 'post' && $this->getRequest()->isPost()) {
+        
+        $allowGuest = Mage::helper('review')->getIsGuestAllowToWrite();
+        if (!$allowGuest && $this->getRequest()->getActionName() == 'post' && $this->getRequest()->isPost()) {
             if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
-                $this->setFlag('', self::FLAG_NO_DISPATCH, true);
-                Mage::getSingleton('customer/session')->setBeforeAuthUrl(Mage::getUrl('*/*/*', array('_current' => true)));
-                Mage::getSingleton('review/session')->setFormData($this->getRequest()->getPost())
-                    ->setRedirectUrl($this->_getRefererUrl());
-                $this->_redirectUrl(Mage::helper('customer')->getLoginUrl());
+                $this->_initNotLoggedIn()->_redirectUrl(Mage::helper('customer')->getLoginUrl());
             }
         }
 
@@ -161,6 +168,15 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
 
         if (($product = $this->_initProduct()) && !empty($data)) {
             $session    = Mage::getSingleton('core/session');
+            //if enable secure code
+            if(Mage::helper('review')->canShowSecureCode()) {
+            	$verifyCode = Mage::getSingleton('review/session')->getReviewVerifyCode();
+            	if (empty($verifyCode) || strtolower($verifyCode) != strtolower($data['secure_code'])) {
+            		$session->setFormData($data);
+            		$session->addError($this->__('Secure Code Error!'));
+            		return $this->_redirectReferer();
+            	}
+            }
             /* @var $session Mage_Core_Model_Session */
             $review     = Mage::getModel('review/review')->setData($data);
             /* @var $review Mage_Review_Model_Review */
@@ -168,9 +184,26 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
             $validate = $review->validate();
             if ($validate === true) {
                 try {
+                	
+	                if (!Mage::helper('review')->getIsBuyAllowToWrite()) {
+	        			if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
+	        				$this->_initNotLoggedIn()->_redirectUrl(Mage::helper('customer')->getLoginUrl());
+	        			}
+	        		
+	        			if (false == Mage::helper('review')->checkProductInOrder(Mage::getSingleton('customer/session')->getCustomer(), $product)) {
+	        				Mage::throwException($this->__('Only this product allows users to buy post the review.'));
+	        			}
+	        		}
+                	
+                    if(Mage::helper('review')->isNeedVerify()){
+                        $status=Mage_Review_Model_Review::STATUS_PENDING;
+                    }else{
+                        $status=Mage_Review_Model_Review::STATUS_APPROVED;
+                    }
+                    
                     $review->setEntityId($review->getEntityIdByCode(Mage_Review_Model_Review::ENTITY_PRODUCT_CODE))
                         ->setEntityPkValue($product->getId())
-                        ->setStatusId(Mage_Review_Model_Review::STATUS_PENDING)
+                        ->setStatusId($status)
                         ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
                         ->setStoreId(Mage::app()->getStore()->getId())
                         ->setStores(array(Mage::app()->getStore()->getId()))
@@ -186,6 +219,10 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
 
                     $review->aggregate();
                     $session->addSuccess($this->__('Your review has been accepted for moderation.'));
+                }
+                catch (Mage_Core_Exception $e) {
+                	$session->setFormData($data);
+                    $session->addError($e->getMessage());
                 }
                 catch (Exception $e) {
                     $session->setFormData($data);
@@ -295,5 +332,41 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
         $update->addUpdate($product->getCustomLayoutUpdate());
         $this->generateLayoutXml()->generateLayoutBlocks();
     }
+    
+     public function generalImageAction()
+     {
+     	$source = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+     	# Randomly generated a four digit verification code
+     	$str = '';
+     	for ($i=0; $i<4; $i++) {
+     		$str .= $source[rand(0, strlen($source) - 1)];
+     	}
+     	
+     	Mage::getSingleton('review/session')->setReviewVerifyCode($str);
+     	
+     	# To create pictures, define color value
+     	$img = imagecreate(60, 25);
+     	$black = imagecolorallocate($img, 0, 0, 0);
+     	$gray = imagecolorallocate($img, 200, 200, 200);
+     	imagefill($img, 0, 0, $gray);
+     	
+     	# In the canvas randomly generated a large black spots, the interference
+     	for ($i=0; $i<80; $i++) {
+     		imagesetpixel($img, rand(0, 60), rand(0, 20), $black);
+     	}
+     	
+     	$strx = rand(3, 8);
+     	for($i=0; $i<4; $i++) {
+     		imagestring($img, 5, $strx, rand(1, 6), substr($str, $i, 1), $black);
+     		$strx += rand(8, 12);
+     	}
+     	
+     	header('Pragma', 'no-cache');
+     	header('Content-Type', 'image/jpeg');
+     	
+     	imagejpeg($img);
+     	imagedestroy($img);
+     	
+     	exit;
+     }
 }
-

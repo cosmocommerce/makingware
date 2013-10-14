@@ -140,6 +140,17 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'nl2br'         => true,
             'escape'        => true,
         ));
+        
+         $this->addColumn('reply_content', array(
+            'header'        => Mage::helper('review')->__('Reply Content'),
+            'align'         => 'left',
+            'index'         => 'reply_content',
+            'filter_index'  => 'rdt.reply_content',
+            'type'          => 'text',
+            'truncate'      => 50,
+            'nl2br'         => true,
+            'escape'        => true,
+        ));
 
         /**
          * Check is single store mode

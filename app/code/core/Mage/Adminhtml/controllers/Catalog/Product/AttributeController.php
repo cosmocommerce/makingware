@@ -276,4 +276,50 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
     {
         return Mage::getSingleton('admin/session')->isAllowed('catalog/attributes/attributes');
     }
+
+    public function uploadimageAction()
+    {
+    	foreach($_FILES['option']['tmp_name']['image'] as $key=>$val)
+    	{
+            try{
+            	if(!empty($_FILES['option']['tmp_name']['image'][$key]))
+            	{
+					$uploader = new Varien_File_Uploader(
+    				array('tmp_name'=>$val,'name'=>$_FILES['option']['name']['image'][$key])
+    				);
+			        $uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
+			        $uploader->addValidateCallback('catalog_product_image', Mage::helper('catalog/image'), 'validateUploadFile');
+			        $uploader->setAllowRenameFiles(true);
+			        $uploader->setFilesDispersion(true);
+			        $result = $uploader->save(
+			            Mage::getSingleton('catalog/product_media_config')->getBaseTmpMediaPath()
+			        );
+
+			        $imageInfo[$key]['url'] = Mage::getSingleton('catalog/product_media_config')->getTmpMediaUrl($result['file']);
+			        $imageInfo[$key]['file'] = $result['file'] . '.tmp';
+
+            	}
+
+
+
+
+
+
+            }catch (Exception $e) {
+            	$imageInfo = array('error'=>$e->getMessage(), 'errorcode'=>$e->getCode());
+            }
+
+    	}
+
+           $fileArray=array();
+         $fileArray=Mage::getSingleton('core/session')->getUploadImageInfo();
+
+
+
+                     $fileArray[]=$imageInfo;
+                      $fileArray=Mage::getSingleton('core/session')->setUploadImageInfo($fileArray);
+        
+    	$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($imageInfo));
+
+    }
 }

@@ -25,7 +25,7 @@
  */
 
 /**
- * Adminhtml tax rule Edit Container
+ * Adminhtml rule Edit Container
  *
  * @category   Mage
  * @package    Mage_Adminhtml

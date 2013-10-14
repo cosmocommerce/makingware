@@ -231,4 +231,24 @@ class Mage_Catalog_Model_Observer
         $result  = $observer->getEvent()->getData('result');
         $result->isAllowed = Mage::helper('catalog')->setStoreId($storeId)->isUsingStaticUrlsAllowed();
     }
+
+    public function calculateTotalSales(Varien_Event_Observer $observer)
+	{
+		$order=$observer->getEvent()->getInvoice()->getOrder();
+		$items=$order->getItemsCollection();
+
+		foreach($items as $key=>$item){
+
+			if ($item->getParentItem()){
+				continue;
+			}
+
+			$productId=$item->getProductId();
+			$product=Mage::getModel('catalog/product')->load($productId);
+			$totalSales=$product->getData('total_sales');
+			$qtyOrdered=intval($item->getData('qty_ordered'));
+			$newTotalSales=$totalSales+$qtyOrdered;
+			$product->setTotalSales($newTotalSales)->save();
+		}
+	}
 }

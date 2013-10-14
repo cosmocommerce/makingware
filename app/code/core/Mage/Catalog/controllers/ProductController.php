@@ -190,4 +190,28 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
             $this->_forward('noRoute');
         }
     }
+    
+    public function mediaAction()
+    {
+    	$html = '';
+    	if ($productId = $this->getRequest()->getParam('id')) {
+    		$product = Mage::getModel('catalog/product')->load((int)$productId);
+    		if ($product->getId() && $product->getImage()) {
+    			Mage::register('product', $product);
+    			$html = $this->getLayout()->createBlock('catalog/product_view_media')
+    				->setTemplate('catalog/product/view/media.phtml')
+    				->toHtml();
+    		}
+    	}
+    	$this->getResponse()->setBody($html)->sendResponse();
+    	die;
+    }
+
+	public function clearAction()
+    {
+         Mage::getResourceModel('reports/product_index_viewed')->cleanRecentView();
+		 $session = Mage::getSingleton('catalog/session');
+		 $session->addSuccess($this->__('Recently Viewed Products successfully cleared'));
+		 $this->_redirectReferer();
+    }
 }

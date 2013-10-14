@@ -58,6 +58,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
         $collection = Mage::getModel('catalog/product')->getCollection()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
+            ->addAttributeToSelect('total_sales')
             ->addAttributeToSelect('attribute_set_id')
             ->addAttributeToSelect('type_id')
             ->joinField('qty',
@@ -192,6 +193,14 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
                 'index' => 'status',
                 'type'  => 'options',
                 'options' => Mage::getSingleton('catalog/product_status')->getOptionArray(),
+        ));
+
+        $this->addColumn('total_sales',
+            array(
+                'header'=> Mage::helper('catalog')->__('Total Sales'),
+                'width' => '70px',
+                'index' => 'total_sales',
+                'type'  => 'number'
         ));
 
         if (!Mage::app()->isSingleStoreMode()) {

@@ -238,7 +238,7 @@
 
         <system>
             <smtp>
-                <disable>0</disable>
+                <email_agent>0</email_agent>
                 <host>localhost</host>
                 <port>25</port>
             </smtp>

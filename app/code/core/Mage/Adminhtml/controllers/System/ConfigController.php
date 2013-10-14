@@ -100,7 +100,6 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         if ($this->_isSectionAllowedFlag) {
             $this->_addContent($this->getLayout()->createBlock('adminhtml/system_config_edit')->initForm());
 
-            $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/shipping/ups.phtml'));
             $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/config/js.phtml'));
             $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/shipping/applicable_country.phtml'));
 
@@ -224,9 +223,13 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
      */
     public function exportTableratesAction()
     {
+        $action = $this->getRequest()->getParam('action', null);
+        if (is_null($action)) {
+            $action = 'tablerate';
+        }
         $fileName   = 'tablerates.csv';
         /** @var $gridBlock Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid */
-        $gridBlock  = $this->getLayout()->createBlock('adminhtml/shipping_carrier_tablerate_grid');
+        $gridBlock  = $this->getLayout()->createBlock('adminhtml/shipping_carrier_tablerate_grid', '', array('action' => $action));
         $website    = Mage::app()->getWebsite($this->getRequest()->getParam('website'));
         if ($this->getRequest()->getParam('conditionName')) {
             $conditionName = $this->getRequest()->getParam('conditionName');

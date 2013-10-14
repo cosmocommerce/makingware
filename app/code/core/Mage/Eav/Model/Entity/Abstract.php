@@ -1073,6 +1073,9 @@ abstract class Mage_Eav_Model_Entity_Abstract
         } else {
             $origData = array();
         }
+        if (is_null($origData)) {
+        	$origData = array();
+        }
 
         $staticFields   = $this->_getWriteAdapter()->describeTable($this->getEntityTable());
         $staticFields   = array_keys($staticFields);

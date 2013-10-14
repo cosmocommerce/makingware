@@ -664,6 +664,7 @@ Product.Configurable.prototype = {
         if (!this.valueAutoIndex) {
             this.valueAutoIndex = 1;
         }
+               
         templateVariables.set('html_id', container.id + '_'
                 + this.valueAutoIndex);
         templateVariables.update(value);
@@ -698,6 +699,26 @@ Product.Configurable.prototype = {
         } else {
             priceTypeField.options[1].selected = !(priceTypeField.options[0].selected = true);
         }
+        
+        if(container.attributeObject.input_type=="color"){
+            if(value.color_pic){
+                li.down('.attribute-color-type .color-pic-show').src+=value.color_pic;
+                li.down('.attribute-color-type .attr-color-pic-check').name="color_pic_check["+value.value_index+"]";  
+            }else{
+                li.down('.attribute-color-type .color-pic-show').remove();
+                li.down('.attribute-color-type .delete-attr-color-pic').remove();
+            }
+            
+             li.down('.attribute-color-type .attr-color-text').value=value.color_text != undefined ?value.color_text:"";
+             li.down('.attribute-color-type .attr-color-text').name="color_text["+value.value_index+"]";
+             li.down('.attribute-color-type .attr-color-pic').name="color_pic["+value.value_index+"]";  
+                  
+                
+        }else{
+              li.down('.attribute-color-type').remove();       
+            
+        }
+        
         Event.observe(priceField, 'keyup', this.onValuePriceUpdate);
         Event.observe(priceField, 'change', this.onValuePriceUpdate);
         Event.observe(priceTypeField, 'change', this.onValueTypeUpdate);

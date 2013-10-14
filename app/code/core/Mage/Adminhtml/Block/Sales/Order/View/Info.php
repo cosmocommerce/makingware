@@ -161,4 +161,28 @@ class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Adminhtml_Block_Sa
         $url = $this->getUrl('*/*/address', array('address_id'=>$address->getId()));
         return '<a href="'.$url.'">' . $label . '</a>';
     }
+    
+    public function getOrderStatusDetail()
+    {
+        $message='';
+        $invoiceObj= Mage::getResourceModel('sales/order_invoice_grid_collection')->setOrderFilter($this->getOrder())->load()->getFirstItem();
+        $invoiceId= $invoiceObj->getId();
+        
+        if(!empty($invoiceId)){
+            $message.='had paid,';
+        }else{
+            $message.='had not paid,';
+        }
+        
+        $shipmentObj= Mage::getResourceModel('sales/order_shipment_grid_collection')->setOrderFilter($this->getOrder())->load()->getFirstItem();
+        $shipmentId= $shipmentObj->getId();
+        
+        if(!empty($shipmentId)){
+            $message.='had shipped';
+        }else{
+            $message.='had not shipped';
+        }
+        
+        return $message;
+    }
 }

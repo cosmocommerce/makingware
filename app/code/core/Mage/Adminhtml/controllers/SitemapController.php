@@ -42,7 +42,7 @@ class Mage_Adminhtml_SitemapController extends  Mage_Adminhtml_Controller_Action
     {
         // load layout, set active menu and breadcrumbs
         $this->loadLayout()
-            ->_setActiveMenu('catalog/system_sitemap')
+            ->_setActiveMenu('system/system_sitemap')
             ->_addBreadcrumb(Mage::helper('catalog')->__('Catalog'), Mage::helper('catalog')->__('Catalog'))
             ->_addBreadcrumb(Mage::helper('sitemap')->__('Google Sitemap'), Mage::helper('sitemap')->__('Google Sitemap'))
         ;
@@ -54,7 +54,7 @@ class Mage_Adminhtml_SitemapController extends  Mage_Adminhtml_Controller_Action
      */
     public function indexAction()
     {
-        $this->_title($this->__('Catalog'))->_title($this->__('Google Sitemaps'));
+        $this->_title($this->__('System'))->_title($this->__('Google Sitemaps'));
 
         $this->_initAction()
             ->_addContent($this->getLayout()->createBlock('adminhtml/sitemap'))
@@ -75,7 +75,7 @@ class Mage_Adminhtml_SitemapController extends  Mage_Adminhtml_Controller_Action
      */
     public function editAction()
     {
-        $this->_title($this->__('Catalog'))->_title($this->__('Google Sitemaps'));
+        $this->_title($this->__('System'))->_title($this->__('Google Sitemaps'));
 
         // 1. Get ID and create model
         $id = $this->getRequest()->getParam('sitemap_id');

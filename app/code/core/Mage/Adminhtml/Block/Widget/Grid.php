@@ -474,6 +474,11 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
     protected function _prepareCollection()
     {
         if ($this->getCollection()) {
+        	
+        	Mage::dispatchEvent(
+        		'adminhtml_block_widget_grid_prepare_collection', 
+        		array('collection' => $this->getCollection(), 'block' => $this)
+        	);
 
             $this->_preparePage();
 
@@ -529,6 +534,11 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
 
     protected function _prepareColumns()
     {
+    	Mage::dispatchEvent(
+    		'adminhtml_block_widget_grid_prepare_columns', 
+    		array('columns' => $this->getColumns(), 'block' => $this)
+    	);
+    	
         $this->sortColumnsByOrder();
         return $this;
     }

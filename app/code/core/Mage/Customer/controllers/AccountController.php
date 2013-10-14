@@ -66,7 +66,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         }
 
         $action = $this->getRequest()->getActionName();
-        if (!preg_match('/^(create|login|logoutSuccess|forgotpassword|forgotpasswordpost|confirm|confirmation)/i', $action)) {
+        if (!preg_match('/^(create|login|checkEmail|checkUsername|checkTelephone|checkMobile|logoutSuccess|forgotpassword|forgotpasswordpost|confirm|confirmation)/i', $action)) {
             if (!$this->_getSession()->authenticate($this)) {
                 $this->setFlag('', 'no-dispatch', true);
             }
@@ -100,6 +100,14 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         );
         $this->getLayout()->getBlock('head')->setTitle($this->__('My Account'));
         $this->renderLayout();
+    }
+    
+    public function loginminiAction()
+    {
+    	$this->_getSession()->setBeforeAuthUrl($this->_getRefererUrl());
+    	$this->getResponse()->setBody(
+    		$this->getLayout()->getBlockSingleton('customer/form_loginmini')->toHtml()
+    	);
     }
 
     /**
@@ -151,7 +159,8 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                     $session->addError($message);
                     $session->setUsername($login['username']);
                 } catch (Exception $e) {
-                    // Mage::logException($e); // PA DSS violation: this exception log can disclose customer password
+                	$session->addError($e->getMessage());
+                	$session->setUsername($login['username']);
                 }
             } else {
                 $session->addError($this->__('Login and password are required.'));
@@ -159,6 +168,47 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         }
 
         $this->_loginPostRedirect();
+    }
+
+    public function loginPostCheckoutAction()
+    {
+        $session = $this->_getSession();
+        $message='';
+        if ($this->getRequest()->isPost()) {
+        	$data=$this->getRequest()->getPost();
+            $username = $data['useremail'];
+            $password = $data['password'];
+
+            if (!empty($username) && !empty($password)) {
+                try {
+                    $session->login($username, $password);
+                } catch (Mage_Core_Exception $e) {
+                    switch ($e->getCode()) {
+                        case Mage_Customer_Model_Customer::EXCEPTION_EMAIL_NOT_CONFIRMED:
+                            $message = Mage::helper('customer')->__('This account is not confirmed. <a href="%s">Click here</a> to resend confirmation email.', Mage::helper('customer')->getEmailConfirmationUrl($username));
+                            break;
+                        case Mage_Customer_Model_Customer::EXCEPTION_INVALID_EMAIL_OR_PASSWORD:
+                            $message = $e->getMessage();
+                            break;
+                        default:
+                            $message = $e->getMessage();
+                    }
+                    $session->setUsername($username);
+                } catch (Exception $e) {
+
+                }
+            } else {
+                $message=$this->__('Login and password are required');
+            }
+        }
+
+         if (empty($message)) {
+            $this->_redirect('checkout/onepage');
+        } else {
+            Mage::getSingleton('checkout/session')->addError($message);
+            $this->_redirect('checkout/cart');
+
+        }
     }
 
     /**
@@ -253,6 +303,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
             if (!$customer = Mage::registry('current_customer')) {
                 $customer = Mage::getModel('customer/customer')->setId(null);
             }
+            $customer->addData($this->getRequest()->getPost());
 
             /* @var $customerForm Mage_Customer_Model_Form */
             $customerForm = Mage::getModel('customer/form');
@@ -282,7 +333,6 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                 $addressErrors  = $addressForm->validateData($addressData);
                 if ($addressErrors === true) {
                     $address->setId(null)
-                        ->setIsDefaultBilling($this->getRequest()->getParam('default_billing', false))
                         ->setIsDefaultShipping($this->getRequest()->getParam('default_shipping', false));
                     $addressForm->compactData($addressData);
                     $customer->addAddress($address);
@@ -314,6 +364,11 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
 
                 if (true === $validationResult) {
                     $customer->save();
+                    
+                    Mage::dispatchEvent(
+                    	'customer_account_register_complete',
+                    	array('customer' => $customer, 'request' => $this->getRequest(), 'response' => $this->getResponse())
+                    );
 
                     if ($customer->isConfirmationRequired()) {
                         $customer->sendNewAccountEmail('confirmation', $session->getBeforeAuthUrl());
@@ -340,9 +395,21 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                 $session->setCustomerFormData($this->getRequest()->getPost());
                 if ($e->getCode() === Mage_Customer_Model_Customer::EXCEPTION_EMAIL_EXISTS) {
                     $url = Mage::getUrl('customer/account/forgotpassword');
-                    $message = $this->__('There is already an account with this email address. If you are sure that it is your email address, <a href="%s">click here</a> to get your password and access your account.', $url);
+                    $message = $this->__('There is already an account with this email address. If you are sure that it is your email address, <a href=\"%s\">click here</a> to get your password and access your account.', $url);
                     $session->setEscapeMessages(false);
-                } else {
+                }elseif($e->getCode() === Mage_Customer_Model_Customer::EXCEPTION_USERNAME_EXISTS){
+                	$url = Mage::getUrl('customer/account/forgotpassword');
+                    $message = $this->__('There is already an account with this username. If you are sure that it is your username, <a href=\"%s\">click here</a> to get your password and access your account.', $url);
+                    $session->setEscapeMessages(false);
+                }elseif($e->getCode() === Mage_Customer_Model_Customer::EXCEPTION_USERPHONE_EXISTS){
+                	$url = Mage::getUrl('customer/account/forgotpassword');
+                    $message = $this->__('There is already an account with this phone. If you are sure that it is your phone, <a href=\"%s\">click here</a> to get your password and access your account.', $url);
+                    $session->setEscapeMessages(false);
+                }elseif($e->getCode() === Mage_Customer_Model_Customer::EXCEPTION_USERMOBILE_EXISTS){
+                	$url = Mage::getUrl('customer/account/forgotpassword');
+                    $message = $this->__('There is already an account with this mobile. If you are sure that it is your mobile, <a href=\"%s\">click here</a> to get your password and access your account.', $url);
+                    $session->setEscapeMessages(false);
+                }else {
                     $message = $e->getMessage();
                 }
                 $session->addError($message);
@@ -563,6 +630,11 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         if ($this->getRequest()->getParam('changepass')==1){
             $customer->setChangePassword(1);
         }
+        
+        Mage::dispatchEvent(
+        	'customer_account_edit_prepare',
+        	array('customer' => $customer, 'session' => $this->_getSession(), 'request' => $this->getRequest(), 'response' => $this->getResponse())
+        );
 
         $this->getLayout()->getBlock('head')->setTitle($this->__('Account Information'));
 
@@ -580,7 +652,8 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
 
         if ($this->getRequest()->isPost()) {
             /* @var $customer Mage_Customer_Model_Customer */
-            $customer = $this->_getSession()->getCustomer();
+            $customer = $this->_getSession()->getCustomer()
+            	->addData($this->getRequest()->getPost());
 
             /* @var $customerForm Mage_Customer_Model_Form */
             $customerForm = Mage::getModel('customer/form');
@@ -596,7 +669,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
             } else {
                 $customerForm->compactData($customerData);
                 $errors = array();
-
+                
                 // If password change was requested then add it to common validation scheme
                 if ($this->getRequest()->getParam('change_password')) {
                     $currPass   = $this->getRequest()->getPost('current_password');
@@ -609,8 +682,14 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                     } else {
                         $salt = false;
                     }
+                    
+                    if ($customer->getNotVerifyCurrentPassword() || $this->_getSession()->getNotVerifyCurrentPassword()) {
+                    	$result = true;
+                    }else {
+                    	$result = $customer->hashPassword($currPass, $salt) == $oldPass;
+                    }
 
-                    if ($customer->hashPassword($currPass, $salt) == $oldPass) {
+                    if ($result) {
                         if (strlen($newPass)) {
                             // Set entered password and its confirmation - they will be validated later to match each other and be of right length
                             $customer->setPassword($newPass);
@@ -670,4 +749,88 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         $data = $this->_filterDates($data, array('dob'));
         return $data;
     }
+
+     public function checkEmailAction()
+     {
+        $result = array();
+        
+        $data = $this->getRequest()->getPost();
+        if (empty($data['email'])) {
+        	$result['success'] = false;
+        }else {
+			$customer = Mage::getModel('customer/customer')
+				->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+			    ->loadByEmail($data['email']);
+
+		    if($customer->getId()){
+		    	$result['success'] = false;
+		    }else{
+				$result['success'] = true;
+		    }
+        }
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+     }
+
+     public function checkUsernameAction()
+     {
+     	$result = array();
+     	
+     	$data = $this->getRequest()->getPost();
+     	if (empty($data['username'])) {
+     		$result['success'] = false;
+     	}else {
+     		$customer = Mage::getModel('customer/customer')
+     			->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+     			->loadByUsername($data['username']);
+     	
+     		if($customer->getId()){
+     			$result['success'] = false;
+     		}else{
+     			$result['success'] = true;
+     		}
+     	}
+     	$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+     }
+     
+     public function checkTelephoneAction()
+     {
+     	$result = array();
+     	
+     	$data = $this->getRequest()->getPost();
+     	if (empty($data['telephone'])) {
+     		$result['success'] = false;
+     	}else {
+     		$customer = Mage::getModel('customer/customer')
+     			->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+     			->loadByTelephone($data['telephone']);
+     	
+     		if($customer->getId()){
+     			$result['success'] = false;
+     		}else{
+     			$result['success'] = true;
+     		}
+     	}
+     	$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+     }
+
+     public function checkMobileAction()
+     {
+     	$result = array();
+     	
+     	$data = $this->getRequest()->getPost();
+     	if (empty($data['mobile'])) {
+     		$result['success'] = false;
+     	}else {
+     		$customer = Mage::getModel('customer/customer')
+     			->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+     			->loadByMobile($data['mobile']);
+     	
+     		if($customer->getId()){
+     			$result['success'] = false;
+     		}else{
+     			$result['success'] = true;
+     		}
+     	}
+     	$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+     }
 }

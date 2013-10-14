@@ -169,7 +169,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Layer_Filter_Price extends Mage_Cor
      * @param int $index    the range factor
      * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Layer_Filter_Attribute
      */
-    public function applyFilterToCollection($filter, $range, $index)
+    /*public function applyFilterToCollection($filter, $range, $index)
     {
         $collection = $filter->getLayer()->getProductCollection();
         $collection->addPriceData($filter->getCustomerGroupId(), $filter->getWebsiteId());
@@ -187,5 +187,67 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Layer_Filter_Price extends Mage_Cor
             ->where($priceExpr . ' < ?', ($range * $index));
 
         return $this;
+    }*/
+    
+    /**
+     * Retrieve array with products counts per price range
+     *
+     * @param Mage_Catalog_Model_Layer_Filter_Price $filter
+     * @param array|int $range
+     * @return array
+     */
+    public function getRangePrices($filter, $ranges)
+    {
+    	$select     = $this->_getSelect($filter);
+    	$connection = $this->_getReadAdapter();
+    	$response   = $this->_dispatchPreparePriceEvent($filter, $select);
+    	$table      = $this->_getIndexTableAlias();
+    	 
+    	$additional = join('', $response->getAdditionalCalculations());
+    	$rate       = $filter->getCurrencyRate();
+    	 
+    	if (is_numeric($ranges)) {
+    		$selectSql = "(FLOOR((({$table}.min_price {$additional})*{$rate})/{$ranges})+1)*{$ranges}";
+    	}else {
+    		$field = "({$table}.min_price {$additional})*{$rate}";
+    		$selectSql = $brace = '';
+    		foreach ((array)$ranges as $range) {
+    			$range = (int)$range;
+    			$selectSql .= "IF({$field}<={$range}-1,{$range},";
+    			$brace .= ')';
+    		}
+    		$selectSql .= '0'  . $brace;
+    	}
+    	 
+    	$select->columns(array(
+    			'range' => new Zend_Db_Expr($selectSql),
+    			'count' => new Zend_Db_Expr('COUNT(*)')
+    	));
+    	$select->group('range');
+    	
+    	return $connection->fetchPairs($select);
+    }
+    
+    public function applyFilterToCollection($filter, $minPrice, $maxPrice)
+    {
+    	$collection = $filter->getLayer()->getProductCollection();
+    	$collection->addPriceData($filter->getCustomerGroupId(), $filter->getWebsiteId());
+    
+    	$select     = $collection->getSelect();
+    	$response   = $this->_dispatchPreparePriceEvent($filter, $select);
+    
+    	$table      = $this->_getIndexTableAlias();
+    	$additional = join('', $response->getAdditionalCalculations());
+    	$rate       = $filter->getCurrencyRate();
+    	$priceExpr  = new Zend_Db_Expr("(({$table}.min_price {$additional}) * {$rate})");
+    
+    	if ($minPrice) {
+    		$select->where($priceExpr . ' >= ?', $minPrice);
+    	}
+    	if ($maxPrice) {
+    		$select->where($priceExpr . ' <= ?', $maxPrice);
+    	}
+    	
+    	return $this;
     }
 }

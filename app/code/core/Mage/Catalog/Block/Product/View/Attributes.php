@@ -62,9 +62,9 @@ class Mage_Catalog_Block_Product_View_Attributes extends Mage_Core_Block_Templat
                 $value = $attribute->getFrontend()->getValue($product);
 
                 if (!$product->hasData($attribute->getAttributeCode())) {
-                    $value = Mage::helper('catalog')->__('N/A');
+                    $value = Mage::helper('catalog')->__('-');
                 } elseif ((string)$value == '') {
-                    $value = Mage::helper('catalog')->__('No');
+                    $value = Mage::helper('catalog')->__('-');
                 } elseif ($attribute->getFrontendInput() == 'price' && is_string($value)) {
                     $value = Mage::app()->getStore()->convertPrice($value, true);
                 }

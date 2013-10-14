@@ -86,8 +86,7 @@ class Mage_Install_Model_Installer_Console extends Mage_Install_Model_Installer_
                 'use_secure'        => array('required' => true, 'comment' => ''),
                 'secure_base_url'   => array('required' => true, 'comment' => ''),
                 'use_secure_admin'  => array('required' => true, 'comment' => ''),
-                'admin_lastname'    => array('required' => true, 'comment' => ''),
-                'admin_firstname'   => array('required' => true, 'comment' => ''),
+                'admin_name'   		=> array('required' => true, 'comment' => ''),
                 'admin_email'       => array('required' => true, 'comment' => ''),
                 'admin_username'    => array('required' => true, 'comment' => ''),
                 'admin_password'    => array('required' => true, 'comment' => ''),
@@ -306,8 +305,7 @@ class Mage_Install_Model_Installer_Console extends Mage_Install_Model_Installer_
          * Primary admin user
          */
         $this->_getDataModel()->setAdminData(array(
-            'firstname'         => $this->_args['admin_firstname'],
-            'lastname'          => $this->_args['admin_lastname'],
+            'name'         		=> $this->_args['admin_name'],
             'email'             => $this->_args['admin_email'],
             'username'          => $this->_args['admin_username'],
             'new_password'          => $this->_args['admin_password'],

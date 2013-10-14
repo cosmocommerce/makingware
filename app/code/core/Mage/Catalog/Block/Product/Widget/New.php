@@ -1,61 +1,91 @@
 <?php
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
- *
- * @category    Mage
- * @package     Mage_Catalog
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-
-/**
- * New products widget
- *
- * @category   Mage
- * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
- */
-class Mage_Catalog_Block_Product_Widget_New
-    extends Mage_Catalog_Block_Product_New
-    implements Mage_Widget_Block_Interface
+class Mage_Catalog_Block_Product_Widget_New extends Mage_Catalog_Block_Product_Abstract implements Mage_Widget_Block_Interface
 {
-    /**
-     * Internal contructor
-     *
-     */
-    protected function _construct()
-    {
-        parent::_construct();
+	protected $_productsCount = null;
 
-        $this->addPriceBlockType('bundle', 'bundle/catalog_product_price', 'bundle/catalog/product/price.phtml');
-    }
+	const DEFAULT_PRODUCTS_COUNT = 5;
 
-    /**
-     * Retrieve how much products should be displayed.
-     *
-     * @return int
-     */
-    public function getProductsCount()
-    {
-        if (!$this->hasData('products_count')) {
-            return parent::getProductsCount();
+	protected function _construct()
+	{
+		parent::_construct();
+		$this->addData(array(
+			'cache_lifetime'    => 86400,
+			'cache_tags'        => array(Mage_Catalog_Model_Product::CACHE_TAG),
+		));
+	}
+
+	public function getCacheKeyInfo()
+	{
+		return array(
+		   'CATALOGPRODUCTNEW',
+		   Mage::app()->getStore()->getId(),
+		   Mage::getDesign()->getPackageName(),
+		   Mage::getDesign()->getTheme('template'),
+		   Mage::getSingleton('customer/session')->getCustomerGroupId(),
+		   'template' => $this->getTemplate(),
+		   $this->getCategoryId(),
+		   $this->getProductsCount()
+		);
+	}
+
+	protected function _beforeToHtml()
+	{
+		$todayDate  = Mage::app()->getLocale()->date()->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+        $collection = Mage::getResourceModel('catalog/product_collection');
+		if($categoryId = $this->getCategoryId()) {
+			$collection->addCategoryFilter(Mage::getModel('catalog/category')->load($categoryId));
+		}
+		
+		$collection->setVisibility(Mage::getSingleton('catalog/product_visibility')->getVisibleInCatalogIds());
+		$collection = $this->_addProductAttributesAndPrices($collection)
+			->addStoreFilter()
+			->addAttributeToFilter('news_from_date', array('date' => true, 'to' => $todayDate))
+			->addAttributeToFilter('news_to_date', array('or'=> array(
+				0 => array('date' => true, 'from' => $todayDate),
+				1 => array('is' => new Zend_Db_Expr('null')))
+			), 'left')
+			->addAttributeToSort('news_from_date', 'desc')
+			->setPageSize($this->getProductsCount())
+			->setCurPage(1);
+            
+        if ($catId=$this->getCategoryId()) { 
+            $collection->addUrlRewrite($catId);      
         }
-        return $this->_getData('products_count');
-    }
+
+		$this->setProductCollection($collection);
+
+		return parent::_beforeToHtml();
+	}
+
+	public function setProductsCount($count)
+	{
+		$this->_productsCount = $count;
+		return $this;
+	}
+
+	public function getProductsCount()
+	{
+		if (!$this->hasData('products_count')) {
+			if (null === $this->_productsCount) {
+				$this->_productsCount = self::DEFAULT_PRODUCTS_COUNT;
+				return $this->_productsCount;
+		    }
+        }
+		return $this->_getData('products_count');
+	}
+	
+	public function getCategoryId()
+	{
+		if ($this->hasData('category_id')) {
+			$ids = $this->_getData('category_id');
+			if (false !== strpos($ids, '/')) {
+				$ids = explode('/',$ids);
+				$category_id = end($ids);
+				if (is_numeric($category_id)) {
+					return (int)$category_id;
+				}
+			}
+		}
+		return 0;
+	}
 }

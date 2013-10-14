@@ -264,8 +264,7 @@ class Mage_CatalogIndex_Model_Mysql4_Indexer extends Mage_Core_Model_Mysql4_Abst
             'website_id',
             'customer_group_id',
             'value',
-            'attribute_id',
-            'tax_class_id'
+            'attribute_id'
         ));
 
         $productTypes = Mage::getSingleton('catalogindex/retreiver')->assignProductTypes($products);
@@ -282,7 +281,6 @@ class Mage_CatalogIndex_Model_Mysql4_Indexer extends Mage_Core_Model_Mysql4_Abst
                 }
                 foreach (Mage::getSingleton('catalogindex/retreiver')->getCustomerGroups() as $group) {
                     $finalPrice = $retreiver->getFinalPrice($product, $store, $group);
-                    $taxClassId = $retreiver->getTaxClassId($product, $store);
                     $id = $product;
                     if (!is_null($forcedId)) {
                         $id = $forcedId;
@@ -294,8 +292,7 @@ class Mage_CatalogIndex_Model_Mysql4_Indexer extends Mage_Core_Model_Mysql4_Abst
                             $store->getWebsiteId(),
                             $group->getId(),
                             $finalPrice,
-                            $priceAttribute,
-                            $taxClassId
+                            $priceAttribute
                         ));
                     }
                 }
@@ -319,8 +316,7 @@ class Mage_CatalogIndex_Model_Mysql4_Indexer extends Mage_Core_Model_Mysql4_Abst
             'website_id',
             'entity_id',
             'customer_group_id',
-            'value',
-            'tax_class_id'
+            'value'
         ));
         $this->clear(false, false, true, false, false, $products, $store);
         $products = Mage::getSingleton('catalogindex/retreiver')->assignProductTypes($products);
@@ -341,15 +337,11 @@ class Mage_CatalogIndex_Model_Mysql4_Indexer extends Mage_Core_Model_Mysql4_Abst
 
                 if (is_array($minimal)) {
                     foreach ($minimal as $price) {
-                        if (!isset($price['tax_class_id'])) {
-                            $price['tax_class_id'] = 0;
-                        }
                         $this->_insert('catalogindex/minimal_price', array(
                             $store->getWebsiteId(),
                             $id,
                             $price['customer_group_id'],
-                            $price['minimal_value'],
-                            $price['tax_class_id']
+                            $price['minimal_value']
                         ));
                     }
                 }

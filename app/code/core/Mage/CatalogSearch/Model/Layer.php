@@ -59,7 +59,6 @@ class Mage_CatalogSearch_Model_Layer extends Mage_Catalog_Model_Layer
             ->setStore(Mage::app()->getStore())
             ->addMinimalPrice()
             ->addFinalPrice()
-            ->addTaxPercents()
             ->addStoreFilter()
             ->addUrlRewrite();
 

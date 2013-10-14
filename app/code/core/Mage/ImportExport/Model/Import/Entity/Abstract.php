@@ -241,6 +241,11 @@ abstract class Mage_ImportExport_Model_Import_Entity_Abstract
     {
         return $rowData;
     }
+    
+    protected function _prepareRowData(array $rowData)
+    {
+    	return $rowData;
+    }
 
     /**
      * Validate data rows and save bunches to DB.
@@ -276,7 +281,7 @@ abstract class Mage_ImportExport_Model_Import_Entity_Abstract
                 if ($this->_errorsCount >= $this->_errorsLimit) { // errors limit check
                     return;
                 }
-                $rowData = $source->current();
+                $rowData = $this->_prepareRowData($source->current());
 
                 $this->_processedRowsCount++;
 

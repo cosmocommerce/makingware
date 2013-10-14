@@ -32,10 +32,8 @@ AdminOrder.prototype = {
         this.currencyId     = false;
         this.currencySymbol = data.currency_symbol ? data.currency_symbol : '';
         this.addresses      = data.addresses ? data.addresses : $H({});
-        this.shippingAsBilling = data.shippingAsBilling ? data.shippingAsBilling : false;
         this.gridProducts   = $H({});
         this.gridProductsGift = $H({});
-        this.billingAddressContainer = '';
         this.shippingAddressContainer= '';
         this.isShippingMethodReseted = data.shipping_method_reseted ? data.shipping_method_reseted : false;
         this.overlayData = $H({});
@@ -104,23 +102,12 @@ AdminOrder.prototype = {
 
         var data = this.serializeData(container);
         data[el.name] = id;
-        if(this.isShippingField(container) && !this.isShippingMethodReseted){
+        if(!this.isShippingMethodReseted){
             this.resetShippingMethod(data);
         }
         else{
             this.saveData(data);
         }
-    },
-
-    isShippingField : function(fieldId){
-        if(this.shippingAsBilling){
-            return fieldId.include('billing');
-        }
-        return fieldId.include('shipping');
-    },
-
-    isBillingField : function(fieldId){
-        return fieldId.include('billing');
     },
 
     bindAddressFields : function(container) {
@@ -136,21 +123,9 @@ AdminOrder.prototype = {
         var matchRes = field.name.match(re);
         var type = matchRes[1];
         var name = matchRes[2];
-        var data;
+        var data = this.serializeData(this.shippingAddressContainer).toObject();
 
-        if(this.isBillingField(field.id)){
-            data = this.serializeData(this.billingAddressContainer)
-        }
-        else{
-            data = this.serializeData(this.shippingAddressContainer)
-        }
-        data = data.toObject();
-
-        if( (type == 'billing' && this.shippingAsBilling)
-            || (type == 'shipping' && !this.shippingAsBilling) ) {
-            data['reset_shipping'] = true;
-        }
-
+        data['reset_shipping'] = true;
         data['order['+type+'_address][customer_address_id]'] = $('order-'+type+'_address_customer_address_id').value;
 
         if (data['reset_shipping']) {
@@ -159,7 +134,7 @@ AdminOrder.prototype = {
         else {
             this.saveData(data);
             if (name == 'country_id' || name == 'customer_address_id') {
-                this.loadArea(['shipping_method', 'billing_method', 'totals'], true, data);
+                this.loadArea(['shipping_method', 'payment_method', 'totals'], true, data);
             }
             // added for reloading of default sender and default recipient for giftmessages
             //this.loadArea(['giftmessage'], true, data);
@@ -214,35 +189,10 @@ AdminOrder.prototype = {
         }
     },
 
-    disableShippingAddress : function(flag){
-        this.shippingAsBilling = flag;
-        if($('order-shipping_address_customer_address_id')) {
-            $('order-shipping_address_customer_address_id').disabled=flag;
-        }
-        if($(this.shippingAddressContainer)){
-            var dataFields = $(this.shippingAddressContainer).select('input', 'select');
-            for(var i=0;i<dataFields.length;i++) dataFields[i].disabled = flag;
-        }
-    },
-
-    setShippingAsBilling : function(flag){
-        this.disableShippingAddress(flag);
-        if(flag){
-            var data = this.serializeData(this.billingAddressContainer);
-        }
-        else{
-            var data = this.serializeData(this.shippingAddressContainer);
-        }
-        data = data.toObject();
-        data['shipping_as_billing'] = flag ? 1 : 0;
-        data['reset_shipping'] = 1;
-        this.loadArea(['shipping_method', 'billing_method', 'shipping_address', 'totals', 'giftmessage'], true, data);
-    },
-
     resetShippingMethod : function(data){
         data['reset_shipping'] = 1;
         this.isShippingMethodReseted = true;
-        this.loadArea(['shipping_method', 'billing_method', 'shipping_address', 'totals', 'giftmessage'], true, data);
+        this.loadArea(['shipping_method', 'payment_method', 'shipping_address', 'totals', 'giftmessage'], true, data);
     },
 
     loadShippingRates : function(){
@@ -253,7 +203,7 @@ AdminOrder.prototype = {
     setShippingMethod : function(method){
         var data = {};
         data['order[shipping_method]'] = method;
-        this.loadArea(['shipping_method', 'totals', 'billing_method'], true, data);
+        this.loadArea(['shipping_method', 'totals', 'payment_method'], true, data);
     },
 
     switchPaymentMethod : function(method){
@@ -278,7 +228,7 @@ AdminOrder.prototype = {
         }
 
         if(!this.paymentMethod || method){
-            $('order-billing_method_form').select('input', 'select').each(function(elem){
+            $('order-payment_method_form').select('input', 'select').each(function(elem){
                 if(elem.type != 'radio') elem.disabled = true;
             })
         }
@@ -336,20 +286,20 @@ AdminOrder.prototype = {
     },
 
     applyCoupon : function(code){
-        this.loadArea(['items', 'shipping_method', 'totals', 'billing_method'], true, {'order[coupon][code]':code, reset_shipping: true});
+        this.loadArea(['items', 'shipping_method', 'totals', 'payment_method'], true, {'order[coupon][code]':code, reset_shipping: true});
     },
 
     addProduct : function(id){
-        this.loadArea(['items', 'shipping_method', 'totals', 'billing_method'], true, {add_product:id, reset_shipping: true});
+        this.loadArea(['items', 'shipping_method', 'totals', 'payment_method'], true, {add_product:id, reset_shipping: true});
     },
 
     removeQuoteItem : function(id){
-        this.loadArea(['items', 'shipping_method', 'totals', 'billing_method'], true,
+        this.loadArea(['items', 'shipping_method', 'totals', 'payment_method'], true,
             {remove_item:id, from:'quote',reset_shipping: true});
     },
 
     moveQuoteItem : function(id, to){
-        this.loadArea(['sidebar_'+to, 'items', 'shipping_method', 'totals', 'billing_method'], this.getAreaId('items'),
+        this.loadArea(['sidebar_'+to, 'items', 'shipping_method', 'totals', 'payment_method'], this.getAreaId('items'),
             {move_item:id, to:to, reset_shipping: true});
     },
 
@@ -540,7 +490,7 @@ AdminOrder.prototype = {
      */
     productGridAddSelected : function(){
         if(this.productGridShowButton) Element.show(this.productGridShowButton);
-        var area = ['search', 'items', 'shipping_method', 'totals', 'giftmessage','billing_method'];
+        var area = ['search', 'items', 'shipping_method', 'totals', 'giftmessage','payment_method'];
         // prepare additional fields and filtered items of products
         var fieldsPrepare = {};
         var itemsFilter = [];
@@ -603,7 +553,7 @@ AdminOrder.prototype = {
                 }
             }
             data.reset_shipping = true;
-            this.loadArea(['sidebar', 'items', 'shipping_method', 'billing_method','totals', 'giftmessage'], true, data);
+            this.loadArea(['sidebar', 'items', 'shipping_method', 'payment_method','totals', 'giftmessage'], true, data);
         }
     },
 
@@ -654,7 +604,7 @@ AdminOrder.prototype = {
             if (!response.ok) {
                 return;
             }
-            this.loadArea(['items', 'shipping_method', 'billing_method','totals', 'giftmessage'], true);
+            this.loadArea(['items', 'shipping_method', 'payment_method','totals', 'giftmessage'], true);
         }.bind(this));
         // show item configuration
         itemId = itemId ? itemId : productId;
@@ -667,7 +617,7 @@ AdminOrder.prototype = {
     },
 
     itemsUpdate : function(){
-        var area = ['sidebar', 'items', 'shipping_method', 'billing_method','totals', 'giftmessage'];
+        var area = ['sidebar', 'items', 'shipping_method', 'payment_method','totals', 'giftmessage'];
         // prepare additional fields
         var fieldsPrepare = {update_items: 1};
         var info = $('order-items_grid').select('input', 'select', 'textarea');
@@ -938,7 +888,7 @@ AdminOrder.prototype = {
         if (!params.form_key) {
             params.form_key = FORM_KEY;
         }
-        var data = this.serializeData('order-billing_method');
+        var data = this.serializeData('order-shipping_method');
         if (data) {
             data.each(function(value) {
                 params[value[0]] = value[1];

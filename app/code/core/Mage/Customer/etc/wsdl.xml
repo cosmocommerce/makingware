@@ -9,8 +9,7 @@
                 <all>
                     <element name="customer_id" type="xsd:int" minOccurs="0" />
                     <element name="email" type="xsd:string" minOccurs="0" />
-                    <element name="firstname" type="xsd:string" minOccurs="0" />
-                    <element name="lastname" type="xsd:string" minOccurs="0" />
+                    <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="password" type="xsd:string" minOccurs="0" />
                     <element name="website_id" type="xsd:int" minOccurs="0" />
                     <element name="store_id" type="xsd:int" minOccurs="0" />
@@ -27,14 +26,11 @@
                     <element name="website_id" type="xsd:int" minOccurs="0" />
                     <element name="created_in" type="xsd:string" minOccurs="0" />
                     <element name="email" type="xsd:string" minOccurs="0" />
-                    <element name="firstname" type="xsd:string" minOccurs="0" />
-                    <element name="middlename" type="xsd:string" minOccurs="0" />
-                    <element name="lastname" type="xsd:string" minOccurs="0" />
+                    <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="group_id" type="xsd:int" minOccurs="0" />
                     <element name="prefix" type="xsd:string" minOccurs="0" />
                     <element name="suffix" type="xsd:string" minOccurs="0" />
                     <element name="dob" type="xsd:string" minOccurs="0" />
-                    <element name="taxvat" type="xsd:string" minOccurs="0" />
                     <element name="confirmation" type="xsd:boolean" minOccurs="0" />
                     <element name="password_hash" type="xsd:string" minOccurs="0" />
                 </all>
@@ -65,9 +61,7 @@
                     <element name="company" type="xsd:string" minOccurs="0" />
                     <element name="country_id" type="xsd:string" minOccurs="0" />
                     <element name="fax" type="xsd:string" minOccurs="0" />
-                    <element name="firstname" type="xsd:string" minOccurs="0" />
-                    <element name="lastname" type="xsd:string" minOccurs="0" />
-                    <element name="middlename" type="xsd:string" minOccurs="0" />
+                    <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="postcode" type="xsd:string" minOccurs="0" />
                     <element name="prefix" type="xsd:string" minOccurs="0" />
                     <element name="region_id" type="xsd:int" minOccurs="0" />
@@ -75,7 +69,6 @@
                     <element name="street" type="typens:ArrayOfString" minOccurs="0" />
                     <element name="suffix" type="xsd:string" minOccurs="0" />
                     <element name="telephone" type="xsd:string" minOccurs="0" />
-                    <element name="is_default_billing" type="xsd:boolean" minOccurs="0" />
                     <element name="is_default_shipping" type="xsd:boolean" minOccurs="0" />
                 </all>
             </complexType>
@@ -89,9 +82,7 @@
                     <element name="company" type="xsd:string" minOccurs="0" />
                     <element name="country_id" type="xsd:string" minOccurs="0" />
                     <element name="fax" type="xsd:string" minOccurs="0" />
-                    <element name="firstname" type="xsd:string" minOccurs="0" />
-                    <element name="lastname" type="xsd:string" minOccurs="0" />
-                    <element name="middlename" type="xsd:string" minOccurs="0" />
+                    <element name="name" type="xsd:string" minOccurs="0" />
                     <element name="postcode" type="xsd:string" minOccurs="0" />
                     <element name="prefix" type="xsd:string" minOccurs="0" />
                     <element name="region" type="xsd:string" minOccurs="0" />
@@ -99,7 +90,6 @@
                     <element name="street" type="xsd:string" minOccurs="0" />
                     <element name="suffix" type="xsd:string" minOccurs="0" />
                     <element name="telephone" type="xsd:string" minOccurs="0" />
-                    <element name="is_default_billing" type="xsd:boolean" minOccurs="0" />
                     <element name="is_default_shipping" type="xsd:boolean" minOccurs="0" />
                 </all>
             </complexType>

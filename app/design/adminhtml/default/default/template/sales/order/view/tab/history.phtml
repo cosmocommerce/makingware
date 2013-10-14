@@ -46,6 +46,9 @@
                 <?php if ($_comment = $this->getItemComment($_item)): ?>
                     <br/><?php echo $_comment ?>
                 <?php endif; ?>
+                <?php if ($_userInfo = $this->getItemUserInfo($_item)): ?>
+                   <br/><span style="float:right;"> -- <?php echo $_userInfo ?></span>
+                <?php endif; ?>
             </li>
         <?php endforeach; ?>
         </ul>

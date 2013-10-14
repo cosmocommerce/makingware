@@ -83,7 +83,7 @@ class Mage_Api_Model_Wsdl_Config_Base extends Varien_Simplexml_Config
         if (null === $this->_wsdlVariables) {
             $this->_wsdlVariables = new Varien_Object();
             $this->_wsdlVariables->setUrl(Mage::getUrl('*/*/*'));
-            $this->_wsdlVariables->setName('Magento');
+            $this->_wsdlVariables->setName('Makingware');
             $this->_wsdlVariables->setHandler($this->getHandler());
         }
 

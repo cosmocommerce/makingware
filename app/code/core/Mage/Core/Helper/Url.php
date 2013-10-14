@@ -41,10 +41,26 @@ class Mage_Core_Helper_Url extends Mage_Core_Helper_Abstract
      */
     public function getCurrentUrl()
     {
-        $request = Mage::app()->getRequest();
-        $url = $request->getScheme() . '://' . $request->getHttpHost() . $request->getServer('REQUEST_URI');
-        return $url;
-//        return $this->_getUrl('*/*/*', array('_current' => true, '_use_rewrite' => true));
+    	$request = Mage::app()->getRequest();
+    	
+    	$httpHost = $request->getServer('HTTP_HOST');
+    	if (empty($httpHost)) {
+    		$scheme = $request->getScheme();
+    		$name   = $request->getServer('SERVER_NAME');
+    		$port   = $request->getServer('SERVER_PORT');
+    		
+    		if(null === $name) {
+    			$httpHost = '';
+    		}elseif (($scheme == Mage_Core_Controller_Request_Http::SCHEME_HTTP && $port == 80) || 
+    				($scheme == Mage_Core_Controller_Request_Http::SCHEME_HTTPS && $port == 443)) {
+    			$httpHost = $name;
+    		}else {
+    			$httpHost = $name . ':' . $port;
+    		}
+    	}
+    	
+    	return $request->getScheme() . '://' . $httpHost . $request->getServer('REQUEST_URI');
+    	// return $this->_getUrl('*/*/*', array('_current' => true, '_use_rewrite' => true));
     }
 
     /**

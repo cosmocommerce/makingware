@@ -63,14 +63,9 @@ class Mage_Adminhtml_Block_Report_Tag_Customer_Grid extends Mage_Adminhtml_Block
             'index'     =>'entity_id'
         ));
 
-        $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('reports')->__('First Name'),
-            'index'     =>'firstname'
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('reports')->__('Last Name'),
-            'index'     =>'lastname'
+        $this->addColumn('name', array(
+            'header'    =>Mage::helper('reports')->__('Name'),
+            'index'     =>'name'
         ));
 
         $this->addColumn('taged', array(

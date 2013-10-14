@@ -1,64 +1,75 @@
-<?php
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE_AFL.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
- *
- * @category    design
- * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-?>
-<div class="page-title">
-    <h1><?php echo $this->__('Your order has been received') ?></h1>
+<div class="cartpage-title clearfix">
+    <h1>
+        <?php echo $this->__('Order submitted successfully');?>
+    </h1>
+    <?php echo $this->getChildHtml('shopcar_guid');?>
 </div>
-<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
-<h2 class="sub-title"><?php echo $this->__('Thank you for your purchase!') ?></h2>
+<?php echo $this->getMessagesBlock()->getGroupedHtml(); ?>
+<div class="onepage_success">
+    <b class="icon icon_msg4 icon_msg4_right"></b>
 
-<?php if ($this->getOrderId()):?>
-<?php if ($this->getCanViewOrder()) :?>
-    <p><?php echo $this->__('Your order # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getViewOrderUrl()), $this->escapeHtml($this->getOrderId()))) ?></p>
-<?php  else :?>
-    <p><?php echo $this->__('Your order # is: %s.', $this->escapeHtml($this->getOrderId())) ?>.</p>
-<?php endif;?>
-    <p><?php echo $this->__('You will receive an order confirmation email with details of your order and a link to track its progress.') ?></p>
-<?php if ($this->getViewOrder() && $this->getCanPrintOrder()) :?>
-    <p>
-        <?php echo $this->__('Click <a href="%s" onclick="this.target=\'_blank\'">here to print</a> a copy of your order confirmation.', $this->getPrintUrl()) ?>
-        <?php echo $this->getChildHtml() ?>
-    </p>
-<?php endif;?>
-<?php endif;?>
+    <h2><?php echo $this->__('Thank you for your patronage! Your order has been successfully submitted.');?></h2>
+    <?php $order = $this->getOrder()?>
+    <p><?php
+        echo $this->__('You will receive an order confirmation e-mail, the confirmation email will be sent to your mailbox') . '：' .
+             $order->getData('customer_email');
+        ?></p>
 
-<?php if ($this->getAgreementRefId()): ?>
-    <p><?php echo $this->__('Your billing agreement # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getAgreementUrl()), $this->escapeHtml($this->getAgreementRefId())))?></p>
-<?php endif;?>
+    <div class="wrap_info">
 
-<?php if ($profiles = $this->getRecurringProfiles()):?>
-<p><?php echo $this->__('Your recurring payment profiles:'); ?></p>
-<ul class="disc">
-<?php foreach($profiles as $profile):?>
-<?php $profileIdHtml = ($this->getCanViewProfiles() ? sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getProfileUrl($profile)), $this->escapeHtml($this->getObjectData($profile, 'reference_id'))) : $this->escapeHtml($this->getObjectData($profile, 'reference_id')));?>
-    <li><?php echo $this->__('Payment profile # %s: "%s".', $profileIdHtml, $this->escapeHtml($this->getObjectData($profile, 'schedule_description')))?></li>
-<?php endforeach;?>
-</ul>
-<?php endif;?>
-
-<div class="buttons-set">
-    <button type="button" class="button" title="<?php echo $this->__('Continue Shopping') ?>" onclick="window.location='<?php echo $this->getUrl() ?>'"><span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
+        <span><?php echo $this->__('订单编号');?> ：
+			<strong>
+                <?php if ($this->canPrint()) : ?>
+                <?php echo $this->__('<a href="%s">%s</a>', $this->getViewOrderUrl(), $this->getOrderId()) ?>
+                <?php else : ?>
+                <?php echo $this->__('%s', $this->getOrderId()) ?>
+                <?php endif;?>
+            </strong>
+		</span><br/>
+        <?php echo $this->__('应付金额') . '：' . $order->formatPrice($order->getGrandTotal()) ?>
+        <br/>
+        <?php echo $this->__('付款方式') . '：' . $order->getPayment()->getMethodInstance()->getTitle() ?>
+    </div>
+    <div class="wrap_btn">
+        <?php if ($this->canOnlinePayment()) : ?>
+        <a href="<?php echo $order->getPayment()->getMethodInstance()->getOnlinePaymentUrl() ?>" target="_blank"
+           class="btn_strong btn_strong_big pay"><?php echo $this->__('To pay');?></a>
+        <?php endif;?>
+        <?php if ($this->canPrint()) : ?>
+        &nbsp;<?php echo $this->__('<a href="%s" onclick="this.target=\'_blank\'" class="btn_common ">打印</a> ', $this->getPrintUrl()) ?>
+        <?php endif;?></div>
+    <?php echo $this->__('You can');?>: <br/>
+    <a href="#" onclick="window.location='<?php echo Mage::getUrl();?>'"><?php echo $this->__('Back home');?></a>
+    |
+    <a href="<?php echo Mage::getUrl('customer/account') ?>"><?php echo $this->__('User Center');?></a>
 </div>
+    <div class="success-item"><?php echo $this->getChildHtml('item');?></div>
+<div id="loadblock" style="display:none;" class="pay_light">
+
+    <div class="note"><?php echo $this->__('Please Pay In New Website And Choose Your Operation');?></div>
+    <ul class="form-list">
+        <li class="control"><strong><?php echo $this->__('Pay Successfully');?></strong> <a class="reg"  target="_blank" href='<?php echo $this->getReturnUrl();?>'><?php echo $this->__('View Order');?></a>
+        </li>
+        <li class="control">
+            <strong><?php echo $this->__('Pay Unsuccessfully');?></strong> <a class="reg"
+                                                                              href='javascript:returnPay()'><?php echo $this->__('Return To Pay');?></a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    var showDialog = function() {
+        $('#loadblock').dialog({width:430, height: 210, modal: true,title:"<?php echo $this->__('Login Payment Website To Pay');?>"});
+    }
+    $(function() {
+        $('.pay').click(function() {
+            showDialog();
+        });
+    });
+    function returnPay() {
+        $('.ui-dialog-titlebar-close').click();
+    }
+
+    //]]>
+</script>
+

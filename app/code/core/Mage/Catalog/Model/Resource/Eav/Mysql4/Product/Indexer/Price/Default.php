@@ -222,9 +222,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Indexer_Price_Default
         $statusCond = $write->quoteInto('=?', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
         $this->_addAttributeToSelect($select, 'status', 'e.entity_id', 'cs.store_id', $statusCond, true);
 
-        $taxClassId = $this->_addAttributeToSelect($select, 'tax_class_id', 'e.entity_id', 'cs.store_id');
-        $select->columns(array('tax_class_id' => $taxClassId));
-
         $price          = $this->_addAttributeToSelect($select, 'price', 'e.entity_id', 'cs.store_id');
         $specialPrice   = $this->_addAttributeToSelect($select, 'special_price', 'e.entity_id', 'cs.store_id');
         $specialFrom    = $this->_addAttributeToSelect($select, 'special_from_date', 'e.entity_id', 'cs.store_id');
@@ -501,7 +498,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Indexer_Price_Default
             'entity_id'         => 'entity_id',
             'customer_group_id' => 'customer_group_id',
             'website_id'        => 'website_id',
-            'tax_class_id'      => 'tax_class_id',
             'price'             => 'orig_price',
             'final_price'       => 'price',
             'min_price'         => 'min_price',

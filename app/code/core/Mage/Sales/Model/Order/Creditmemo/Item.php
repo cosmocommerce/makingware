@@ -132,14 +132,6 @@ class Mage_Sales_Model_Order_Creditmemo_Item extends Mage_Core_Model_Abstract
         $this->getOrderItem()->setQtyRefunded(
             $this->getOrderItem()->getQtyRefunded() + $this->getQty()
         );
-        $this->getOrderItem()->setTaxRefunded(
-            $this->getOrderItem()->getTaxRefunded()
-                + $this->getOrderItem()->getBaseTaxAmount() * $this->getQty() / $this->getOrderItem()->getQtyOrdered()
-        );
-        $this->getOrderItem()->setHiddenTaxRefunded(
-            $this->getOrderItem()->getHiddenTaxRefunded()
-                + $this->getOrderItem()->getHiddenTaxAmount() * $this->getQty() / $this->getOrderItem()->getQtyOrdered()
-        );
         return $this;
     }
 
@@ -147,14 +139,6 @@ class Mage_Sales_Model_Order_Creditmemo_Item extends Mage_Core_Model_Abstract
     {
         $this->getOrderItem()->setQtyRefunded(
             $this->getOrderItem()->getQtyRefunded()-$this->getQty()
-        );
-        $this->getOrderItem()->setTaxRefunded(
-            $this->getOrderItem()->getTaxRefunded()
-                - $this->getOrderItem()->getBaseTaxAmount() * $this->getQty() / $this->getOrderItem()->getQtyOrdered()
-        );
-        $this->getOrderItem()->setHiddenTaxRefunded(
-            $this->getOrderItem()->getHiddenTaxRefunded()
-                - $this->getOrderItem()->getHiddenTaxAmount() * $this->getQty() / $this->getOrderItem()->getQtyOrdered()
         );
         return $this;
     }
@@ -172,8 +156,6 @@ class Mage_Sales_Model_Order_Creditmemo_Item extends Mage_Core_Model_Abstract
 
         $rowTotal       = $orderItem->getRowTotal();
         $baseRowTotal   = $orderItem->getBaseRowTotal();
-        $rowTotalInclTax    = $orderItem->getRowTotalInclTax();
-        $baseRowTotalInclTax= $orderItem->getBaseRowTotalInclTax();
 
         $rowTotal       = $rowTotal/$orderItemQty*$this->getQty();
         $baseRowTotal   = $baseRowTotal/$orderItemQty*$this->getQty();
@@ -181,10 +163,6 @@ class Mage_Sales_Model_Order_Creditmemo_Item extends Mage_Core_Model_Abstract
         $this->setRowTotal($store->roundPrice($rowTotal));
         $this->setBaseRowTotal($store->roundPrice($baseRowTotal));
 
-        if ($rowTotalInclTax && $baseRowTotalInclTax) {
-            $this->setRowTotalInclTax($store->roundPrice($rowTotalInclTax/$orderItemQty*$this->getQty()));
-            $this->setBaseRowTotalInclTax($store->roundPrice($baseRowTotalInclTax/$orderItemQty*$this->getQty()));
-        }
         return $this;
     }
 

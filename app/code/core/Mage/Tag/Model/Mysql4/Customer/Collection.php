@@ -168,8 +168,7 @@ class Mage_Tag_Model_Mysql4_Customer_Collection extends Mage_Customer_Model_Enti
         $tagTable = $this->getTable('tag/tag');
 
         //TODO: add full name logic
-        $this->addAttributeToSelect('firstname')
-            ->addAttributeToSelect('lastname')
+        $this->addAttributeToSelect('name')
             ->addAttributeToSelect('email');
 
         $this->getSelect()

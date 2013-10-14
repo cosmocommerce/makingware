@@ -141,6 +141,10 @@ class Mage_Sales_Model_Order_Status_History extends Mage_Sales_Model_Abstract
         if (!$this->getParentId() && $this->getOrder()) {
             $this->setParentId($this->getOrder()->getId());
         }
+        
+        if (is_null($this->getUserId()) && Mage::getSingleton('admin/session')->getUser()) {
+        	$this->setUserId(Mage::getSingleton('admin/session')->getUser()->getId());
+        }
 
         return $this;
     }

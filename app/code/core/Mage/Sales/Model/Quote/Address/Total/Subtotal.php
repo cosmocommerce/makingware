@@ -111,12 +111,12 @@ class Mage_Sales_Model_Quote_Address_Total_Subtotal extends Mage_Sales_Model_Quo
                $quoteItem->getQty()
             );
             $item->setPrice($finalPrice)
-                ->setBaseOriginalPrice($finalPrice);
+                ->setBaseOriginalPrice($quoteItem->getParentItem()->getProduct()->getPrice());
             $item->calcRowTotal();
         } else if (!$quoteItem->getParentItem()) {
             $finalPrice = $product->getFinalPrice($quoteItem->getQty());
             $item->setPrice($finalPrice)
-                ->setBaseOriginalPrice($finalPrice);
+                ->setBaseOriginalPrice($product->getPrice());
             $item->calcRowTotal();
             $this->_addAmount($item->getRowTotal());
             $this->_addBaseAmount($item->getBaseRowTotal());

@@ -99,6 +99,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
                 ->load();
             $this->setData('stores', $stores);
         }
+        
         return $stores;
     }
 
@@ -111,7 +112,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
     {
         $attributeType = $this->getAttributeObject()->getFrontendInput();
         $defaultValues = $this->getAttributeObject()->getDefaultValue();
-        if ($attributeType == 'select' || $attributeType == 'multiselect') {
+        if ($attributeType == 'select' || $attributeType == 'multiselect' || $attributeType == 'color' || $attributeType == 'size') {
             $defaultValues = explode(',', $defaultValues);
         } else {
             $defaultValues = array();
@@ -119,6 +120,8 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
 
         switch ($attributeType) {
             case 'select':
+            case 'color':
+            case 'size':
                 $inputType = 'radio';
                 break;
             case 'multiselect':
@@ -131,11 +134,22 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
 
         $values = $this->getData('option_values');
         if (is_null($values)) {
-            $values = array();
-            $optionCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
-                ->setAttributeFilter($this->getAttributeObject()->getId())
-                ->setPositionOrder('desc', true)
-                ->load();
+        	if($attributeType=='color')
+        	{
+				 $values = array();
+            	 $optionCollection = Mage::getResourceModel('eav/entity_attribute_color_collection')
+                 ->setAttributeFilter($this->getAttributeObject()->getId())
+                 ->setPositionOrder('desc', true)
+                 ->load();
+        	}
+        	else
+        	{
+				 $values = array();
+	             $optionCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
+	             ->setAttributeFilter($this->getAttributeObject()->getId())
+	             ->setPositionOrder('desc', true)
+	             ->load();
+        	}
 
             foreach ($optionCollection as $option) {
                 $value = array();
@@ -148,8 +162,26 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
                 $value['intype'] = $inputType;
                 $value['id'] = $option->getId();
                 $value['sort_order'] = $option->getSortOrder();
+                if($option->getColorValue())
+                {
+					$value['color_value']=$option->getColorValue();
+                }
+
+                if($option->getImageUrl())
+                {
+					$value['image_url']=$option->getImageUrl();
+                }
+
                 foreach ($this->getStores() as $store) {
-                    $storeValues = $this->getStoreOptionValues($store->getId());
+                	if($attributeType=='color')
+                	{
+						$storeValues = $this->getStoreOptionValues($store->getId(),'color');
+                	}
+                	else
+                	{
+						 $storeValues = $this->getStoreOptionValues($store->getId());
+                	}
+
                     if (isset($storeValues[$option->getId()])) {
                         $value['store'.$store->getId()] = htmlspecialchars($storeValues[$option->getId()]);
                     }
@@ -161,7 +193,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
             }
             $this->setData('option_values', $values);
         }
-
+        
         return $values;
     }
 
@@ -194,20 +226,39 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
      * @param integer $storeId
      * @return array
      */
-    public function getStoreOptionValues($storeId)
+    public function getStoreOptionValues($storeId,$type='')
     {
-        $values = $this->getData('store_option_values_'.$storeId);
-        if (is_null($values)) {
-            $values = array();
-            $valuesCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
-                ->setAttributeFilter($this->getAttributeObject()->getId())
-                ->setStoreFilter($storeId, false)
-                ->load();
-            foreach ($valuesCollection as $item) {
-                $values[$item->getId()] = $item->getValue();
-            }
-            $this->setData('store_option_values_'.$storeId, $values);
-        }
+    	if(!empty($type))
+    	{
+			 $values = $this->getData('store_option_values_'.$storeId);
+       	 	 if (is_null($values)) {
+	             $values = array();
+	             $valuesCollection = Mage::getResourceModel('eav/entity_attribute_color_collection')
+	                ->setAttributeFilter($this->getAttributeObject()->getId())
+	                ->setAllStoreFilter($storeId, false)
+	                ->load();
+	             foreach ($valuesCollection as $item) {
+	                $values[$item->getId()] = $item->getValue();
+	             }
+	             $this->setData('store_option_values_'.$storeId, $values);
+             }
+    	}
+    	else
+    	{
+			$values = $this->getData('store_option_values_'.$storeId);
+	        if (is_null($values)) {
+	            $values = array();
+	            $valuesCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
+	                ->setAttributeFilter($this->getAttributeObject()->getId())
+	                ->setStoreFilter($storeId, false)
+	                ->load();
+	            foreach ($valuesCollection as $item) {
+	                $values[$item->getId()] = $item->getValue();
+	            }
+	            $this->setData('store_option_values_'.$storeId, $values);
+	        }
+    	}
+
         return $values;
     }
 
@@ -219,6 +270,11 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
     public function getAttributeObject()
     {
         return Mage::registry('entity_attribute');
+    }
+
+    public function getImageUrl()
+    {
+		return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product';
     }
 
 }

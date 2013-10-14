@@ -129,13 +129,9 @@ class Mage_Reports_Model_Mysql4_Quote_Collection extends Mage_Sales_Model_Mysql4
     public function addCustomerData($filter = null)
     {
         $customerEntity = Mage::getResourceSingleton('customer/customer');
-        $attrFirstname = $customerEntity->getAttribute('firstname');
-        $attrFirstnameId = $attrFirstname->getAttributeId();
-        $attrFirstnameTableName = $attrFirstname->getBackend()->getTable();
-
-        $attrLastname = $customerEntity->getAttribute('lastname');
-        $attrLastnameId = $attrLastname->getAttributeId();
-        $attrLastnameTableName = $attrLastname->getBackend()->getTable();
+        $attrName = $customerEntity->getAttribute('name');
+        $attrNameId = $attrName->getAttributeId();
+        $attrNameTableName = $attrName->getBackend()->getTable();
 
         $attrEmail = $customerEntity->getAttribute('email');
         $attrEmailTableName = $attrEmail->getBackend()->getTable();
@@ -147,20 +143,12 @@ class Mage_Reports_Model_Mysql4_Quote_Collection extends Mage_Sales_Model_Mysql4
                 array('email'=>'cust_email.email')
             )
             ->joinInner(
-                array('cust_fname'=>$attrFirstnameTableName),
-                'cust_fname.entity_id=main_table.customer_id and cust_fname.attribute_id='.$attrFirstnameId,
-                array('firstname'=>'cust_fname.value')
-            )
-            ->joinInner(
-                array('cust_lname'=>$attrLastnameTableName),
-                'cust_lname.entity_id=main_table.customer_id and cust_lname.attribute_id='.$attrLastnameId,
-                array(
-                    'lastname'=>'cust_lname.value',
-                    'customer_name' => new Zend_Db_Expr('CONCAT(cust_fname.value, " ", cust_lname.value)')
-                )
+                array('cust_fname'=>$attrNameTableName),
+                'cust_fname.entity_id=main_table.customer_id and cust_fname.attribute_id='.$attrNameId,
+                array('name'=>'cust_fname.value')
             );
 
-        $this->_joinedFields['customer_name'] = 'CONCAT(cust_fname.value, " ", cust_lname.value)';
+        $this->_joinedFields['customer_name'] = 'cust_fname.value';
         $this->_joinedFields['email'] = 'cust_email.email';
 
         if ($filter) {

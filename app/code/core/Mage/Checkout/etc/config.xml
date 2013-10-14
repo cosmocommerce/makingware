@@ -35,34 +35,17 @@
         <fieldsets>
             <customer_account>
                 <prefix><to_order>customer_prefix</to_order></prefix>
-                <firstname><to_order>customer_firstname</to_order></firstname>
-                <middlename><to_order>customer_middlename</to_order></middlename>
-                <lastname><to_order>customer_lastname</to_order></lastname>
+                <name><to_order>customer_name</to_order></name>
                 <suffix><to_order>customer_suffix</to_order></suffix>
                 <email><to_order>customer_email</to_order></email>
                 <group_id><to_order>customer_group_id</to_order></group_id>
-                <tax_class_id><to_order>customer_tax_class_id</to_order></tax_class_id>
             </customer_account>
-            <checkout_onepage_billing>
-                <prefix><to_customer>*</to_customer></prefix>
-                <firstname><to_customer>*</to_customer></firstname>
-                <middlename><to_customer>*</to_customer></middlename>
-                <lastname><to_customer>*</to_customer></lastname>
-                <suffix><to_customer>*</to_customer></suffix>
-                <email><to_customer>*</to_customer></email>
-                <customer_dob><to_customer>dob</to_customer></customer_dob>
-                <customer_taxvat><to_customer>taxvat</to_customer></customer_taxvat>
-                <customer_gender><to_customer>gender</to_customer></customer_gender>
-            </checkout_onepage_billing>
             <checkout_onepage_quote>
                 <customer_prefix><to_customer>prefix</to_customer></customer_prefix>
-                <customer_firstname><to_customer>firstname</to_customer></customer_firstname>
-                <customer_middlename><to_customer>middlename</to_customer></customer_middlename>
-                <customer_lastname><to_customer>lastname</to_customer></customer_lastname>
+                <customer_name><to_customer>name</to_customer></customer_name>
                 <customer_suffix><to_customer>suffix</to_customer></customer_suffix>
                 <customer_email><to_customer>email</to_customer></customer_email>
                 <customer_dob><to_customer>dob</to_customer></customer_dob>
-                <customer_taxvat><to_customer>taxvat</to_customer></customer_taxvat>
                 <customer_gender><to_customer>gender</to_customer></customer_gender>
             </checkout_onepage_quote>
         </fieldsets>
@@ -105,6 +88,12 @@
                     <nominal>
                         <renderer>checkout/total_nominal</renderer>
                     </nominal>
+                    <discount>
+                    	<renderer>checkout/total_discount</renderer>
+                    </discount>
+                    <subtotal>
+                    	<renderer>checkout/total_subtotal</renderer>
+                    </subtotal>
                 </totals>
             </quote>
         </sales>

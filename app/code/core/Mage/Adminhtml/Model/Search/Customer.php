@@ -37,10 +37,9 @@ class Mage_Adminhtml_Model_Search_Customer extends Varien_Object
         }
         $collection = Mage::getResourceModel('customer/customer_collection')
             ->addNameToSelect()
-            ->joinAttribute('company', 'customer_address/company', 'default_billing', null, 'left')
+            ->joinAttribute('company', 'customer_address/company', 'default_shipping', null, 'left')
             ->addAttributeToFilter(array(
-                array('attribute'=>'firstname', 'like'=>$this->getQuery().'%'),
-                array('attribute'=>'lastname', 'like'=>$this->getQuery().'%'),
+                array('attribute'=>'name', 'like'=>$this->getQuery().'%'),
                 array('attribute'=>'company', 'like'=>$this->getQuery().'%'),
             ))
             ->setPage(1, 10)

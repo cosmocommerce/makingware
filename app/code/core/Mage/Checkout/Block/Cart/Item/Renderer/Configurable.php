@@ -70,12 +70,43 @@ class Mage_Checkout_Block_Cart_Item_Renderer_Configurable extends Mage_Checkout_
     public function getProductThumbnail()
     {
         $product = $this->getChildProduct();
+        
+        if($this->hasColorAttr($this->getProduct())){
+             if($product->getData('thumbnail') && ($product->getData('thumbnail') != 'no_selection')){
+                return $this->helper('catalog/image')->init($product, 'thumbnail');  
+             }
+        }
+
         if (!$product || !$product->getData('thumbnail')
             || ($product->getData('thumbnail') == 'no_selection')
             || (Mage::getStoreConfig(self::CONFIGURABLE_PRODUCT_IMAGE) == self::USE_PARENT_IMAGE)) {
             $product = $this->getProduct();
         }
+        
         return $this->helper('catalog/image')->init($product, 'thumbnail');
+    }
+
+    public function hasColorAttr($current_product)
+    {
+    	if($current_product-> isConfigurable ())
+    	{
+			$attributes=$this->getAllowAttributes($current_product);
+
+    		foreach($attributes as $attribute)
+    		{
+				if($attribute->getProductAttribute()->getFrontendInput()=="color")
+				{
+					return true;
+				}
+    		}
+    	}
+
+    	return false;
+    }
+
+    public function getAllowAttributes($current_product)
+    {
+		return $current_product->getTypeInstance(true)->getConfigurableAttributes($current_product);
     }
 
     /**

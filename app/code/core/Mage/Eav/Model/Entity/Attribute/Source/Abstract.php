@@ -79,7 +79,6 @@ abstract class Mage_Eav_Model_Entity_Attribute_Source_Abstract implements Mage_E
     public function getOptionText($value)
     {
         $options = $this->getAllOptions();
-        // Fixed for tax_class_id and custom_design
         if (sizeof($options) > 0) foreach($options as $option) {
             if (isset($option['value']) && $option['value'] == $value) {
                 return isset($option['label']) ? $option['label'] : $option['value'];

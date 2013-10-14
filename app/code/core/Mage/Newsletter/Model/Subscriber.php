@@ -538,8 +538,8 @@ class Mage_Newsletter_Model_Subscriber extends Mage_Core_Model_Abstract
     public function getSubscriberFullName()
     {
         $name = null;
-        if ($this->hasCustomerFirstname() || $this->hasCustomerLastname()) {
-            $name = $this->getCustomerFirstname() . ' ' . $this->getCustomerLastname();
+        if ($this->hasCustomerName()) {
+            $name = $this->getCustomerName();
         }
         return $name;
     }

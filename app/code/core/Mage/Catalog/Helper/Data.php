@@ -268,4 +268,79 @@ class Mage_Catalog_Helper_Data extends Mage_Core_Helper_Abstract
         $model = (string)Mage::getConfig()->getNode(self::XML_PATH_CONTENT_TEMPLATE_FILTER);
         return Mage::getModel($model);
     }
+
+    public function getImage($_product, $_image, $_fixsize, $_imgsize)
+    {
+        $imagePath = $_image->getPath();
+        if (empty($imagePath) || !file_exists($imagePath)) {
+            return Mage::helper('catalog/image')->init($_product, 'image');
+        }
+
+        $_originalSizes = getimagesize($_image->getPath());
+        $_imgsize=explode(',',$_imgsize);
+
+        switch ($_fixsize) {
+            case "width":
+                $width = $_imgsize[0];
+                $height = $_originalSizes[1] / $_originalSizes[0]*$width;
+                break;
+            case "height":
+                $height = $_imgsize[0];
+                $width = $_originalSizes[0] / $_originalSizes[1]*$height;
+                break;
+            case "auto":
+                if ($_originalSizes[0] < $_originalSizes[1]) {
+                    $height = $_imgsize[0];
+                    $width = $_originalSizes[0] / $_originalSizes[1]*$height;
+                } else {
+                    $width = $_imgsize[0];
+                    $height = $_originalSizes[1] / $_originalSizes[0]*$width;
+                }
+                break;
+            case "both":
+                $width = $_imgsize[0];  
+                $height = isset($_imgsize[1]) ? $_imgsize[1] : $width;
+                break;
+        }
+
+        return Mage::helper('catalog/image')->init($_product, 'image', $_image->getFile())->resize($width, $height);
+    }
+
+    public function imageToVarien($_product)
+    {
+        $images = $_product->getMediaGalleryImages();
+        if ($images->getSize()) {
+            $image = $images->getFirstItem();
+            foreach ($images as $_image) {
+                if ($_image->getFile() == $_product->getImage()) {
+                    $result = $_image;
+                }
+            }
+            $result = $image;
+        } else {
+            $images = $_product->getMediaGallery('images');
+            $image = $images[0];
+
+            foreach ($images as $_image) {
+                if($_image['file'] == $_product->getImage()) {
+                    $image = $_image;
+                }
+            }
+
+            $image['url'] = $_product->getMediaConfig()->getMediaUrl($image['file']);
+            $image['id'] = isset($image['value_id']) ? $image['value_id'] : null;
+            $image['path'] = $_product->getMediaConfig()->getMediaPath($image['file']);
+
+            $result = new Varien_Object($image);
+        }
+
+        $baseMediaPath = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath();
+        $imageFile = $baseMediaPath . $result->getFile();
+
+        if (file_exists($imageFile)) {
+            return $result;
+        } else {
+            return null;
+        }
+    }
 }

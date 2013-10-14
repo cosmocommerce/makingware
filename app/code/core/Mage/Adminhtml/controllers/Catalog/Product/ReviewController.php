@@ -127,7 +127,8 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('The review was removed by another user or does not exist.'));
             } else {
                 try {
-                    $review->addData($data)->save();
+                    $review->addData($data);
+                    $review->save();
 
                     $arrRatingId = $this->getRequest()->getParam('ratings', array());
                     $votes = Mage::getModel('rating/rating_option_vote')
@@ -149,7 +150,7 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
                                 ->addOptionVote($optionId, $review->getEntityPkValue());
                         }
                     }
-
+                      
                     $review->aggregate();
 
                     Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The review has been saved.'));
@@ -337,7 +338,6 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
 
                 return;
             } catch (Exception $e){
-                die($e->getMessage());
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
             }
         }

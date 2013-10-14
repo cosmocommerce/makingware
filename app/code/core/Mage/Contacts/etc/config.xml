@@ -28,7 +28,7 @@
 <config>
     <modules>
         <Mage_Contacts>
-            <version>0.8.0</version>
+            <version>0.8.1</version>
         </Mage_Contacts>
     </modules>
     <frontend>

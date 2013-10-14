@@ -35,8 +35,7 @@ class Mage_Api_Model_User extends Mage_Core_Model_Abstract
     {
         $this->_beforeSave();
         $data = array(
-                'firstname' => $this->getFirstname(),
-                'lastname'  => $this->getLastname(),
+                'name' 		=> $this->getName(),
                 'email'     => $this->getEmail(),
                 'modified'  => Mage::getSingleton('core/date')->gmtDate()
             );
@@ -112,11 +111,6 @@ class Mage_Api_Model_User extends Mage_Core_Model_Abstract
 
     public function getCollection() {
         return Mage::getResourceModel('api/user_collection');
-    }
-
-    public function getName($separator=' ')
-    {
-        return $this->getFirstname().$separator.$this->getLastname();
     }
 
     public function getId()

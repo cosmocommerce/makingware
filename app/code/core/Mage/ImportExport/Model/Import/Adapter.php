@@ -49,7 +49,11 @@ class Mage_ImportExport_Model_Import_Adapter
         $adapterClass = __CLASS__ . '_' . ucfirst(strtolower($type));
 
         if (!class_exists($adapterClass, false)) {
-            $adapterFile = str_replace('_', '/', $adapterClass) . '.php';
+        	if (defined('COMPILER_INCLUDE_PATH')) {
+        		$adapterFile = $adapterClass . '.php';
+        	}else {
+        		$adapterFile = str_replace('_', '/', $adapterClass) . '.php';
+        	}
             if (!@include_once($adapterFile)) {
                 Mage::throwException("'{$type}' file extension is not supported");
             }

@@ -35,6 +35,7 @@
 class Mage_Sales_Block_Order_Info extends Mage_Core_Block_Template
 {
     protected $_links = array();
+    protected $_notAllowOnlinePayment = array('free', 'cod','bankremittance');
 
     protected function _construct()
     {
@@ -108,4 +109,68 @@ class Mage_Sales_Block_Order_Info extends Mage_Core_Block_Template
         return $this->getUrl('sales/order/print', array('order_id' => $order->getId()));
     }
 
+    public function getBillInfo()
+	{
+		$billInfo = Mage::getModel('makingware_bill/bill')->load($this->getOrder()->getId(),'order_id');
+
+		return $billInfo;
+	 }
+	 
+	 public function loadShippingBaseTime()
+	 {
+	 	if (!$this->hasData('shipping_base_time')) {
+	 		$this->setData('shipping_base_time', false);
+	 		$shippingCarrier = $this->getOrder()->getShippingCarrier();
+	 		if ($shippingCarrier instanceof Mage_Shipping_Model_Carrier_Abstract && $shippingCarrier->getShippingBaseTime()) {
+	 			$methodCodes = explode('_',$this->getOrder()->getShippingMethod());
+	 			if ($shippingTimeOrderModel = Mage::getModel('shipping/carrier_' . $methodCodes[0] . '_order')) {
+	 				$this->setData('shipping_base_time', $shippingTimeOrderModel->load($this->getOrder()->getId()));
+	 			}
+	 		}
+	 		
+	 	}
+	 	return $this->getData('shipping_base_time');
+	 }
+
+	 public function canShowShippingBestTime()
+     {
+     	return (boolean)$this->loadShippingBaseTime();
+     }
+
+     public function getShippingBestTime()
+     {
+     	if ($shippingBaseTime = $this->loadShippingBaseTime()) {
+     		return $shippingBaseTime->getShippingBestTime();
+     	}
+		return '';
+     }
+
+    public function canOnlinePayment($order)
+    {
+    	return !in_array($order->getPayment()->getMethodInstance()->getCode(), $this->_notAllowOnlinePayment);
+    }
+    
+    public function getOrderStatusDetail($order)
+    {
+        $message='';
+        $invoiceObj= Mage::getResourceModel('sales/order_invoice_grid_collection')->setOrderFilter($order)->load()->getFirstItem();
+        $invoiceId= $invoiceObj->getId();
+        
+        if(!empty($invoiceId)){
+            $message.='had paid,';
+        }else{
+            $message.='had not paid,';
+        }
+        
+        $shipmentObj= Mage::getResourceModel('sales/order_shipment_grid_collection')->setOrderFilter($order)->load()->getFirstItem();
+        $shipmentId= $shipmentObj->getId();
+        
+        if(!empty($shipmentId)){
+            $message.='had shipped';
+        }else{
+            $message.='had not shipped';
+        }
+        
+        return $message;
+    }
 }

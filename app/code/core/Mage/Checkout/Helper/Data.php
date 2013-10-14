@@ -79,6 +79,16 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return $this->_agreements;
     }
+    
+	public function getCheckoutUrl ()
+    {
+        return Mage::getUrl('checkout/onepage', array('_secure' => true));
+    }
+
+    public function getCheckoutCartUrl ()
+    {
+        return Mage::getUrl('checkout/cart', array('_secure' => true));
+    }
 
     /**
      * Get onepage checkout availability
@@ -88,50 +98,6 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
     public function canOnepageCheckout()
     {
         return (bool)Mage::getStoreConfig('checkout/options/onepage_checkout_enabled');
-    }
-
-    /**
-     * Get sales item (quote item, order item etc) price including tax based on row total and tax amount
-     *
-     * @param   Varien_Object $item
-     * @return  float
-     */
-    public function getPriceInclTax($item)
-    {
-        if ($item->getPriceInclTax()) {
-            return $item->getPriceInclTax();
-        }
-        $qty = ($item->getQty() ? $item->getQty() : ($item->getQtyOrdered() ? $item->getQtyOrdered() : 1));
-        $price = (floatval($qty)) ? ($item->getRowTotal() + $item->getTaxAmount())/$qty : 0;
-        return Mage::app()->getStore()->roundPrice($price);
-    }
-
-    /**
-     * Get sales item (quote item, order item etc) row total price including tax
-     *
-     * @param   Varien_Object $item
-     * @return  float
-     */
-    public function getSubtotalInclTax($item)
-    {
-        if ($item->getRowTotalInclTax()) {
-            return $item->getRowTotalInclTax();
-        }
-        $tax = $item->getTaxAmount();
-        return $item->getRowTotal() + $tax;
-    }
-
-    public function getBasePriceInclTax($item)
-    {
-        $qty = ($item->getQty() ? $item->getQty() : ($item->getQtyOrdered() ? $item->getQtyOrdered() : 1));
-        $price = (floatval($qty)) ? ($item->getBaseRowTotal() + $item->getBaseTaxAmount())/$qty : 0;
-        return Mage::app()->getStore()->roundPrice($price);
-    }
-
-    public function getBaseSubtotalInclTax($item)
-    {
-        $tax = ($item->getBaseTaxBeforeDiscount() ? $item->getBaseTaxBeforeDiscount() : $item->getBaseTaxAmount());
-        return $item->getBaseRowTotal()+$tax;
     }
 
     /**
@@ -205,9 +171,8 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                         'reason' => $message,
                         'checkoutType' => $checkoutType,
                         'dateAndTime' => Mage::app()->getLocale()->date(),
-                        'customer' => $checkout->getCustomerFirstname() . ' ' . $checkout->getCustomerLastname(),
+                        'customer' => $checkout->getCustomerName(),
                         'customerEmail' => $checkout->getCustomerEmail(),
-                        'billingAddress' => $checkout->getBillingAddress(),
                         'shippingAddress' => $checkout->getShippingAddress(),
                         'shippingMethod' => Mage::getStoreConfig('carriers/'.$shippingMethod.'/title'),
                         'paymentMethod' => Mage::getStoreConfig('payment/'.$paymentMethod.'/title'),

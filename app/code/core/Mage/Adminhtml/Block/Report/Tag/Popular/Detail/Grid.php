@@ -61,16 +61,10 @@ class Mage_Adminhtml_Block_Report_Tag_Popular_Detail_Grid extends Mage_Adminhtml
     protected function _prepareColumns()
     {
 
-        $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('reports')->__('First Name'),
+        $this->addColumn('name', array(
+            'header'    =>Mage::helper('reports')->__('Name'),
             'sortable'  => false,
-            'index'     =>'firstname'
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('reports')->__('Last Name'),
-            'sortable'  => false,
-            'index'     =>'lastname'
+            'index'     =>'name'
         ));
 
         $this->addColumn('product', array(

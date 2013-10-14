@@ -74,7 +74,7 @@
             </depends>
         </Mage_Adminhtml>
         <Mage_AdminNotification>
-            <active>true</active>
+            <active>false</active>
             <codePool>core</codePool>
             <depends>
                <Mage_Core/>
@@ -181,48 +181,6 @@
                 <Mage_Catalog/>
             </depends>
         </Mage_Payment>
-        <Mage_Usa>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-            </depends>
-        </Mage_Usa>
-        <Mage_Paygate>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Payment/>
-            </depends>
-        </Mage_Paygate>
-        <Mage_Paypal>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Paygate/>
-                <Mage_Checkout/>
-                <Mage_Sales/>
-            </depends>
-        </Mage_Paypal>
-        <Mage_PaypalUk>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Paygate/>
-                <Mage_Checkout/>
-                <Mage_Sales/>
-                <Mage_Paypal/>
-            </depends>
-        </Mage_PaypalUk>
-        <Mage_GoogleCheckout>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-            </depends>
-        </Mage_GoogleCheckout>
         <Mage_Log>
             <active>true</active>
             <codePool>core</codePool>
@@ -295,14 +253,6 @@
                 <Mage_Widget/>
             </depends>
         </Mage_Newsletter>
-        <Mage_Tax>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Catalog/>
-                <Mage_Customer/>
-            </depends>
-        </Mage_Tax>
         <Mage_Wishlist>
             <active>true</active>
             <codePool>core</codePool>
@@ -393,13 +343,6 @@
                 <Mage_Catalog/>
             </depends>
         </Mage_GoogleOptimizer>
-        <Mage_GoogleBase>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Catalog/>
-            </depends>
-        </Mage_GoogleBase>
         <Mage_Index>
             <active>true</active>
             <codePool>core</codePool>

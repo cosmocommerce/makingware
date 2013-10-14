@@ -83,14 +83,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </subtotal>
-                        <tax translate="label">
-                            <label>Tax</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>4</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </tax>
                     </fields>
                 </totals_sort>
                 <reorder translate="label">

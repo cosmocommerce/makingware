@@ -93,8 +93,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
     protected $_isOnlineFilterUsed = false;
 
     protected $_fieldMap = array(
-        'customer_firstname' => 'customer_firstname_table.value',
-        'customer_lastname'  => 'customer_lastname_table.value',
+        'customer_name' 	 => 'customer_name_table.value',
         'customer_email'     => 'customer_email_table.email',
         'customer_id'        =>  'customer_table.customer_id',
         'url'                =>  'url_info_table.url'
@@ -146,8 +145,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
 
         $customersCollection = Mage::getModel('customer/customer')->getCollection();
         /* @var $customersCollection Mage_Customer_Model_Entity_Customer_Collection */
-        $firstname = $customersCollection->getAttribute('firstname');
-        $lastname  = $customersCollection->getAttribute('lastname');
+        $name = $customersCollection->getAttribute('name');
         $email  = $customersCollection->getAttribute('email');
 
         $this->_select
@@ -160,11 +158,11 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
                 array('customer_lastname'=>'value')
              )
              ->joinLeft(
-                array('customer_firstname_table'=>$firstname->getBackend()->getTable()),
-                'customer_firstname_table.entity_id=customer_table.customer_id
-                 AND customer_firstname_table.attribute_id = '.(int) $firstname->getAttributeId() . '
+                array('customer_name_table'=>$name->getBackend()->getTable()),
+                'customer_name_table.entity_id=customer_table.customer_id
+                 AND customer_name_table.attribute_id = '.(int) $name->getAttributeId() . '
                  ',
-                array('customer_firstname'=>'value')
+                array('customer_name'=>'value')
              )
              ->joinLeft(
                 array('customer_email_table'=>$email->getBackend()->getTable()),

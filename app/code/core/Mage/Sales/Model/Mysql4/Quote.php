@@ -69,7 +69,7 @@ class Mage_Sales_Model_Mysql4_Quote extends Mage_Sales_Model_Mysql4_Abstract
      * @param Mage_Sales_Model_Quote $quote
      * @param int $customerId
      */
-    public function loadByCustomerId($quote, $customerId)
+    public function loadByCustomerId($quote, $customerId, $namespace = null)
     {
         $read = $this->_getReadAdapter();
         if ($read) {
@@ -77,6 +77,9 @@ class Mage_Sales_Model_Mysql4_Quote extends Mage_Sales_Model_Mysql4_Abstract
                 ->where('is_active=1')
                 ->order('updated_at desc')
                 ->limit(1);
+            if ($namespace) {
+            	$select->where('namespace=\'' . $namespace . '\'');
+            }
 
             $data = $read->fetchRow($select);
 

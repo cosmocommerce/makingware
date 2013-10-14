@@ -98,4 +98,20 @@ class Mage_Core_Model_Mysql4_Url_Rewrite_Collection extends Mage_Core_Model_Mysq
             ->where('id_path like ?', "category%");
         return $this;
     }
+
+    public function filterByProductId($productId)
+    {
+        $this->getSelect()
+            ->where('product_id = ?', $productId);
+
+        return $this;
+    }
+
+    public function filterByCategoryId($categoryId)
+    {
+        $this->getSelect()
+            ->where('category_id = ?', $categoryId);
+            
+        return $this;
+    }
 }

@@ -60,9 +60,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Simple extends 
 
         $attributes = Mage::getModel('catalog/product')
             ->setTypeId(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
-            ->setAttributeSetId($this->_getProduct()->getAttributeSetId())
+            ->setAttributeSetId($this->_getProduct()->getAttributeSetId()) 
             ->getAttributes();
-
+            
         /* Standart attributes */
         foreach ($attributes as $attribute) {
             if (($attribute->getIsRequired()
@@ -79,14 +79,15 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Simple extends 
                     continue;
                 }
                 $attributeCode = $attribute->getAttributeCode();
+
                 $element = $fieldset->addField(
                     'simple_product_' . $attributeCode,
-                     $inputType,
-                     array(
+                    $inputType,
+                    array(
                         'label'    => $attribute->getFrontend()->getLabel(),
                         'name'     => $attributeCode,
                         'required' => $attribute->getIsRequired(),
-                     )
+                    )
                 )->setEntityAttribute($attribute);
 
                 if (in_array($attributeCode, $attributesConfig['autogenerate'])) {
@@ -102,10 +103,22 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Simple extends 
                     );
                 }
 
+                if($attributeCode=='weight'){
+                      $element->setValue(0);
+                }
+
+                if($attributeCode=='status'){
+                      $element->setValue(1);
+                }
+
+                if($attributeCode=='visibility'){
+                      $element->setValue(1);
+                }
 
                 if ($inputType == 'select' || $inputType == 'multiselect') {
                     $element->setValues($attribute->getFrontend()->getSelectOptions());
                 }
+
             }
 
         }
@@ -113,14 +126,25 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Simple extends 
         /* Configurable attributes */
         foreach ($this->_getProduct()->getTypeInstance(true)->getUsedProductAttributes($this->_getProduct()) as $attribute) {
             $attributeCode =  $attribute->getAttributeCode();
-            $fieldset->addField( 'simple_product_' . $attributeCode, 'select',  array(
-                'label' => $attribute->getFrontend()->getLabel(),
-                'name'  => $attributeCode,
-                'values' => $attribute->getSource()->getAllOptions(true, true),
-                'required' => true,
-                'class'    => 'validate-configurable',
-                'onchange' => 'superProduct.showPricing(this, \'' . $attributeCode . '\')'
-            ));
+            if($attribute->getFrontendInput()=='color'){
+                 $fieldset->addField( 'simple_product_' . $attributeCode, 'select',  array(
+                    'label' => $attribute->getFrontend()->getLabel(),
+                    'name'  => $attributeCode,
+                    'values' => $attribute->getSource()->getAllOptions(true, true,null,1),
+                    'required' => true,
+                    'class'    => 'validate-configurable',
+                    'onchange' => 'superProduct.showPricing(this, \'' . $attributeCode . '\')'
+                ));
+            }else{
+                $fieldset->addField( 'simple_product_' . $attributeCode, 'select',  array(
+                    'label' => $attribute->getFrontend()->getLabel(),
+                    'name'  => $attributeCode,
+                    'values' => $attribute->getSource()->getAllOptions(true, true),
+                    'required' => true,
+                    'class'    => 'validate-configurable',
+                    'onchange' => 'superProduct.showPricing(this, \'' . $attributeCode . '\')'
+                ));
+            }
 
             $fieldset->addField('simple_product_' . $attributeCode . '_pricing_value', 'hidden', array(
                 'name' => 'pricing[' . $attributeCode . '][value]'

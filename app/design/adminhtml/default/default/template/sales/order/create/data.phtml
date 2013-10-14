@@ -46,12 +46,11 @@
         <div id="order-items"><?php echo $this->getChildHtml('items') ?></div>
         <div id="order-form_account"><?php echo $this->getChildHtml('form_account') ?></div>
         <div id="order-addresses">
-            <div id="order-billing_address" class="box-left"><?php echo $this->getChildHtml('billing_address') ?></div>
-            <div id="order-shipping_address" class="box-right"><?php echo $this->getChildHtml('shipping_address') ?></div>
+            <div id="order-shipping_address"><?php echo $this->getChildHtml('shipping_address') ?></div>
         </div>
         <div class="clear"></div>
         <div id="order-methods">
-            <div id="order-billing_method" class="box-left payments"><?php echo $this->getChildHtml('billing_method') ?></div>
+        	<div id="order-payment_method" class="box-left"><?php echo $this->getChildHtml('payment_method') ?></div>
             <div id="order-shipping_method" class="box-right"><?php echo $this->getChildHtml('shipping_method') ?></div>
         </div>
 

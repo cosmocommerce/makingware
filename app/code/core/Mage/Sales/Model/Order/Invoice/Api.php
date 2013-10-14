@@ -64,8 +64,7 @@ class Mage_Sales_Model_Order_Invoice_Api extends Mage_Sales_Model_Api_Resource
             ->addAttributeToSelect('state')
             ->addAttributeToSelect('grand_total')
             ->addAttributeToSelect('order_currency_code')
-            ->joinAttribute('billing_firstname', 'order_address/firstname', 'billing_address_id', null, 'left')
-            ->joinAttribute('billing_lastname', 'order_address/lastname', 'billing_address_id', null, 'left')
+            ->joinAttribute('shipping_name', 'order_address/name', 'shipping_address_id', null, 'left')
             ->joinAttribute('order_increment_id', 'order/increment_id', 'order_id', null, 'left')
             ->joinAttribute('order_created_at', 'order/created_at', 'order_id', null, 'left');
 

@@ -41,7 +41,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'checkout_method'   => array('type'=>'static'),
                     'password_hash'     => array('type'=>'static'),
                     'quote_status_id'   => array('type'=>'static'),
-                    'billing_address_id'=> array('type'=>'static'),
+                    'shipping_address_id'=> array('type'=>'static'),
                     'orig_order_id'     => array('type'=>'static'),
                     'converted_at'      => array('type'=>'static'),
                     'reserved_order_id' => array('type'=>'static'),
@@ -70,13 +70,10 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'is_multi_payment'  => array('type'=>'static'),
 
                     'customer_id'       => array('type'=>'static'),
-                    'customer_tax_class_id' => array('type'=>'static'),
                     'customer_group_id' => array('type'=>'static'),
                     'customer_email'    => array('type'=>'static'),
                     'customer_prefix'   => array('type'=>'static'),
-                    'customer_firstname'=> array('type'=>'static'),
-                    'customer_middlename'=>array('type'=>'static'),
-                    'customer_lastname' => array('type'=>'static'),
+                    'customer_name'		=> array('type'=>'static'),
                     'customer_suffix'   => array('type'=>'static'),
                     'customer_note'     => array('type'=>'static'),
                     'customer_note_notify' => array('type'=>'static'),
@@ -106,21 +103,16 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'discount_percent'  => array('type'=>'static'),
                     'discount_amount'   => array('type'=>'static'),
                     'no_discount'       => array('type'=>'static'),
-                    'tax_percent'       => array('type'=>'static'),
-                    'tax_amount'        => array('type'=>'static'),
                     'row_total'         => array('type'=>'static'),
                     'row_total_with_discount' => array('type'=>'static'),
 
                     'base_price'             => array('type'=>'static'),
                     'base_discount_amount'   => array('type'=>'static'),
-                    'base_tax_amount'        => array('type'=>'static'),
                     'base_row_total'         => array('type'=>'static'),
 
                     'row_weight'        => array('type'=>'static'),
                     'applied_rule_ids'  => array('type'=>'static'),
                     'additional_data'   => array('type'=>'static'),
-
-                    'tax_string'   => array('type'=>'text'),
                 ),
             ),
 
@@ -137,9 +129,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'save_in_address_book' => array('type'=>'static'),
                     'email'     => array('type'=>'static'),
                     'prefix'    => array('type'=>'static'),
-                    'firstname' => array('type'=>'static'),
-                    'middlename'=> array('type'=>'static'),
-                    'lastname'  => array('type'=>'static'),
+                    'name' 		=> array('type'=>'static'),
                     'suffix'    => array('type'=>'static'),
                     'company'   => array('type'=>'static'),
                     'street'    => array('type'=>'static'),
@@ -151,7 +141,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'telephone' => array('type'=>'static'),
                     'fax'       => array('type'=>'static'),
 
-                    'same_as_billing'   => array('type'=>'static'),
                     'free_shipping'     => array('type'=>'static'),
                     'weight'            => array('type'=>'static'),
                     'collect_shipping_rates' => array('type'=>'static'),
@@ -161,7 +150,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'subtotal'          => array('type'=>'static'),
                     'subtotal_with_discount' => array('type'=>'static'),
-                    'tax_amount'        => array('type'=>'static'),
                     'shipping_amount'   => array('type'=>'static'),
                     'discount_amount'   => array('type'=>'static'),
                     'custbalance_amount'=> array('type'=>'static'),
@@ -169,15 +157,12 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'base_subtotal'             => array('type'=>'static'),
                     'base_subtotal_with_discount' => array('type'=>'static'),
-                    'base_tax_amount'           => array('type'=>'static'),
                     'base_shipping_amount'      => array('type'=>'static'),
                     'base_discount_amount'      => array('type'=>'static'),
                     'base_custbalance_amount'   => array('type'=>'static'),
                     'base_grand_total'          => array('type'=>'static'),
 
                     'customer_notes' => array('type'=>'static'),
-
-                    'tax_string'   => array('type'=>'text'),
                 ),
             ),
             'quote_address_item' => array(
@@ -203,14 +188,11 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'discount_percent'  => array('type'=>'decimal'),
                     'discount_amount'   => array('type'=>'decimal'),
                     'no_discount'       => array('type'=>'int'),
-                    'tax_percent'       => array('type'=>'decimal'),
-                    'tax_amount'        => array('type'=>'decimal'),
                     'row_total'         => array('type'=>'decimal'),
                     'row_total_with_discount' => array('type'=>'decimal'),
 
                     'base_price'             => array('type'=>'decimal'),
                     'base_discount_amount'   => array('type'=>'decimal'),
-                    'base_tax_amount'        => array('type'=>'decimal'),
                     'base_row_total'         => array('type'=>'decimal'),
 
                     'row_weight'        => array('type'=>'decimal'),
@@ -240,16 +222,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'method'    => array(),
                     'additional_data' => array('type'=>'text'),
                     'po_number' => array(),
-                    'cc_type'   => array(),
-                    'cc_number_enc' => array(),
-                    'cc_last4'  => array(),
-                    'cc_owner'  => array(),
-                    'cc_exp_month' => array('type'=>'int'),
-                    'cc_exp_year' => array('type'=>'int'),
-                    'cc_cid_enc' => array(),
-                    'cc_ss_issue' => array(),
-                    'cc_ss_start_month' => array('type'=>'int'),
-                    'cc_ss_start_year' => array('type'=>'int'),
+                    'cod_type'   => array(),
                 ),
             ),
 
@@ -285,7 +258,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'quote_id' => array('type'=>'int'),
                     'quote_address_id' => array('type'=>'int'),
-                    'billing_address_id' => array('type'=>'int', 'backend'=>'_billing'),
                     'shipping_address_id' => array('type'=>'int', 'backend'=>'_shipping'),
 
                     'coupon_code'       => array(),
@@ -307,7 +279,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'shipping_description' => array(),
                     'weight' => array('type'=>'decimal'),
 
-                    'tax_amount'        => array('type'=>'static'),
                     'shipping_amount'   => array('type'=>'static'),
                     'discount_amount'   => array('type'=>'static'),
                     'custbalance_amount'=> array('type'=>'decimal'),
@@ -325,7 +296,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'adjustment_positive' => array('type'=>'decimal'),
                     'adjustment_negative' => array('type'=>'decimal'),
 
-                    'base_tax_amount'        => array('type'=>'static'),
                     'base_shipping_amount'   => array('type'=>'static'),
                     'base_discount_amount'   => array('type'=>'static'),
                     'base_custbalance_amount'=> array('type'=>'decimal'),
@@ -349,9 +319,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'discount_canceled'     => array('type'=>'static'),
                     'discount_invoiced'     => array('type'=>'static'),
                     'subtotal_invoiced'     => array('type'=>'static'),
-                    'tax_refunded'     => array('type'=>'static'),
-                    'tax_canceled'     => array('type'=>'static'),
-                    'tax_invoiced'     => array('type'=>'static'),
                     'shipping_refunded'     => array('type'=>'static'),
                     'shipping_canceled'     => array('type'=>'static'),
                     'shipping_invoiced'     => array('type'=>'static'),
@@ -361,9 +328,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'base_discount_canceled'     => array('type'=>'static'),
                     'base_discount_invoiced'     => array('type'=>'static'),
                     'base_subtotal_invoiced'     => array('type'=>'static'),
-                    'base_tax_refunded'     => array('type'=>'static'),
-                    'base_tax_canceled'     => array('type'=>'static'),
-                    'base_tax_invoiced'     => array('type'=>'static'),
                     'base_shipping_refunded'     => array('type'=>'static'),
                     'base_shipping_canceled'     => array('type'=>'static'),
                     'base_shipping_invoiced'     => array('type'=>'static'),
@@ -372,10 +336,9 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'customer_group_id' => array('type'=>'int', 'visible'=>false),
                     'customer_email'    => array('type'=>'varchar', 'visible'=>false),
                     'customer_prefix'   => array('type'=>'varchar', 'visible'=>false),
-                    'customer_firstname'=> array('type'=>'varchar', 'visible'=>false),
-                    'customer_middlename'   => array('type'=>'varchar', 'visible'=>false),
-                    'customer_lastname' => array('type'=>'varchar', 'visible'=>false),
+                    'customer_name'		=> array('type'=>'varchar', 'visible'=>false),
                     'customer_suffix'   => array('type'=>'varchar', 'visible'=>false),
+                    'customer_comment'	=> array('type'=>'text', 'visible'=>false),
                     'customer_note'     => array('type'=>'text', 'visible'=>false),
                     'customer_note_notify' => array('type'=>'int', 'visible'=>false),
                     'customer_is_guest' => array('type'=>'int', 'visible'=>false),
@@ -393,9 +356,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'customer_address_id' => array('type'=>'int'),
                     'email' => array(),
                     'prefix'    => array(),
-                    'firstname' => array(),
-                    'middlename'=> array(),
-                    'lastname'  => array(),
+                    'name' 		=> array(),
                     'suffix'    => array(),
                     'company'   => array(),
                     'street'    => array(),
@@ -406,7 +367,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'country_id'=> array('type'=>'varchar'),
                     'telephone' => array(),
                     'fax'       => array(),
-                    'tax_string'   => array('type'=>'text'),
                 ),
             ),
             'order_item' => array(
@@ -444,11 +404,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'discount_amount'   => array('type'=>'decimal'),
                     'discount_invoiced' => array('type'=>'decimal'),
 
-                    'tax_percent'       => array('type'=>'decimal'),
-                    'tax_amount'        => array('type'=>'decimal'),
-                    'tax_invoiced'      => array('type'=>'decimal'),
-                    'tax_string'        => array('type'=>'text'),
-
                     'row_total'         => array('type'=>'decimal'),
                     'row_weight'        => array('type'=>'decimal'),
                     'row_invoiced'      => array('type'=>'decimal'),
@@ -459,8 +414,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'base_original_price'    => array('type'=>'decimal'),
                     'base_discount_amount'   => array('type'=>'decimal'),
                     'base_discount_invoiced' => array('type'=>'decimal'),
-                    'base_tax_amount'        => array('type'=>'decimal'),
-                    'base_tax_invoiced'      => array('type'=>'decimal'),
                     'base_row_total'         => array('type'=>'decimal'),
                     'base_row_invoiced'      => array('type'=>'decimal'),
                     'base_invoiced_total'    => array('type'=>'decimal'),
@@ -484,27 +437,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'last_trans_id'         => array(),
                     'po_number'     => array(),
 
-                    'cc_type'       => array(),
-                    'cc_number_enc' => array(),
-                    'cc_last4'      => array(),
-                    'cc_owner'      => array(),
-                    'cc_exp_month'  => array(),
-                    'cc_exp_year'   => array(),
-
-                    'cc_ss_issue' => array(),
-                    'cc_ss_start_month' => array(),
-                    'cc_ss_start_year' => array(),
-
-                    'cc_status'             => array(),
-                    'cc_status_description' => array(),
-                    'cc_trans_id'           => array(),
-                    'cc_approval'           => array(),
-                    'cc_avs_status'         => array(),
-                    'cc_cid_status'         => array(),
-
-                    'cc_debug_request_body' => array(),
-                    'cc_debug_response_body'=> array(),
-                    'cc_debug_response_serialized' => array(),
+                    'cod_type'      => array(),
 
                     'anet_trans_method'     => array(),
                     'echeck_routing_number' => array(),
@@ -569,7 +502,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'backend'=>'sales_entity/order_invoice_attribute_backend_order'
                     ),
 
-                    'billing_address_id'    => array('type'=>'int'),
                     'shipping_address_id'   => array('type'=>'int'),
 
                     'global_currency_code'    => array(),
@@ -583,7 +515,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'subtotal'          => array('type'=>'decimal'),
                     'discount_amount'   => array('type'=>'decimal'),
-                    'tax_amount'        => array('type'=>'decimal'),
                     'shipping_amount'   => array('type'=>'decimal'),
                     'grand_total'       => array('type'=>'decimal'),
                     'total_qty'         => array('type'=>'decimal'),
@@ -592,7 +523,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'base_subtotal'          => array('type'=>'decimal'),
                     'base_discount_amount'   => array('type'=>'decimal'),
-                    'base_tax_amount'        => array('type'=>'decimal'),
                     'base_shipping_amount'   => array('type'=>'decimal'),
                     'base_grand_total'       => array('type'=>'decimal'),
                     'email_sent' => array('type'=>'int'),
@@ -617,12 +547,10 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'cost'          => array('type'=>'decimal'),
                     'price'         => array('type'=>'decimal'),
                     'discount_amount' => array('type'=>'decimal'),
-                    'tax_amount'    => array('type'=>'decimal'),
                     'row_total'     => array('type'=>'decimal'),
 
                     'base_price'         => array('type'=>'decimal'),
                     'base_discount_amount' => array('type'=>'decimal'),
-                    'base_tax_amount'    => array('type'=>'decimal'),
                     'base_row_total'     => array('type'=>'decimal'),
 
                     'additional_data'   => array('type'=>'text'),
@@ -660,7 +588,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'customer_id'   => array('type'=>'int'),
                     'order_id'      => array('type'=>'int'),
                     'shipment_status'     => array('type'=>'int'),
-                    'billing_address_id'    => array('type'=>'int'),
                     'shipping_address_id'   => array('type'=>'int'),
 
                     'total_qty'         => array('type'=>'decimal'),
@@ -741,7 +668,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'order_id'      => array('type'=>'int'),
                     'creditmemo_status'     => array('type'=>'int'),
-                    'billing_address_id'    => array('type'=>'int'),
                     'shipping_address_id'   => array('type'=>'int'),
 
                     'global_currency_code'    => array(),
@@ -755,7 +681,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'subtotal'          => array('type'=>'decimal'),
                     'discount_amount'   => array('type'=>'decimal'),
-                    'tax_amount'        => array('type'=>'decimal'),
                     'shipping_amount'   => array('type'=>'decimal'),
                     'adjustment'        => array('type'=>'decimal'),
                     'adjustment_positive' => array('type'=>'decimal'),
@@ -764,7 +689,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'base_subtotal'          => array('type'=>'decimal'),
                     'base_discount_amount'   => array('type'=>'decimal'),
-                    'base_tax_amount'        => array('type'=>'decimal'),
                     'base_shipping_amount'   => array('type'=>'decimal'),
                     'base_adjustment'        => array('type'=>'decimal'),
                     'base_adjustment_positive' => array('type'=>'decimal'),
@@ -792,12 +716,10 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'cost'          => array('type'=>'decimal'),
                     'price'         => array('type'=>'decimal'),
                     'discount_amount' => array('type'=>'decimal'),
-                    'tax_amount'    => array('type'=>'decimal'),
                     'row_total'     => array('type'=>'decimal'),
 
                     'base_price'         => array('type'=>'decimal'),
                     'base_discount_amount' => array('type'=>'decimal'),
-                    'base_tax_amount'    => array('type'=>'decimal'),
                     'base_row_total'     => array('type'=>'decimal'),
 
                     'additional_data'   => array('type'=>'text'),

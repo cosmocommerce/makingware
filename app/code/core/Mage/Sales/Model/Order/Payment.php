@@ -46,11 +46,11 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     protected $_order;
 
     /**
-     * Billing agreement instance that may be created during payment processing
+     * Shipping agreement instance that may be created during payment processing
      *
-     * @var Mage_Sales_Model_Billing_Agreement
+     * @var Mage_Sales_Model_Shipping_Agreement
      */
-    protected $_billingAgreement = null;
+    protected $_shippingAgreement = null;
 
     /**
      * Whether can void
@@ -194,7 +194,7 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
             }
         }
 
-        $this->_createBillingAgreement();
+        $this->_createShippingAgreement();
 
         $orderIsNotified = null;
         if ($stateObject->getState() && $stateObject->getStatus()) {
@@ -1079,13 +1079,13 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     }
 
     /**
-     * Get the billing agreement, if any
+     * Get the shipping agreement, if any
      *
-     * @return Mage_Sales_Model_Billing_Agreement|null
+     * @return Mage_Sales_Model_Shipping_Agreement|null
      */
-    public function getBillingAgreement()
+    public function getShippingAgreement()
     {
-        return $this->_billingAgreement;
+        return $this->_shippingAgreement;
     }
 
     /**
@@ -1313,20 +1313,20 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     }
 
     /**
-     * Generate billing agreement object if there is billing agreement data
+     * Generate shipping agreement object if there is shipping agreement data
      * Adds it to order as related object
      */
-    protected function _createBillingAgreement()
+    protected function _createShippingAgreement()
     {
-        if ($this->getBillingAgreementData()) {
+        if ($this->getShippingAgreementData()) {
             $order = $this->getOrder();
-            $agreement = Mage::getModel('sales/billing_agreement')->importOrderPayment($this);
+            $agreement = Mage::getModel('sales/shipping_agreement')->importOrderPayment($this);
             if ($agreement->isValid()) {
-                $message = Mage::helper('sales')->__('Created billing agreement #%s.', $agreement->getReferenceId());
+                $message = Mage::helper('sales')->__('Created shipping agreement #%s.', $agreement->getReferenceId());
                 $order->addRelatedObject($agreement);
-                $this->_billingAgreement = $agreement;
+                $this->_shippingAgreement = $agreement;
             } else {
-                $message = Mage::helper('sales')->__('Failed to create billing agreement for this order.');
+                $message = Mage::helper('sales')->__('Failed to create shipping agreement for this order.');
             }
             $comment = $order->addStatusHistoryComment($message);
             $order->addRelatedObject($comment);

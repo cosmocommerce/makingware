@@ -33,11 +33,6 @@
  */
 class Mage_Checkout_Block_Onepage_Progress extends Mage_Checkout_Block_Onepage_Abstract
 {
-    public function getBilling()
-    {
-        return $this->getQuote()->getBillingAddress();
-    }
-
     public function getShipping()
     {
         return $this->getQuote()->getShippingAddress();
@@ -67,21 +62,6 @@ class Mage_Checkout_Block_Onepage_Progress extends Mage_Checkout_Block_Onepage_A
     public function getPaymentHtml()
     {
         return $this->getChildHtml('payment_info');
-    }
-
-    /**
-     * Get quote shipping price including tax
-     * @return float
-     */
-    public function getShippingPriceInclTax()
-    {
-        $inclTax = $this->getQuote()->getShippingAddress()->getShippingInclTax();
-        return $this->formatPrice($inclTax);
-    }
-
-    public function getShippingPriceExclTax()
-    {
-        return $this->formatPrice($this->getQuote()->getShippingAddress()->getShippingAmount());
     }
 
     public function formatPrice($price)

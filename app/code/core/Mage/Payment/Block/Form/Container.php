@@ -53,7 +53,7 @@ class Mage_Payment_Block_Form_Container extends Mage_Core_Block_Template
 
     protected function _canUseMethod($method)
     {
-        if (!$method->canUseForCountry($this->getQuote()->getBillingAddress()->getCountry())) {
+        if (!$method->canUseForCountry($this->getQuote()->getShippingAddress()->getCountry())) {
             return false;
         }
 

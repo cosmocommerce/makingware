@@ -70,7 +70,6 @@ class Mage_Adminhtml_Model_Sales_Order_Random
     {
         if (!self::$_customerCollection) {
             self::$_customerCollection = Mage::getResourceModel('customer/customer_collection')
-                ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing', null, 'inner')
                 ->joinAttribute('shipping_country_id', 'customer_address/country_id', 'default_shipping', null, 'inner')
                 ->load();
         }
@@ -129,7 +128,6 @@ class Mage_Adminhtml_Model_Sales_Order_Random
         $customer = $this->_getCustomer();
         $this->_quote->setStore($this->_getStore())
             ->setCustomer($customer);
-        $this->_quote->getBillingAddress()->importCustomerAddress($customer->getDefaultBillingAddress());
         $this->_quote->getShippingAddress()->importCustomerAddress($customer->getDefaultShippingAddress());
 
         $productCount = rand(3, 10);

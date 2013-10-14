@@ -35,7 +35,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Composite_Fieldset_Grouped extends Ma
 {
     /**
      * Redefine default price block
-     * Set current customer to tax calculation
+     * Set current customer to calculation
      */
     protected function _construct()
     {
@@ -43,11 +43,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Composite_Fieldset_Grouped extends Ma
 
         $this->_block = 'adminhtml/catalog_product_price';
         $this->_useLinkForAsLowAs = false;
-
-        $taxCalculation = Mage::getSingleton('tax/calculation');
-        if (!$taxCalculation->getCustomer() && Mage::registry('current_customer')) {
-            $taxCalculation->setCustomer(Mage::registry('current_customer'));
-        }
     }
 
     /**

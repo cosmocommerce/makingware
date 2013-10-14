@@ -40,13 +40,7 @@ class Mage_Adminhtml_Model_Search_Order extends Varien_Object
             ->addAttributeToSelect('*')
             ->addAttributeToSearchFilter(array(
                 array('attribute'=>'increment_id', 'like'=>$query.'%'),
-                array('attribute'=>'billing_firstname', 'like'=>$query.'%'),
-                array('attribute'=>'billing_lastname', 'like'=>$query.'%'),
-                array('attribute'=>'billing_telephone', 'like'=>$query.'%'),
-                array('attribute'=>'billing_postcode', 'like'=>$query.'%'),
-
-                array('attribute'=>'shipping_firstname', 'like'=>$query.'%'),
-                array('attribute'=>'shipping_lastname', 'like'=>$query.'%'),
+                array('attribute'=>'shipping_name', 'like'=>$query.'%'),
                 array('attribute'=>'shipping_telephone', 'like'=>$query.'%'),
                 array('attribute'=>'shipping_postcode', 'like'=>$query.'%'),
             ))
@@ -59,8 +53,8 @@ class Mage_Adminhtml_Model_Search_Order extends Varien_Object
                 'id'                => 'order/1/'.$order->getId(),
                 'type'              => 'Order',
                 'name'              => Mage::helper('adminhtml')->__('Order #%s', $order->getIncrementId()),
-                'description'       => $order->getBillingFirstname().' '.$order->getBillingLastname(),
-                'form_panel_title'  => Mage::helper('adminhtml')->__('Order #%s (%s)', $order->getIncrementId(), $order->getBillingFirstname().' '.$order->getBillingLastname()),
+                'description'       => $order->getShippingName(),
+                'form_panel_title'  => Mage::helper('adminhtml')->__('Order #%s (%s)', $order->getIncrementId(), $order->getShippingName()),
                 'url'               => Mage::helper('adminhtml')->getUrl('*/sales_order/view', array('order_id'=>$order->getId())),
             );
         }

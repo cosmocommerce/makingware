@@ -268,4 +268,46 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
         Mage::dispatchEvent('customer_registration_is_allowed', array('result' => $result));
         return $result->getIsAllowed();
     }
+    
+    /**
+     * Check Register Required Login Attributes
+     * @param string $code
+     * @return boolean
+     */
+    public function isRegisterRequireLoginAttribute($code)
+    {
+    	static $requireAttributes = array();
+    	if (!isset($requireAttributes[$code])) {
+    		$requireAttributes[$code] = false;
+    		
+	    	$attributes = explode(',', Mage::getStoreConfig('customer/create_account/register_required_login_attributes'));
+	    	if ($code && in_array($code, $attributes)) {
+	    		$requireAttributes[$code] = true;
+	    	}
+    	}
+    	return $requireAttributes[$code];
+    }
+    
+    public function getAllowLoginAttributeOptions()
+    {
+    	static $options = array();
+    	if (empty($options)) {
+	    	$allowLoginType = explode(',', Mage::getStoreConfig('customer/startup/allow_login_type'));
+	    	foreach ($allowLoginType as $type) {
+	    		if ($type == 'username') {
+	    			$options[$type] = $this->__('Username');
+	    		}elseif ($type == 'telephone') {
+	    			$options[$type] = $this->__('Telephone');
+	    		}elseif ($type == 'mobile') {
+	    			$options[$type] = $this->__('Mobile');
+	    		}else {
+	    			$options[$type] = $type;
+	    		}
+	    	}
+	    	if (empty($options['email'])) {
+	    		$options = array_merge(array('email' => $this->__('email')), $options);
+	    	}
+    	}
+    	return $options;
+    }
 }

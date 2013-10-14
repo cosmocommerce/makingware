@@ -29,7 +29,7 @@
 $installer = $this;
 
 $attributes = array(
-    'prefix', 'firstname', 'middlename', 'lastname', 'suffix'
+    'prefix', 'name', 'suffix'
 );
 
 foreach ($attributes as $attributeCode) {

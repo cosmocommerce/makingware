@@ -285,22 +285,12 @@ class  Mage_Adminhtml_Block_Sales_Items_Abstract extends Mage_Adminhtml_Block_Te
      */
     public function displayPriceAttribute($code, $strong = false, $separator = '<br />')
     {
-        if ($code == 'tax_amount' && $this->getOrder()->getRowTaxDisplayPrecision()) {
-            return $this->displayRoundedPrices(
-                $this->getPriceDataObject()->getData('base_'.$code),
-                $this->getPriceDataObject()->getData($code),
-                $this->getOrder()->getRowTaxDisplayPrecision(),
-                $strong,
-                $separator
-            );
-        } else {
-            return $this->displayPrices(
-                $this->getPriceDataObject()->getData('base_'.$code),
-                $this->getPriceDataObject()->getData($code),
-                $strong,
-                $separator
-            );
-        }
+    	return $this->displayPrices(
+    		$this->getPriceDataObject()->getData('base_'.$code),
+            $this->getPriceDataObject()->getData($code),
+            $strong,
+            $separator
+        );
     }
 
     /**
@@ -342,86 +332,6 @@ class  Mage_Adminhtml_Block_Sales_Items_Abstract extends Mage_Adminhtml_Block_Te
             }
         }
         return $res;
-    }
-
-    /**
-     * Retrieve include tax html formated content
-     *
-     * @param Varien_Object $item
-     * @return string
-     */
-    public function displayPriceInclTax(Varien_Object $item)
-    {
-        $qty = ($item->getQtyOrdered() ? $item->getQtyOrdered() : ($item->getQty() ? $item->getQty() : 1));
-        $baseTax = ($item->getTaxBeforeDiscount() ? $item->getTaxBeforeDiscount() : ($item->getTaxAmount() ? $item->getTaxAmount() : 0));
-        $tax = ($item->getBaseTaxBeforeDiscount() ? $item->getBaseTaxBeforeDiscount() : ($item->getBaseTaxAmount() ? $item->getBaseTaxAmount() : 0));
-
-        $basePriceTax = 0;
-        $priceTax = 0;
-
-        if (floatval($qty)) {
-            $basePriceTax = $item->getBasePrice()+$baseTax/$qty;
-            $priceTax = $item->getPrice()+$tax/$qty;
-        }
-
-        return $this->displayPrices(
-            $this->getOrder()->getStore()->roundPrice($basePriceTax),
-            $this->getOrder()->getStore()->roundPrice($priceTax)
-        );
-    }
-
-    /**
-     * Retrieve subtotal price include tax html formated content
-     *
-     * @param Varien_Object $item
-     * @return string
-     */
-    public function displaySubtotalInclTax($item)
-    {
-        $baseTax = ($item->getTaxBeforeDiscount() ? $item->getTaxBeforeDiscount() : ($item->getTaxAmount() ? $item->getTaxAmount() : 0));
-        $tax = ($item->getBaseTaxBeforeDiscount() ? $item->getBaseTaxBeforeDiscount() : ($item->getBaseTaxAmount() ? $item->getBaseTaxAmount() : 0));
-
-        return $this->displayPrices(
-            $item->getBaseRowTotal()+$baseTax,
-            $item->getRowTotal()+$tax
-        );
-    }
-
-    /**
-     * Retrieve tax calculation html content
-     *
-     * @param Varien_Object $item
-     * @return string
-     */
-    public function displayTaxCalculation(Varien_Object $item)
-    {
-        if ($item->getTaxPercent() && $item->getTaxString() == '') {
-            $percents = array($item->getTaxPercent());
-        } else if ($item->getTaxString()) {
-            $percents = explode(Mage_Tax_Model_Config::CALCULATION_STRING_SEPARATOR, $item->getTaxString());
-        } else {
-            return '0%';
-        }
-
-        foreach ($percents as &$percent) {
-            $percent = sprintf('%.2f%%', $percent);
-        }
-        return implode(' + ', $percents);
-    }
-
-    /**
-     * Retrieve tax with persent html content
-     *
-     * @param Varien_Object $item
-     * @return string
-     */
-    public function displayTaxPercent(Varien_Object $item)
-    {
-        if ($item->getTaxPercent()) {
-            return sprintf('%s%%', $item->getTaxPercent() + 0);
-        } else {
-            return '0%';
-        }
     }
 
     /**

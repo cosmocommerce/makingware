@@ -30,6 +30,7 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
     protected $_code;
     protected $_rates = null;
     protected $_numBoxes = 1;
+    protected $_formBlockType = 'shipping/form';
 
     /**
      * Whether this carrier has fixed rates calculation
@@ -67,7 +68,9 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
         if (empty($this->_code)) {
             return false;
         }
+        
         $path = 'carriers/'.$this->_code.'/'.$field;
+
         return Mage::getStoreConfig($path, $this->getStore());
     }
 
@@ -354,5 +357,42 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
     public function getCarrierCode()
     {
         return $this->_code;
+    }
+
+    /**
+     * Retrieve block type for method form generation
+     *
+     * @return string
+     */
+    public function getFormBlockType()
+    {
+        return $this->_formBlockType;
+    }
+
+    /**
+     * Retrieve shipping method code
+     *
+     * @return string
+     */
+    public function getCode($type, $code='')
+    {
+        if (empty($this->_code)) {
+            Mage::throwException($this->_getHelper()->__('Cannot retrieve the shipping method code.'));
+        }
+        return $this->_code;
+    }
+
+    /**
+     * Retrieve shipping information model object
+     *
+     * @return Mage_Shipping_Model_Info
+     */
+    public function getInfoInstance()
+    {
+        $instance = $this->getData('info_instance');
+        if (!($instance instanceof Mage_Shipping_Model_Info)) {
+            Mage::throwException($this->_getHelper()->__('Cannot retrieve the shipping information object instance.'));
+        }
+        return $instance;
     }
 }

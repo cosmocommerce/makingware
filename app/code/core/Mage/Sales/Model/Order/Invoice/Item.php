@@ -136,11 +136,6 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
         $orderItem = $this->getOrderItem();
         $orderItem->setQtyInvoiced($orderItem->getQtyInvoiced()+$this->getQty());
 
-        $orderItem->setTaxInvoiced($orderItem->getTaxInvoiced()+$this->getTaxAmount());
-        $orderItem->setBaseTaxInvoiced($orderItem->getBaseTaxInvoiced()+$this->getBaseTaxAmount());
-        $orderItem->setHiddenTaxInvoiced($orderItem->getHiddenTaxInvoiced()+$this->getHiddenTaxAmount());
-        $orderItem->setBaseHiddenTaxInvoiced($orderItem->getBaseHiddenTaxInvoiced()+$this->getBaseHiddenTaxAmount());
-
         $orderItem->setDiscountInvoiced($orderItem->getDiscountInvoiced()+$this->getDiscountAmount());
         $orderItem->setBaseDiscountInvoiced($orderItem->getBaseDiscountInvoiced()+$this->getBaseDiscountAmount());
 
@@ -158,12 +153,6 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
     {
         $orderItem = $this->getOrderItem();
         $orderItem->setQtyInvoiced($orderItem->getQtyInvoiced()-$this->getQty());
-
-        $orderItem->setTaxInvoiced($orderItem->getTaxInvoiced()-$this->getTaxAmount());
-        $orderItem->setBaseTaxInvoiced($orderItem->getBaseTaxInvoiced()-$this->getBaseTaxAmount());
-        $orderItem->setHiddenTaxInvoiced($orderItem->getHiddenTaxInvoiced()-$this->getHiddenTaxAmount());
-        $orderItem->setBaseHiddenTaxInvoiced($orderItem->getBaseHiddenTaxInvoiced()-$this->getBaseHiddenTaxAmount());
-
 
         $orderItem->setDiscountInvoiced($orderItem->getDiscountInvoiced()-$this->getDiscountAmount());
         $orderItem->setBaseDiscountInvoiced($orderItem->getBaseDiscountInvoiced()-$this->getBaseDiscountAmount());
@@ -186,8 +175,6 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
 
         $rowTotal       = $orderItem->getRowTotal();
         $baseRowTotal   = $orderItem->getBaseRowTotal();
-        $rowTotalInclTax    = $orderItem->getRowTotalInclTax();
-        $baseRowTotalInclTax= $orderItem->getBaseRowTotalInclTax();
 
         $rowTotal       = $rowTotal/$orderItemQty*$this->getQty();
         $baseRowTotal   = $baseRowTotal/$orderItemQty*$this->getQty();
@@ -195,10 +182,6 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
         $this->setRowTotal($store->roundPrice($rowTotal));
         $this->setBaseRowTotal($store->roundPrice($baseRowTotal));
 
-        if ($rowTotalInclTax && $baseRowTotalInclTax) {
-            $this->setRowTotalInclTax($store->roundPrice($rowTotalInclTax/$orderItemQty*$this->getQty()));
-            $this->setBaseRowTotalInclTax($store->roundPrice($baseRowTotalInclTax/$orderItemQty*$this->getQty()));
-        }
         return $this;
     }
 

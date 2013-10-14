@@ -44,8 +44,7 @@ class Mage_Adminhtml_Block_Report_Shopcart_Customer_Grid extends Mage_Adminhtml_
     {
         //TODO: add full name logic
         $collection = Mage::getResourceModel('reports/customer_collection')
-          ->addAttributeToSelect('firstname')
-          ->addAttributeToSelect('lastname');
+          ->addAttributeToSelect('name');
 
         $this->setCollection($collection);
         return parent::_prepareCollection();
@@ -65,14 +64,9 @@ class Mage_Adminhtml_Block_Report_Shopcart_Customer_Grid extends Mage_Adminhtml_
             'index'     =>'entity_id'
         ));
 
-        $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('reports')->__('First Name'),
-            'index'     =>'firstname'
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('reports')->__('Last Name'),
-            'index'     =>'lastname'
+        $this->addColumn('name', array(
+            'header'    =>Mage::helper('reports')->__('Name'),
+            'index'     =>'name'
         ));
 
         $this->addColumn('items', array(

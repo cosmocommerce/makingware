@@ -28,7 +28,7 @@
 <config>
     <modules>
         <Mage_Shipping>
-            <version>0.7.0</version>
+            <version>0.8.0</version>
         </Mage_Shipping>
     </modules>
     <global>
@@ -40,9 +40,15 @@
             <shipping_mysql4>
                 <class>Mage_Shipping_Model_Mysql4</class>
                 <entities>
-                    <tablerate>
-                        <table>shipping_tablerate</table>
-                    </tablerate>
+                    <tablerate><table>shipping_tablerate</table></tablerate>
+                    <ems><table>shipping_ems</table></ems>
+                    <sf><table>shipping_sf</table></sf>
+                    <sto><table>shipping_sto</table></sto>
+                    <yto><table>shipping_yto</table></yto>
+                    <flatrate_order><table>shipping_flatrate_order</table></flatrate_order>
+                    <flatrate_quote><table>shipping_flatrate_quote</table></flatrate_quote>
+                    <!--<sf_order><table>shipping_sf_order</table></sf_order>
+                    <sf_quote><table>shipping_sf_quote</table></sf_quote>-->
                 </entities>
             </shipping_mysql4>
         </models>
@@ -87,6 +93,76 @@
                 </rule>
             </shipping>
         </sales>
+        <carriers>
+            <flatrate>
+            	<times>
+            		<workday>
+            			<code>workday</code>
+            			<name>Workday</name>
+            			<order>0</order>
+            		</workday>
+            		<anytime>
+            			<code>anytime</code>
+            			<name>Anytime</name>
+            			<order>1</order>
+            		</anytime>
+            		<weekend>
+            			<code>weekend</code>
+            			<name>Weekend</name>
+            			<order>2</order>
+            		</weekend>
+            	</times>
+            </flatrate>
+            <!--<sf>
+            	<times>
+            		<workday>
+            			<code>workday</code>
+            			<name>Workday</name>
+            			<order>0</order>
+            		</workday>
+            		<anytime>
+            			<code>anytime</code>
+            			<name>Anytime</name>
+            			<order>1</order>
+            		</anytime>
+            		<weekend>
+            			<code>weekend</code>
+            			<name>Weekend</name>
+            			<order>2</order>
+            		</weekend>
+            	</times>
+            </sf>-->
+        </carriers>
+        <events>
+        	<sales_quote_save_after>
+        		<observers>
+                    <shipping_flatrate>
+                        <type>singleton</type>
+                        <class>Mage_Shipping_Model_Observer_Flatrate</class>
+                        <method>saveFlatrateQuote</method>
+                    </shipping_flatrate>
+                    <!--<shipping_sf>
+                        <type>singleton</type>
+                        <class>Mage_Shipping_Model_Observer_Sf</class>
+                        <method>saveSfQuote</method>
+                    </shipping_sf>-->
+        		</observers>
+            </sales_quote_save_after>
+            <checkout_submit_all_after>
+        		<observers>
+                    <shipping_flatrate>
+                        <type>singleton</type>
+                        <class>Mage_Shipping_Model_Observer_Flatrate</class>
+                        <method>saveFlatrateOrder</method>
+                    </shipping_flatrate>
+                    <!--<shipping_sf>
+                        <type>singleton</type>
+                        <class>Mage_Shipping_Model_Observer_Sf</class>
+                        <method>saveSfOrder</method>
+                    </shipping_sf>-->
+        		</observers>
+            </checkout_submit_all_after>
+        </events>
     </global>
     <adminhtml>
         <translate>
@@ -130,7 +206,7 @@
     <default>
         <shipping>
             <option>
-                <checkout_multiple>1</checkout_multiple>
+                <checkout_multiple>0</checkout_multiple>
                 <checkout_multiple_maximum_qty>100</checkout_multiple_maximum_qty>
             </option>
 
@@ -144,6 +220,7 @@
         <carriers>
             <flatrate>
                 <active>1</active>
+                <enable_shipping_time>1</enable_shipping_time>
                 <sallowspecific>0</sallowspecific>
                 <model>shipping/carrier_flatrate</model>
                 <name>Fixed</name>
@@ -175,6 +252,54 @@
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
                 <handling_type>F</handling_type>
             </tablerate>
+
+            <ems>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <condition_name>package_weight</condition_name>
+                <include_virtual_price>1</include_virtual_price>
+                <model>shipping/carrier_ems</model>
+                <name>EMS Rate</name>
+                <title>Best Way</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </ems>
+
+            <sf>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <condition_name>package_weight</condition_name>
+                <include_virtual_price>1</include_virtual_price>
+                <model>shipping/carrier_sf</model>
+                <name>SF Rate</name>
+                <title>Best Way</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </sf>
+
+            <sto>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <condition_name>package_weight</condition_name>
+                <include_virtual_price>1</include_virtual_price>
+                <model>shipping/carrier_sto</model>
+                <name>STO Rate</name>
+                <title>Best Way</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </sto>
+
+            <yto>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <condition_name>package_weight</condition_name>
+                <include_virtual_price>1</include_virtual_price>
+                <model>shipping/carrier_yto</model>
+                <name>YTO Rate</name>
+                <title>Best Way</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </yto>
         </carriers>
     </default>
 </config>

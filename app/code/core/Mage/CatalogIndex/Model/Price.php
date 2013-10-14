@@ -68,7 +68,6 @@ class Mage_CatalogIndex_Model_Price extends Mage_Core_Model_Abstract
             $item = $collection->getItemById($row['entity_id']);
             if ($item) {
                 $item->setData('minimal_price', $row['value']);
-                $item->setData('minimal_tax_class_id', $row['tax_class_id']);
             }
         }
     }

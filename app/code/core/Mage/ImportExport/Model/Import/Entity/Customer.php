@@ -123,7 +123,7 @@ class Mage_ImportExport_Model_Import_Entity_Customer extends Mage_ImportExport_M
      *
      * @var array
      */
-    protected $_ignoredAttributes = array('website_id', 'store_id', 'default_billing', 'default_shipping');
+    protected $_ignoredAttributes = array('website_id', 'store_id', 'default_shipping');
 
     /**
      * Attributes with index (not label) value.
@@ -213,6 +213,10 @@ class Mage_ImportExport_Model_Import_Entity_Customer extends Mage_ImportExport_M
     public function __construct()
     {
         parent::__construct();
+        
+        if (Mage::app()->isSingleStoreMode()) {
+        	$this->_permanentAttributes = array(self::COL_EMAIL);
+        }
 
         $this->_initWebsites()
             ->_initStores()
@@ -527,6 +531,40 @@ class Mage_ImportExport_Model_Import_Entity_Customer extends Mage_ImportExport_M
     public function isAttributeParticular($attrCode)
     {
         return parent::isAttributeParticular($attrCode) || $this->_addressEntity->isAttributeParticular($attrCode);
+    }
+    
+    protected function _prepareRowData(array $rowData)
+    {
+    	if (isset($rowData['username'])) {
+    		unset($rowData['username']);
+    	}
+    	if (isset($rowData['telephone'])) {
+    		unset($rowData['telephone']);
+    	}
+    	if (isset($rowData['mobile'])) {
+    		unset($rowData['mobile']);
+    	}
+    	
+    	if (Mage::app()->isSingleStoreMode()) {
+    		if (empty($rowData[self::COL_WEBSITE])) {
+    			$rowData[self::COL_WEBSITE] = Mage::app()->getWebsite(true)->getCode();
+    		}
+    		if (empty($rowData[self::COL_STORE])) {
+    			$rowData[self::COL_STORE] = Mage::app()->getStore(true)->getCode();
+    		}
+    		if (empty($rowData['group_id'])) {
+    			if (empty($this->_oldCustomers[$rowData[self::COL_EMAIL]][$rowData[self::COL_WEBSITE]])) {
+    				$rowData['group_id'] = intval(Mage::getConfig()->getStoresConfigByPath(Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID));
+    			}else {
+    				$rowData['group_id'] = Mage::getSingleton('customer/customer')
+    					->unsetData()
+    					->setWebsiteId(Mage::app()->getStore(true)->getWebsiteId())
+    					->load($this->_oldCustomers[$rowData[self::COL_EMAIL]][$rowData[self::COL_WEBSITE]])
+    					->getGroupId();
+    			}
+    		}
+    	}
+    	return parent::_prepareRowData($rowData);
     }
 
     /**

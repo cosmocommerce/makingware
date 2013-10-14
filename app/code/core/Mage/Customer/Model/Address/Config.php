@@ -135,7 +135,7 @@ class Mage_Customer_Model_Address_Config extends Mage_Core_Model_Config_Base
         if(!isset($this->_defaultType[$storeId])) {
             $this->_defaultType[$storeId] = new Varien_Object();
             $this->_defaultType[$storeId]->setCode('default')
-                ->setDefaultFormat('{{depend prefix}}{{var prefix}} {{/depend}}{{var firstname}} {{depend middlename}}{{var middlename}} {{/depend}}{{var lastname}}{{depend suffix}} {{var suffix}}{{/depend}}, {{var street}}, {{var city}}, {{var region}} {{var postcode}}, {{var country}}');
+                ->setDefaultFormat('{{depend prefix}}{{var prefix}} {{/depend}}{{var name}} {{depend suffix}} {{var suffix}}{{/depend}}, {{var street}}, {{var city}}, {{var region}} {{var postcode}}, {{var country}}');
 
             $this->_defaultType[$storeId]->setRenderer(
                 Mage::helper('customer/address')

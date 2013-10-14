@@ -37,15 +37,11 @@
             <sort_order>90</sort_order>
             <!-- action>adminhtml/system</action -->
             <children>
-                <myaccount translate="title">
-                    <title>My Account</title>
-                    <action>adminhtml/system_account</action>
-                    <sort_order>10</sort_order>
-                </myaccount>
-                <tools translate="title">
-                    <title>Tools</title>
-                    <sort_order>20</sort_order>
-                </tools>
+            	<config translate="title">
+                    <title>Configuration</title>
+                    <action>adminhtml/system_config</action>
+                    <sort_order>0</sort_order>
+                </config>
                 <design translate="title">
                     <title>Design</title>
                     <action>adminhtml/system_design</action>
@@ -67,50 +63,59 @@
                         </profiles>
                     </children>
                 </convert>
-                <currency translate="title">
-                    <title>Manage Currency Rates</title>
-                    <action>adminhtml/system_currency</action>
-                    <sort_order>50</sort_order>
-                </currency>
                 <email_template translate="title">
                     <title>Transactional Emails</title>
                     <action>adminhtml/system_email_template</action>
                     <sort_order>60</sort_order>
                 </email_template>
-                <variable translate="title">
-                    <title>Custom Variables</title>
-                    <action>adminhtml/system_variable</action>
-                    <sort_order>65</sort_order>
-                </variable>
-                <acl translate="title">
-                    <title>Permissions</title>
-                    <sort_order>70</sort_order>
-                    <children>
-                        <users translate="title">
-                            <title>Users</title>
-                            <action>adminhtml/permissions_user</action>
-                        </users>
-                        <roles translate="title">
-                            <title>Roles</title>
-                            <action>adminhtml/permissions_role</action>
-                        </roles>
-                    </children>
-                </acl>
                 <cache translate="title">
                     <title>Cache Management</title>
                     <action>adminhtml/cache</action>
                     <sort_order>90</sort_order>
                 </cache>
-                <store translate="title" module="core">
-                    <title>Manage Stores</title>
-                    <action>adminhtml/system_store/</action>
-                    <sort_order>100</sort_order>
-                </store>
-                <config translate="title">
-                    <title>Configuration</title>
-                    <action>adminhtml/system_config</action>
-                    <sort_order>110</sort_order>
-                </config>
+                <advanced translate="title">
+                	<title>Advanced</title>
+                	<children>
+		                <currency translate="title">
+		                    <title>Manage Currency Rates</title>
+		                    <action>adminhtml/system_currency</action>
+		                </currency>
+		                <variable translate="title">
+		                    <title>Custom Variables</title>
+		                    <action>adminhtml/system_variable</action>
+		                </variable>
+		                <store translate="title" module="core">
+		                    <title>Manage Stores</title>
+		                    <action>adminhtml/system_store/</action>
+		                </store>
+		                <order_statuses translate="title" module="sales">
+		                    <title>Order Statuses</title>
+		                    <action>adminhtml/sales_order_status</action>
+		                </order_statuses>
+		                <tools translate="title">
+		                    <title>Tools</title>
+		                </tools>
+                    </children>
+                    <sort_order>115</sort_order>
+                </advanced>
+                <manageraccount translate="title">
+                	<title>Manager Account</title>
+                	<children>
+                		<myaccount translate="title">
+		                    <title>My Account</title>
+		                    <action>adminhtml/system_account</action>
+		                </myaccount>
+		                <users translate="title">
+		                	<title>Users</title>
+		                    <action>adminhtml/permissions_user</action>
+		                </users>
+		                <roles translate="title">
+		                	<title>Roles</title>
+		                    <action>adminhtml/permissions_role</action>
+		                </roles>
+                	</children>
+                	<sort_order>10</sort_order>
+                </manageraccount>
             </children>
         </system>
     </menu>
@@ -231,19 +236,6 @@
                             <cache translate="title">
                                 <title>Cache Management</title>
                             </cache>
-                            <extensions translate="title">
-                                <title>Magento Connect</title>
-                                <children>
-                                    <local translate="title">
-                                        <title>Magento Connect Manager</title>
-                                        <sort_order>0</sort_order>
-                                    </local>
-                                    <custom translate="title">
-                                        <title>Package Extensions</title>
-                                        <sort_order>5</sort_order>
-                                    </custom>
-                                </children>
-                            </extensions>
                         </children>
                     </system>
                     <global_search translate="title">

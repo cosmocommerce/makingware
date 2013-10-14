@@ -62,14 +62,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Stock extends Mage_Ad
 
     protected function _prepareColumns()
     {
-        $this->addColumn('firstname', array(
-            'header'    => Mage::helper('catalog')->__('First Name'),
-            'index'     => 'firstname',
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    => Mage::helper('catalog')->__('Last Name'),
-            'index'     => 'lastname',
+        $this->addColumn('name', array(
+            'header'    => Mage::helper('catalog')->__('Name'),
+            'index'     => 'name',
         ));
 
         $this->addColumn('email', array(

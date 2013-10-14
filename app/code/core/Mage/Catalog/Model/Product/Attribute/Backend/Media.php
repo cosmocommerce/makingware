@@ -519,7 +519,7 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_
      * @param string $file
      * @return string
      */
-    protected function _moveImageFromTmp($file)
+    public function _moveImageFromTmp($file)
     {
         $ioObject = new Varien_Io_File();
         $destDirectory = dirname($this->_getConfig()->getMediaPath($file));

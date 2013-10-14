@@ -64,13 +64,9 @@ class Mage_Adminhtml_Block_Permissions_Grid_User extends Mage_Adminhtml_Block_Wi
             'header'    =>Mage::helper('adminhtml')->__('User Name'),
             'index'     =>'username'
         ));
-        $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('adminhtml')->__('First Name'),
-            'index'     =>'firstname'
-        ));
-        $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('adminhtml')->__('Last Name'),
-            'index'     =>'lastname'
+        $this->addColumn('name', array(
+            'header'    =>Mage::helper('adminhtml')->__('Name'),
+            'index'     =>'name'
         ));
         $this->addColumn('email', array(
             'header'    =>Mage::helper('adminhtml')->__('Email'),

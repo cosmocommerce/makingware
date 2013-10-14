@@ -38,10 +38,6 @@
                             <title>Orders</title>
                             <action>adminhtml/report_sales/sales</action>
                         </sales>
-                        <tax translate="title" module="reports">
-                            <title>Tax</title>
-                            <action>adminhtml/report_sales/tax</action>
-                        </tax>
                         <invoiced translate="title" module="reports">
                             <title>Invoiced</title>
                             <action>adminhtml/report_sales/invoiced</action>
@@ -195,9 +191,6 @@
                                     <sales translate="title">
                                         <title>Sales Report</title>
                                     </sales>
-                                    <tax translate="title">
-                                        <title>Tax</title>
-                                    </tax>
                                     <shipping translate="title">
                                         <title>Shipping</title>
                                     </shipping>

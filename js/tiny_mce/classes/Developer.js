@@ -20,7 +20,7 @@
 
 			// Makes sure that XML language pack is used instead of JS files
 			t._runBefore(em, 'init', function(s) {
-				var par = new tinymce.xml.Parser({async : false}), lng = s.language || "en", i18n = tinymce.EditorManager.i18n, sl = tinymce.ScriptLoader;
+				var par = new tinymce.xml.Parser({async : false}), lng = s.language || "zh", i18n = tinymce.EditorManager.i18n, sl = tinymce.ScriptLoader;
 
 				if (!s.translate_mode)
 					return;

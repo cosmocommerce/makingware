@@ -42,7 +42,6 @@ class Mage_Sales_Model_Mysql4_Recurring_Profile extends Mage_Sales_Model_Mysql4_
 
             'order_info' => array(null, array()),
             'order_item_info' => array(null, array()),
-            'billing_address_info' => array(null, array()),
             'shipping_address_info' => array(null, array())
         );
     }

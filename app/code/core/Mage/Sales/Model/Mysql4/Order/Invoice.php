@@ -49,10 +49,10 @@ class Mage_Sales_Model_Mysql4_Order_Invoice extends Mage_Sales_Model_Mysql4_Orde
     {
         parent::_initVirtualGridColumns();
         $this->addVirtualGridColumn(
-                'billing_name',
+                'shipping_name',
                 'sales/order_address',
-                array('billing_address_id' => 'entity_id'),
-                'CONCAT(IFNULL({{table}}.firstname, ""), " ", IFNULL({{table}}.lastname, ""))'
+                array('shipping_address_id' => 'entity_id'),
+                'IFNULL({{table}}.name, "")'
             )
             ->addVirtualGridColumn(
                 'order_increment_id',

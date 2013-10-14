@@ -148,25 +148,6 @@ class Mage_Adminhtml_Block_Report_Sales_Sales_Grid extends Mage_Adminhtml_Block_
             'sortable'      => false
         ));
 
-        $this->addColumn('total_tax_amount', array(
-            'header'        => Mage::helper('sales')->__('Sales Tax'),
-            'type'          => 'currency',
-            'currency_code' => $currencyCode,
-            'index'         => 'total_tax_amount',
-            'total'         => 'sum',
-            'sortable'      => false
-        ));
-
-        $this->addColumn('total_tax_amount_actual', array(
-            'header'        => Mage::helper('sales')->__('Tax'),
-            'type'          => 'currency',
-            'currency_code' => $currencyCode,
-            'index'         => 'total_tax_amount_actual',
-            'total'         => 'sum',
-            'sortable'      => false,
-            'visibility_filter' => array('show_actual_columns')
-        ));
-
         $this->addColumn('total_shipping_amount', array(
             'header'        => Mage::helper('sales')->__('Sales Shipping'),
             'type'          => 'currency',

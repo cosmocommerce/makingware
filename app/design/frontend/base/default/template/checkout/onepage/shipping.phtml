@@ -1,154 +1,363 @@
-<?php
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE_AFL.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
- *
- * @category    design
- * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-?>
-<form action="" id="co-shipping-form">
-    <ul class="form-list">
-    <?php if ($this->customerHasAddresses()): ?>
-       <li class="wide">
-           <label for="shipping-address-select"><?php echo $this->__('Select a shipping address from your address book or enter a new address.') ?></label>
-           <div class="input-box">
-               <?php echo $this->getAddressesHtmlSelect('shipping') ?>
-           </div>
-       </li>
-    <?php endif ?>
-        <li id="shipping-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif ?>>
-            <fieldset>
-                <input type="hidden" name="shipping[address_id]" value="<?php echo $this->getAddress()->getId() ?>" id="shipping:address_id" />
-                <ul>
-                    <li class="fields"><?php echo $this->getLayout()->createBlock('customer/widget_name')->setObject($this->getAddress())->setFieldIdFormat('shipping:%s')->setFieldNameFormat('shipping[%s]')->setFieldParams('onchange="shipping.setSameAsBilling(false)"')->toHtml() ?></li>
-                    <li class="fields">
-                        <div class="fields">
-                            <label for="shipping:company"><?php echo $this->__('Company') ?></label>
-                            <div class="input-box">
-                                <input type="text" id="shipping:company" name="shipping[company]" value="<?php echo $this->htmlEscape($this->getAddress()->getCompany()) ?>" title="<?php echo $this->__('Company') ?>" class="input-text" onchange="shipping.setSameAsBilling(false);" />
-                            </div>
-                        </div>
-            <?php if(false): ?>
-                        <div class="fields">
-                            <label for="shipping:email" class="required"><em>*</em><?php echo $this->__('Email Address') ?></label>
-                            <div class="input-box">
-                                <input type="text" name="shipping[email]" id="shipping:email" value="<?php echo $this->htmlEscape($this->getAddress()->getEmail()) ?>" title="<?php echo $this->__('Email Address') ?>" class="input-text validate-email required-entry" />
-                            </div>
-                        </div>
-            <?php endif ?>
-                    </li>
-                    <li class="wide">
-                        <label for="shipping:street1" class="required"><em>*</em><?php echo $this->__('Address') ?></label>
-                        <div class="input-box">
-                            <input type="text" title="<?php echo $this->__('Street Address') ?>" name="shipping[street][]" id="shipping:street1" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(1)) ?>" class="input-text required-entry" onchange="shipping.setSameAsBilling(false);" />
-                        </div>
-                        </li>
-            <?php for ($_i=2, $_n=$this->helper('customer/address')->getStreetLines(); $_i<=$_n; $_i++): ?>
-                    <li class="wide">
-                        <div class="input-box">
-                            <input type="text" title="<?php echo $this->__('Street Address %s', $_i) ?>" name="shipping[street][]" id="shipping:street<?php echo $_i?>" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet($_i)) ?>" class="input-text" onchange="shipping.setSameAsBilling(false);" />
-                        </div>
-                    </li>
-            <?php endfor ?>
-                    <li class="fields">
-                        <div class="field">
-                            <label for="shipping:city" class="required"><em>*</em><?php echo $this->__('City') ?></label>
-                            <div class="input-box">
-                                <input type="text" title="<?php echo $this->__('City') ?>" name="shipping[city]" value="<?php echo $this->htmlEscape($this->getAddress()->getCity()) ?>" class="input-text required-entry" id="shipping:city" onchange="shipping.setSameAsBilling(false);" />
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="shipping:region" class="required"><em>*</em><?php echo $this->__('State/Province') ?></label>
-                            <div class="input-box">
-                                <select id="shipping:region_id" name="shipping[region_id]" title="<?php echo $this->__('State/Province') ?>" class="validate-select" style="display:none;">
-                                    <option value=""><?php echo $this->__('Please select region, state or province') ?></option>
-                                </select>
-                                <script type="text/javascript">
-                                //<![CDATA[
-                                    $('shipping:region_id').setAttribute('defaultValue',  "<?php echo $this->getAddress()->getRegionId() ?>");
-                                //]]>
-                                </script>
-                                <input type="text" id="shipping:region" name="shipping[region]" value="<?php echo $this->htmlEscape($this->getAddress()->getRegion()) ?>" title="<?php echo $this->__('State/Province') ?>" class="input-text" style="display:none;" />
-                            </div>
-                        </div>
-                    </li>
-                    <li class="fields">
-                        <div class="field">
-                            <label for="shipping:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
-                            <div class="input-box">
-                                <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="shipping[postcode]" id="shipping:postcode" value="<?php echo $this->htmlEscape($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international required-entry" onchange="shipping.setSameAsBilling(false);" />
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="shipping:country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
-                            <div class="input-box">
-                                <?php echo $this->getCountryHtmlSelect('shipping') ?>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="fields">
-                        <div class="field">
-                            <label for="shipping:telephone" class="required"><em>*</em><?php echo $this->__('Telephone') ?></label>
-                            <div class="input-box">
-                                <input type="text" name="shipping[telephone]" value="<?php echo $this->htmlEscape($this->getAddress()->getTelephone()) ?>" title="<?php echo $this->__('Telephone') ?>" class="input-text required-entry" id="shipping:telephone" onchange="shipping.setSameAsBilling(false);" />
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="shipping:fax"><?php echo $this->__('Fax') ?></label>
-                            <div class="input-box">
-                                <input type="text" name="shipping[fax]" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" title="<?php echo $this->__('Fax') ?>" class="input-text" id="shipping:fax" onchange="shipping.setSameAsBilling(false);" />
-                            </div>
-                        </div>
-                    </li>
-                <?php if ($this->isCustomerLoggedIn() && $this->customerHasAddresses()):?>
-                    <li class="control">
-                        <input type="checkbox" name="shipping[save_in_address_book]" value="1" title="<?php echo $this->__('Save in address book') ?>" id="shipping:save_in_address_book" onchange="shipping.setSameAsBilling(false);"<?php if ($this->getAddress()->getSaveInAddressBook()):?> checked="checked"<?php endif;?> class="checkbox" /><label for="shipping:save_in_address_book"><?php echo $this->__('Save in address book') ?></label></li>
-                <?php else:?>
-                    <li class="no-display"><input type="hidden" name="shipping[save_in_address_book]" value="1" /></li>
-                <?php endif;?>
-                </ul>
-            </fieldset>
-        </li>
-        <li class="control">
-            <input type="checkbox" name="shipping[same_as_billing]" id="shipping:same_as_billing" value="1"<?php if($this->getAddress()->getSameAsBilling()): ?> checked="checked"<?php endif; ?> title="<?php echo $this->__('Use Billing Address') ?>" onclick="shipping.setSameAsBilling(this.checked)" class="checkbox" /><label for="shipping:same_as_billing"><?php echo $this->__('Use Billing Address') ?></label>
-        </li>
-    </ul>
-    <div class="buttons-set" id="shipping-buttons-container">
-        <p class="required"><?php echo $this->__('* Required Fields') ?></p>
-        <p class="back-link"><a href="#" onclick="checkout.back(); return false;"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
-        <button type="button" class="button" title="<?php echo $this->__('Continue') ?>" onclick="shipping.save()"><span><span><?php echo $this->__('Continue') ?></span></span></button>
-        <span id="shipping-please-wait" class="please-wait" style="display:none;">
-            <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading next step...') ?>" title="<?php echo $this->__('Loading next step...') ?>" class="v-middle" /> <?php echo $this->__('Loading next step...') ?>
-        </span>
-    </div>
-</form>
+<?php if ($this->isShow()):?>
 <script type="text/javascript">
 //<![CDATA[
-    var shipping = new Shipping('co-shipping-form', '<?php echo $this->getUrl('checkout/onepage/getAddress') ?>address/', '<?php echo $this->getUrl('checkout/onepage/saveShipping') ?>',
-        '<?php echo $this->getUrl('checkout/onepage/shippingMethod') ?>');
-    var shippingForm = new VarienForm('co-shipping-form');
-    shippingForm.extraChildParams = ' onchange="shipping.setSameAsBilling(false);"';
-    //shippingForm.setElementsRelation('shipping:country_id', 'shipping:region', '<?php echo $this->getUrl('directory/json/childRegion') ?>', '<?php echo $this->__('Select State/Province...') ?>');
-    $('shipping-address-select') && shipping.newAddress(!$('shipping-address-select').value);
+    var countryRegions = <?php echo $this->helper('directory')->getRegionJson();?>;
+	var regionCitys = <?php echo $this->helper('directory')->getCityJson();?>;
+	var cityAreas = <?php echo $this->helper('directory')->getAreaJson();?>;
+	var addresses = {};
+	<?php if ($this->customerHasAddresses()): ?>
+		<?php foreach ($this->getCustomer()->getAddresses() as $address):?>
+			<?php if ($address->getCountryId() != $this->getCountryId() && !$this->getCountryMore()) {continue; } ?>
+			addresses[<?php echo $address->getId();?>] = <?php echo json_encode(array(
+				'customer_address_id'=> $address->getId(),
+				'email'	=> $address->getEmail(),
+				'name' => $address->getName(),
+				'country_id'=> $address->getCountryId(),
+				'region_id' => $address->getRegionId(),
+				'region' => $address->getRegion(),
+				'city_id' => $address->getCityId(),
+				'city' => $address->getCity(),
+				'area_id' => $address->getAreaId(),
+				'area' => $address->getArea(),
+				'street' => $address->getStreet(),
+				'postcode' => $address->getPostcode(),
+				'telephone' => $address->getTelephone(),
+				'mobile'	=> $address->getMobile()
+			), false); ?>;
+		<?php endforeach;?>
+	<?php endif;?>
+	
+	window.renderAddressList = function(){
+		var html = '';
+		for(var addressId in addresses) {
+			if (addresses[addressId]['customer_address_id']){
+				html += '<li tag="'+addressId+'">'+
+						addresses[addressId]['region']+addresses[addressId]['city']+
+						addresses[addressId]['area']+addresses[addressId]['street']+' ('+addresses[addressId]['name']+')'+
+						'</li>';
+			}
+		}
+		return html += '<li tag="0">- 添加新地址 -</li>';
+	};
 
-    var shippingRegionUpdater = new RegionUpdater('shipping:country_id', 'shipping:region', 'shipping:region_id', countryRegions, undefined, 'shipping:postcode');
+	window.setAddressName = function(){
+		$("#region").val($("#region_id").find('option[value="'+$("#region_id").val()+'"]').text());
+		$("#city").val($("#city_id").find('option[value="'+$("#city_id").val()+'"]').text());
+		$("#area").val($("#area_id").find('option[value="'+$("#area_id").val()+'"]').text());
+	};
+
+	window.regionChange = function(countryId){
+		if(!countryId){countryId = $("#country_id").val();}
+		if(countryRegions[countryId]){
+			html = '';
+			$.each(countryRegions[countryId], function(key, item) {
+				html += '<option value="'+key+'">'+item.name+'</option>';
+			});
+			$("#region_id").html(html).trigger('change').show();
+		}else{
+			$("#region_id").empty();
+			$("#city_id").empty().hide();
+			$("#area_id").empty().hide();
+		}
+		setAddressName();
+	};
+
+	window.cityChange = function(regionId){
+		if(!regionId){regionId = $("#region_id").val();}
+		if(regionCitys[regionId]){
+			html = '';
+			$.each(regionCitys[regionId], function(key, item) {
+				html += '<option value="'+key+'">'+item.name+'</option>';
+			});
+			$("#city_id").html(html).trigger('change').show();
+		}else {
+			$("#city_id").empty().hide();
+			$("#area_id").empty().hide();
+			$("#city").attr('type', 'text');
+		}
+		setAddressName();
+	};
+
+	window.areaChange = function(cityId){
+		if(!cityId){cityId = $("#city_id").val();}
+		if(cityAreas[cityId]){
+			html = '';
+			$.each(cityAreas[cityId], function(key, item) {
+				html += '<option value="'+key+'">'+item.name+'</option>';
+			});
+			$("#area_id").html(html).show();
+		}
+		setAddressName();
+	};
 //]]>
 </script>
+
+<div class="shipping onepage_items clearfix">
+	<h4><?php echo $this->__('Consignee information');?> <span><a id="address-edit" href="javascript:void(0)"><?php echo $this->__('Change');?></a></span> </h4>
+	<div class="clearbolck"></div>
+	<form id="address-form" style="display:none">
+		<?php if ($this->customerHasAddresses()): ?>
+		<div id="address-list" class="clearfix">
+			<div class="stock_address"><strong><?php echo $this->__('Commonly used address');?></strong>
+				<ul>
+					<script type="text/javascript">
+						$("#address-list ul").html(renderAddressList());
+					</script>
+				</ul>
+			</div>
+		</div>
+		<?php endif; ?>
+		<ul class="form_list">
+			<li class="fields"> <span class="label"><?php echo $this->__('Shipped to Name');?>：</span>
+				<div class="input-box">
+					<input name="name" type="text" class="input-text" value="<?php echo $this->getName();?>" validata="required:true,minLength:2"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter a name');?>"></span>
+				</div>
+			</li>
+			<li class="fields"style="display:none">
+                <div class="input-box">
+					<input type="hidden" id="customer_address_id" name="customer_address_id" value="<?php echo $this->getCustomerAddressId();?>" />
+                </div>
+			</li>
+			<li class="fields" style="display:none">
+				<?php if ($this->getCountryMore()):?>
+				<span class="label"><?php echo $this->__('Country');?>：</span>
+				<div class="input-box"><?php echo $this->getCountryHtmlSelect();?></div>
+				<?php else:?>
+				<input id="country_id" name="country_id" type="hidden" value="<?php echo $this->getCountryId();?>" />
+				<?php endif;?>
+				<script type="text/javascript">
+					$(function(){
+						$("#country_id").change(function(){regionChange();}).trigger('change');
+						<?php if ($countryId = $this->getCountryId()):?>
+							$("#country_id").val("<?php echo $countryId;?>").trigger('change');
+						<?php endif;?>
+					});
+				</script> 
+			</li>
+			<li class="fields"> <span class="label"><?php echo $this->__('State/Province');?>：</span>
+				<div id="address-item" class="input-box"> <span>
+					<select id="region_id" name="region_id" validata="required:true">
+					</select>
+					<input id="region" name="region" type="hidden" value="<?php echo $this->getRegion();?>" />
+					<span class="prompt-msg"></span> </span> <span>
+					<select id="city_id" name="city_id">
+					</select>
+					<input id="city" name="city" type="hidden" value="<?php echo $this->getCity();?>" validata="required:true"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter city');?>"></span> </span> <span>
+					<select id="area_id" name="area_id">
+					</select>
+					<input id="area" name="area" type="hidden" value="<?php echo $this->getArea();?>"/>
+					</span> </div>
+				<script type="text/javascript">
+					$(function(){
+						$("#region_id").change(function(){cityChange();}).trigger('change');
+						$("#city_id").change(function(){areaChange();}).trigger('change');
+						$("#area_id").change(function(){setAddressName();});
+
+						<?php if ($regionId = $this->getRegionId()):?>
+							$("#region_id").val('<?php echo $regionId;?>').trigger('change');
+						<?php endif;?>
+						<?php if ($cityId = $this->getCityId()):?>
+							$("#city_id").val('<?php echo $cityId;?>').trigger('change');
+						<?php endif;?>
+						<?php if ($areaId = $this->getAreaId()):?>
+							$("#area_id").val('<?php echo $areaId;?>').trigger('change');
+						<?php endif;?>
+					});
+				</script> 
+			</li>
+			<li class="fields"> <span class="label"><?php echo $this->__('Shipping Address');?>：</span>
+				<div class="input-box">
+					<textarea cols="60" rows="3" id="street" name="street" class="input-text" validata="required:true"><?php echo $this->getStreet();?></textarea>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter your delivery address');?>"></span> </div>
+			</li>
+			<li class="fields"> <span class="label"><?php echo $this->__('Zip/Postal Code');?>：</span>
+				<div class="input-box">
+					<input name="postcode" type="text" class="input-text" value="<?php echo $this->getPostcode();?>" validata="number:true"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter your zip code receiving area');?>"></span> </div>
+			</li>
+			<?php if (!$this->isCustomerLoggedIn()): ?>
+			<li class="fields"> <span class="label"><?php echo $this->__('Email');?>：</span>
+				<div class="input-box">
+					<input name="email" type="text" class="input-text" value="<?php echo $this->getEmail();?>" validata="required:true,email:true"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter your email');?>"></span> </div>
+			</li>
+			<?php endif; ?>
+			<li class="fields"> <span class="label"><?php echo $this->__('Telephone');?>：</span>
+				<div>
+					<input name="telephone" type="text" class="input-text" value="<?php echo $this->getTelephone();?>" validata="number:true"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter your contact Phone');?>"></span>
+				</div>
+			</li>
+			<li class="fields"> <span class="label"><?php echo $this->__('Mobile');?>：</span>
+				<div>
+					<input name="mobile" type="text" class="input-text" value="<?php echo $this->getMobile() ? $this->getMobile() : $this->getCustomer()->getMobile();?>" validata="number:11"/>
+					<span class="prompt-msg" message="<?php echo $this->__('Please enter your contact Mobile');?>"></span>
+				</div>
+			</li>
+			<?php if ($this->isCustomerLoggedIn()): ?>
+			<li class="fields">
+				<div class="input-box">
+					<input id="save_in_address_book" name="save_in_address_book" type="checkbox" value="1" />
+					<?php echo $this->__('Save in address book');?>
+					<input id="default_shipping" name="default_shipping" type="checkbox" value="1" />
+					<?php echo $this->__('Set as default shipping address');?> </div>
+				<script type="text/javascript">
+					$(function(){
+						$("#default_shipping").change(function(){
+							if($(this).attr('checked')){
+								$("#save_in_address_book").attr('checked', true);
+							}
+						}).trigger('change');
+					});
+				</script> 
+			</li>
+			<?php endif; ?>
+			<li class="fields">
+				<input class="inputbutton" title="<?php echo $this->__('Determine the shipping address');?>" value="<?php echo $this->__('Determine the shipping address');?>" type="submit"/>
+			</li>
+		</ul>
+	</form>
+	<dl id="address-text">
+	</dl>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+     var $addressFrom = $('#address-form');
+     var $addressText = $('#address-text');
+     var $addressEdit = $('#address-edit');
+     var $addressList = $('#address-list');
+     
+     makingware.form.getInstance($addressFrom, {
+    	 error: {
+             required: '<?php echo Mage::helper('core')->__('Required Fields');?>',
+ 			 minLength: '<?php echo Mage::helper('core')->__('At least %s characters');?>',
+ 			 maxLength: '<?php echo Mage::helper('core')->__('Up to %s characters');?>',
+ 			 number1: '<?php echo Mage::helper('core')->__('Must be a number');?>',
+ 			 number2: '<?php echo Mage::helper('core')->__('Must be %s digits');?>',
+ 			 regular: '<?php echo Mage::helper('core')->__('Invalid Input');?>',
+ 			 url: '<?php echo Mage::helper('core')->__('Invalid %s address');?>',
+ 			 email: '<?php echo Mage::helper('core')->__('Invalid %s address');?>',
+ 			 ip: '<?php echo Mage::helper('core')->__('Invalid %s address');?>'
+         }
+	 }).submit(function(){
+		 var $this = $(this);
+		 if($this.data('this').isValidata()){
+			 if(!($this.find('input:[name="telephone"]').val()) && !($this.find('input:[name="mobile"]').val())) {
+				 alertDialog('电话或者手机必须填写一项.');
+	        	 return false;
+		     }
+			 
+			 $.post("<?php echo $this->getUrl('*/*/saveAddress'); ?>", $this.serialize(), function(data) {
+				 if(data){data = $.parseJSON(data);}else{data = {};}
+         		 if(data.error){
+         			if(data.error_messages){alertDialog(data.error_messages);}
+					else if(data.message){
+						if($.isArray(data.message)) {
+							data.message = data.message.join("\n");
+						}
+						alertDialog(data.message);
+					}else{alertDialog(data.error);}
+         		 }else {
+         			addressTextShow();
+ 					 // changed shipping/payment method
+ 					 if(data.customer_address_id){
+ 	 					 $("#customer_address_id").val(data.customer_address_id);
+ 	 			     }
+ 					 if(data.section){
+ 	 					 $.each(data.section, function(key, value){
+ 	 	 					 if(value.name && value.html && $("#"+key).size()){
+ 	 	 	 					 $("#"+key).html(value.html);
+ 	 	 	 				 }
+ 						 });
+ 					 }
+
+ 					 if($this.find('input:[name="save_in_address_book"]').attr('checked')) {
+ 	 					var addressId = $("#customer_address_id").val();
+ 	 					if (addressId) {
+ 	 						addresses[addressId] = addresses[addressId] || {};
+	 						$addressFrom.find(":input[name]").each(function(){
+	 							addresses[addressId][$(this).attr('name')] = $(this).val();
+	 	 					});
+	 						$("#address-list ul").html(renderAddressList());
+ 	 					}
+ 	 				 }
+         		 }
+	         });
+		 }
+		 return false;
+	 });
+
+     $(function(){
+ 		$addressList.find('ul li').live('click', function(event) {
+ 	 		var $this = $(this);
+ 	 		$this.siblings().removeClass('click');
+ 	 		$this.addClass('click');
+
+ 	 		if (addresses[$this.attr('tag')]) {
+ 	 			$.each(addresses[$this.attr('tag')], function(key, value) {
+ 					$addressFrom.find('[name="'+key+'"]').val($.trim(value)).trigger('change');
+ 				});
+ 	 	 	}else {
+ 	 	 		$addressFrom.find(":input[name][name!='country_id']").val('');
+ 	 			$("#region_id").trigger('change');
+ 	 	 	}
+ 		});
+ 		
+ 		// address change
+ 		$addressEdit.click(function() {
+ 			$(this).hide();
+ 			$addressText.empty();
+ 			$addressFrom.show();
+
+ 			if (!$addressList.find('ul li').hasClass('click') && !$addressFrom.find('input[name="name"]').val()){
+ 				var addressId = $("#customer_address_id").val();
+ 	 	 		if (!addresses[addressId]) {
+ 	 	 			addressId = '0';
+ 	 	 	 	}
+ 	 	 		$addressList.find('ul li:[tag="'+addressId+'"]').trigger('click');
+ 	 		}
+ 			return false;
+ 		});
+
+ 		window.addressTextShow = function(){
+ 			$addressFrom.hide();
+			$addressEdit.show();
+
+			 var html = '';
+			 var prefix = '';
+			 $addressFrom.find("ul li").each(function(){
+				 var label, text;
+				 if(label = $(this).find('span[class="label"]').html()){
+					 text = [];
+					 $(this).find('input,textarea:[name!=""]').each(function(){
+						 if($(this).attr('tagName') == 'SELECT'){return true;}
+						 text.push($(this).val());
+					 });
+					 if (label == '省份/地区：') {
+						 prefix = text.join('');
+						 return true;
+					 }
+					 text = text.join('');
+					 if (text == '') {
+						 text = '&nbsp;';
+					 }
+					 html += '<dt>' + label + '</dt>';
+					 html += '<dd>' + prefix + text + '</dd>';
+					 prefix = '';
+				 }
+			 });
+			 $addressText.html(html);
+ 	 	};
+ 		
+ 		if ($addressFrom.find('input[name="name"]').val()) {
+ 			addressTextShow();
+ 	 	}else {
+ 	 		$addressEdit.trigger('click');
+ 	 	}
+ 		//if ($addressFrom.find('input[name="name"]').val()) {$addressFrom.trigger('submit');}
+ 	});
+//]]>
+</script>
+<?php endif;?>

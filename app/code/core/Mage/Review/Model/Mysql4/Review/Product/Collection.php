@@ -204,6 +204,8 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
             case 'rdt.title':
             case 'rdt.nickname':
             case 'rdt.detail':
+            case 'rdt.reply_content':
+            
                 $this->getSelect()->order($attribute . ' ' . $dir);
                 break;
             case 'stores':
@@ -227,6 +229,7 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
             case 'rdt.title':
             case 'rdt.nickname':
             case 'rdt.detail':
+            case 'rdt.reply_content':
                 $conditionSql = $this->_getConditionSql($attribute, $condition);
                 $this->getSelect()->where($conditionSql);
                 return $this;

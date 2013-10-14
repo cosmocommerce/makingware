@@ -122,7 +122,7 @@ class Mage_Install_Model_Installer_Config extends Mage_Install_Model_Installer_A
 
         $data = Mage::getModel('varien/object')
             ->setDbHost('localhost')
-            ->setDbName('magento')
+            ->setDbName('makingware')
             ->setDbUser('root')
             ->setDbPass('')
             ->setSecureBaseUrl($baseSecureUrl)

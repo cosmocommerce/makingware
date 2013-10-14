@@ -85,9 +85,9 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
             'type'      => 'datetime',
         ));
 
-        $this->addColumn('billing_name', array(
+        $this->addColumn('shipping_name', array(
             'header' => Mage::helper('sales')->__('Bill to Name'),
-            'index' => 'billing_name',
+            'index' => 'shipping_name',
         ));
 
         $this->addColumn('state', array(

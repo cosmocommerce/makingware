@@ -53,18 +53,7 @@
         <fieldset>
             <strong><?php echo $_order->getShippingDescription() ?></strong>
             <?php echo $this->helper('sales')->__('Total Shipping Charges'); ?>:
-
-            <?php if ($this->helper('tax')->displayShippingPriceIncludingTax()): ?>
-                <?php $_excl = $this->displayShippingPriceInclTax($_order); ?>
-            <?php else: ?>
-                <?php $_excl = $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
-            <?php endif; ?>
-            <?php $_incl = $this->displayShippingPriceInclTax($_order); ?>
-
-            <?php echo $_excl; ?>
-            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
-                (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
-            <?php endif; ?>
+            <?php echo $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
             <div><?php echo $this->getChildHtml('shipment_tracking') ?></div>
         </fieldset>
     </div>

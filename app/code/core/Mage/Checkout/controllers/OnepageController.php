@@ -82,6 +82,11 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
         return false;
     }
 
+    protected function _getLayout()
+    {
+    	return Mage::getModel('core/layout');
+    }
+
     /**
      * Get shipping method step html
      *
@@ -89,7 +94,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
      */
     protected function _getShippingMethodsHtml()
     {
-        $layout = $this->getLayout();
+        $layout = $this->_getLayout();
         $update = $layout->getUpdate();
         $update->load('checkout_onepage_shippingmethod');
         $layout->generateXml();
@@ -105,7 +110,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
      */
     protected function _getPaymentMethodsHtml()
     {
-        $layout = $this->getLayout();
+        $layout = $this->_getLayout();
         $update = $layout->getUpdate();
         $update->load('checkout_onepage_paymentmethod');
         $layout->generateXml();
@@ -116,13 +121,24 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
 
     protected function _getAdditionalHtml()
     {
-        $layout = $this->getLayout();
+        $layout = $this->_getLayout();
         $update = $layout->getUpdate();
         $update->load('checkout_onepage_additional');
         $layout->generateXml();
         $layout->generateBlocks();
         $output = $layout->getOutput();
         return $output;
+    }
+
+    protected function _getTotals()
+    {
+    	$totals = array();
+		foreach ($this->getOnepage()->getQuote()->getTotals() as $total) {
+			$totals[$total->getCode()] = sprintf('%.2f', abs($total->getValue()));
+		}
+
+		if (empty($totals['discount'])) {$totals['discount'] = 0;}
+		return Mage::helper('core')->jsonEncode($totals);
     }
 
     /**
@@ -166,6 +182,14 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
             $this->_redirect('checkout/cart');
             return;
         }
+        # If there is a virtual goods are hint login to the checkout.
+        if ($quote->hasVirtualItems() && !Mage::helper('customer')->isLoggedIn()) {
+        	Mage::getSingleton('customer/session')
+        		->setBeforeAuthUrl(Mage::getUrl('*/*/*', array('_current' => true)))
+        		->addError($this->__('Please logined of checkout.'));
+        	return $this->_redirectUrl(Mage::helper('customer')->getLoginUrl());
+        }
+        
         Mage::getSingleton('checkout/session')->setCartWasUpdated(false);
         Mage::getSingleton('customer/session')->setBeforeAuthUrl(Mage::getUrl('*/*/*', array('_secure'=>true)));
         $this->getOnepage()->initCheckout();
@@ -228,6 +252,8 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
         $this->loadLayout();
         $this->_initLayoutMessages('checkout/session');
         Mage::dispatchEvent('checkout_onepage_controller_success_action', array('order_ids' => array($lastOrderId)));
+        
+        $this->getLayout()->getBlock('head')->setTitle($this->__('Order submitted successfully'));
         $this->renderLayout();
     }
 
@@ -242,6 +268,8 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
         }
 
         $this->loadLayout();
+        
+        $this->getLayout()->getBlock('head')->setTitle($this->__('Generating order failure. Please contact us or try again later.'));
         $this->renderLayout();
     }
 
@@ -288,72 +316,152 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
     }
 
     /**
-     * save checkout billing address
+     * Address save action
      */
-    public function saveBillingAction()
+    public function saveAddressAction()
     {
-        if ($this->_expireAjax()) {
+    	if ($this->_expireAjax()) {
             return;
         }
         if ($this->getRequest()->isPost()) {
-//            $postData = $this->getRequest()->getPost('billing', array());
-//            $data = $this->_filterPostData($postData);
-            $data = $this->getRequest()->getPost('billing', array());
-            $customerAddressId = $this->getRequest()->getPost('billing_address_id', false);
-
-            if (isset($data['email'])) {
-                $data['email'] = trim($data['email']);
+        	$data = $this->getRequest()->getPost();
+        	if (isset($data['save_in_address_book'])) {
+        		$data['save_in_address_book'] = true;
+        	}
+        	if (isset($data['default_shipping'])) {
+        		$data['default_shipping'] = true;
+        	}
+            $result = $this->getOnepage()->saveShipping($data, $this->getRequest()->getPost('customer_address_id', false));
+        	if (empty($result['error'])) {
+        		$result['customer_address_id'] = $this->getOnepage()->getQuote()->getShippingAddress()->getCustomerAddressId();
+                $result['section'] = array(
+                	'shipping-method' => array(
+                		'name' => 'shipping_method',
+                    	'html' => $this->_getShippingMethodsHtml()
+                	),
+                    'payment-method' => array(
+                		'name' => 'payment[method]',
+                    	'html' => $this->_getPaymentMethodsHtml()
+                	),
+                );
             }
-            $result = $this->getOnepage()->saveBilling($data, $customerAddressId);
-
-            if (!isset($result['error'])) {
-                /* check quote for virtual */
-                if ($this->getOnepage()->getQuote()->isVirtual()) {
-                    $result['goto_section'] = 'payment';
-                    $result['update_section'] = array(
-                        'name' => 'payment-method',
-                        'html' => $this->_getPaymentMethodsHtml()
-                    );
-                } elseif (isset($data['use_for_shipping']) && $data['use_for_shipping'] == 1) {
-                    $result['goto_section'] = 'shipping_method';
-                    $result['update_section'] = array(
-                        'name' => 'shipping-method',
-                        'html' => $this->_getShippingMethodsHtml()
-                    );
-
-                    $result['allow_sections'] = array('shipping');
-                    $result['duplicateBillingInfo'] = 'true';
-                } else {
-                    $result['goto_section'] = 'shipping';
-                }
-            }
-
             $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
         }
     }
 
     /**
-     * Shipping address save action
+     * Payment and Shipping Method save action
      */
-    public function saveShippingAction()
+    public function savePaymentShippingMethodAction()
     {
-        if ($this->_expireAjax()) {
+    	if ($this->_expireAjax()) {
             return;
         }
-        if ($this->getRequest()->isPost()) {
-            $data = $this->getRequest()->getPost('shipping', array());
-            $customerAddressId = $this->getRequest()->getPost('shipping_address_id', false);
-            $result = $this->getOnepage()->saveShipping($data, $customerAddressId);
+        $result = array();
+        try {
+        	if (!$this->getRequest()->isPost()) {
+                $this->_ajaxRedirectResponse();
+                return;
+            }
+            $data = $this->getRequest()->getPost();
 
-            if (!isset($result['error'])) {
-                $result['goto_section'] = 'shipping_method';
-                $result['update_section'] = array(
-                    'name' => 'shipping-method',
-                    'html' => $this->_getShippingMethodsHtml()
+	        // Please save shipping method before payment method
+            $paymentResult = $this->getOnepage()->savePayment(empty($data['payment']) ? array() : $data['payment']);
+	        if ($this->getOnepage()->getQuote()->isVirtual()) {
+	        	$shippingResult = array();
+	        }else {
+	        	$shippingResult = $this->getOnepage()->saveShippingMethod(empty($data['shipping_method']) ? '' : $data['shipping_method']);
+	        }
+
+            $paymentResult = $this->getOnepage()->savePayment(empty($data['payment']) ? array() : $data['payment']);
+
+            $result = array_merge($paymentResult, $shippingResult);
+        	if (empty($result['error'])) {
+                $result['section'] = array(
+                	'totals' => array(
+                		'name' => 'order_totals',
+                    	'html' => '',
+                		'json' => $this->_getTotals()
+                	)
                 );
             }
-            $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+
+        } catch (Mage_Payment_Exception $e) {
+            if ($e->getFields()) {
+                $result['fields'] = $e->getFields();
+            }
+            $result['error'] = $e->getMessage();
+        } catch (Exception $e) {
+        	Mage::log($e->getMessage());
+            $result['error'] = $this->__('Unable Method.');
         }
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+    }
+
+	public function saveBillAction ()
+	{
+		if ($this->_expireAjax()) {
+			return;
+		}
+		if ($this->getRequest()->isPost()) {
+			$data = $this->getRequest()->getPost();
+			$billQuoteModel = Mage::getModel('makingware_bill/bill_quote');
+
+			if ($billQuoteModel->isObjectNew()) {
+				$data['quote_id'] = $billQuoteModel->getQuote()->getId();
+			}
+			$data['price'] = $billQuoteModel->getQuote()->getSubtotal();
+			$billQuoteModel->setData($data)->delete()->save();
+		}
+		$result = array();
+		$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+	}
+
+	public function applyCouponAction()
+    {
+    	if ($this->_expireAjax()) {
+			return;
+		}
+
+        $couponCode = (string) $this->getRequest()->getParam('coupon_code');
+        if ($this->getRequest()->getParam('remove') == 1) {
+            $couponCode = '';
+        }
+        $oldCouponCode = $this->getOnepage()->getQuote()->getCouponCode();
+
+        if (!strlen($couponCode) && !strlen($oldCouponCode)) {
+            return;
+        }
+
+        $result = array();
+        try {
+            $this->getOnepage()->getQuote()->getShippingAddress()->setCollectShippingRates(true);
+            $this->getOnepage()->getQuote()->setCouponCode(strlen($couponCode) ? $couponCode : '')
+                ->collectTotals()
+                ->save();
+
+            if ($couponCode && $couponCode != $this->getOnepage()->getQuote()->getCouponCode()) {
+            	$result['error'] = $this->__('Coupon code "%s" is not valid.', Mage::helper('core')->htmlEscape($couponCode));
+            }
+
+        	if (empty($result['error'])) {
+                $result['section'] = array(
+                	'totals' => array(
+                		'name' => 'order_totals',
+                    	'html' => '',
+                		'json' => $this->_getTotals()
+                	)
+                );
+            }
+
+        } catch (Mage_Core_Exception $e) {
+        	$result['error'] = $e->getMessage();
+        } catch (Exception $e) {
+            $result['error'] = $this->__('Cannot apply the coupon code.');
+            Mage::logException($e);
+        }
+
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
 
     /**
@@ -374,7 +482,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
                 Mage::dispatchEvent('checkout_controller_onepage_save_shipping_method', array('request'=>$this->getRequest(), 'quote'=>$this->getOnepage()->getQuote()));
                 $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
 
-                $result['goto_section'] = 'payment';
+                $result['goto_section'] = 'payment_method';
                 $result['update_section'] = array(
                     'name' => 'payment-method',
                     'html' => $this->_getPaymentMethodsHtml()
@@ -455,8 +563,25 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
             }
             if ($data = $this->getRequest()->getPost('payment', false)) {
                 $this->getOnepage()->getQuote()->getPayment()->importData($data);
+            }else {
+            	$this->getOnepage()->getQuote()->collectTotals();
             }
+
+            # Customer comment...
+            $data = $this->getRequest()->getPost('customer_comment', '');
+            if (!empty($data)) {
+            	$this->getOnepage()->getQuote()->setCustomerComment($data);
+            }
+
             $this->getOnepage()->saveOrder();
+
+        	# bill
+        	if ($this->getRequest()->getPost('bill', 0)) {
+	            if ($bill = Mage::getModel('makingware_bill/bill')) {
+	            	$bill->saveBill();
+	            }
+        	}
+
             $redirectUrl = $this->getOnepage()->getCheckout()->getRedirectUrl();
             $result['success'] = true;
             $result['error']   = false;

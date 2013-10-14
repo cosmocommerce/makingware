@@ -152,22 +152,22 @@ class Mage_Sales_Block_Order_Print_Shipment extends Mage_Sales_Block_Items_Abstr
     }
 
     /**
-     * Getter for billing address of order by format
+     * Getter for shipping address of order by format
      *
      * @param Mage_Sales_Model_Order $order
      * @return string
      */
-    public function getBillingAddressFormattedHtml($order)
+    public function getShippingAddressFormattedHtml($order)
     {
-        $billingAddress = $order->getBillingAddress();
-        if(!($billingAddress instanceof Mage_Sales_Model_Order_Address)) {
+        $shippingAddress = $order->getShippingAddress();
+        if(!($shippingAddress instanceof Mage_Sales_Model_Order_Address)) {
             return '';
         }
-        return $billingAddress->format('html');
+        return $shippingAddress->format('html');
     }
 
     /**
-     * Getter for billing address of order by format
+     * Getter for shipping address of order by format
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
      * @return array

@@ -76,11 +76,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View_Orders extends Mage_Adminhtml_
             'type'      => 'datetime',
         ));
 
-        $this->addColumn('billing_name', array(
-            'header'    => Mage::helper('customer')->__('Bill to Name'),
-            'index'     => 'billing_name',
-        ));
-
         $this->addColumn('shipping_name', array(
             'header'    => Mage::helper('customer')->__('Shipped to Name'),
             'index'     => 'shipping_name',

@@ -210,7 +210,7 @@ class Mage_Sales_Block_Recurring_Profile_View extends Mage_Core_Block_Template
             'label' => $this->_profile->getFieldLabel('currency_code'),
             'value' => $this->_profile->getCurrencyCode()
         ));
-        foreach (array('init_amount', 'trial_billing_amount', 'billing_amount', 'tax_amount', 'shipping_amount') as $key) {
+        foreach (array('init_amount', 'trial_shipping_amount', 'shipping_amount') as $key) {
             $value = $this->_profile->getData($key);
             if ($value) {
                 $this->_addInfo(array(
@@ -223,23 +223,20 @@ class Mage_Sales_Block_Recurring_Profile_View extends Mage_Core_Block_Template
     }
 
     /**
-     * Prepare profile address (billing or shipping) info
+     * Prepare profile address shipping info
      */
     public function prepareAddressInfo()
     {
         $this->_shouldRenderInfo = true;
 
-        if ('shipping' == $this->getAddressType()) {
+        if (true) {
             if ('1' == $this->_profile->getInfoValue('order_item_info', 'is_virtual')) {
                 $this->getParentBlock()->unsetChild('sales.recurring.profile.view.shipping');
                 return;
             }
-            $key = 'shipping_address_info';
-        } else {
-            $key = 'billing_address_info';
         }
         $this->setIsAddress(true);
-        $address = Mage::getModel('sales/order_address', $this->_profile->getData($key));
+        $address = Mage::getModel('sales/order_address', $this->_profile->getData('shipping_address_info'));
         $this->_addInfo(array(
             'value' => preg_replace('/\\n{2,}/', "\n", $address->getFormated()),
         ));
@@ -251,7 +248,7 @@ class Mage_Sales_Block_Recurring_Profile_View extends Mage_Core_Block_Template
     public function prepareRelatedOrdersFrontendGrid()
     {
         $this->_prepareRelatedOrders(array(
-            'increment_id', 'created_at', 'customer_firstname', 'customer_lastname', 'base_grand_total', 'status'
+            'increment_id', 'created_at', 'customer_name', 'base_grand_total', 'status'
         ));
         $this->_relatedOrders->addFieldToFilter('state', array(
             'in' => Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates()

@@ -136,8 +136,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Method_Form extends Mage_
         return $this->getRequest()->getParam('collect_shipping_rates');
     }
 
-    public function getShippingPrice($price, $flag)
+    public function getShippingPrice($price, $flag = true)
     {
-        return $this->getQuote()->getStore()->convertPrice(Mage::helper('tax')->getShippingPrice($price, $flag, $this->getAddress()), true);
+        return $this->getQuote()->getStore()->convertPrice($price, $flag);
     }
 }

@@ -258,4 +258,100 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
 
         return $this;
     }
+
+    public function showColorImage($current_product)
+    {
+    	if($current_product-> isConfigurable ())
+    	{
+			$attributes=$this->getAllowAttributes($current_product);
+
+    		foreach($attributes as $attribute)
+    		{
+				if($attribute->getProductAttribute()->getFrontendInput()=="color")
+				{
+					return true;
+				}
+    		}
+    	}
+
+    	return false;
+    }
+
+    public function getAllowAttributes($current_product)
+    {
+		return $current_product->getTypeInstance(true)->getConfigurableAttributes($current_product);
+    }
+
+    public function getAllProducts($current_product)
+    {
+	    $products = array();
+	    $allProducts = $current_product->getTypeInstance(true)
+	    ->getUsedProducts(null, $current_product);
+
+	    foreach ($allProducts as $product) {
+	    	$products[] = $product;
+	    }
+
+	    return $products;
+    }
+
+     public function getAllColors($current_product)
+    {
+		$allColors=array();
+
+		foreach ($this->getAllProducts($current_product) as $product)
+		{
+            foreach ($this->getAllowAttributes($current_product) as $attribute)
+            {
+			   $productAttribute = $attribute->getProductAttribute();
+			   $attributeValue = $product->getData($productAttribute->getAttributeCode());
+			   $prices = $attribute->getPrices();
+
+				if (is_array($prices)){
+					foreach ($prices as $value){
+						if($attributeValue==$value['value_index']){
+							if($productAttribute->getFrontendInput()=='color'){
+								if(!empty($value['color_value'])){
+                                    $allColors[$value['value_index']]['colorValue']=$value['color_value'];
+                                }
+                                
+                                if(!empty($value['color_pic'])){
+                                     $allColors[$value['value_index']]['imageUrl']=$value['color_pic'];   
+                                    
+                                }else{
+                                   $allColors[$value['value_index']]['imageUrl']=$value['image_url']?$value['image_url']:'';
+                                }
+                                
+                                if(!empty($value['color_text'])){
+                                    $allColors[$value['value_index']]['colorLabel']=$value['color_text'];
+                                }else{
+                                    $allColors[$value['value_index']]['colorLabel']=$value['label'];  
+                                }
+							}
+						}
+					}
+				}
+            }
+		}
+
+		return $allColors;
+    }
+
+    public function getImageUrl()
+    {
+		return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product';
+    }
+
+    public function getDefaultProduct($current_product)
+    {
+    	$allProducts=$this->getAllProducts($current_product);
+        $defaultProduct=null;
+    	foreach($allProducts as $product)
+    	{
+            $defaultProduct= $product;
+            break;
+    	}
+
+    	return $defaultProduct;
+    }
 }

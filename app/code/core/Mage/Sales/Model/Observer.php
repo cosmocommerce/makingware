@@ -224,14 +224,14 @@ class Mage_Sales_Model_Observer
     }
 
     /**
-     * Block admin ability to use customer billing agreements
+     * Block admin ability to use customer shipping agreements
      *
      * @param Varien_Event_Observer $observer
      */
-    public function restrictAdminBillingAgreementUsage($observer)
+    public function restrictAdminShippingAgreementUsage($observer)
     {
         $methodInstance = $observer->getEvent()->getMethodInstance();
-        if (!($methodInstance instanceof Mage_Sales_Model_Payment_Method_Billing_AgreementAbstract)) {
+        if (!($methodInstance instanceof Mage_Sales_Model_Payment_Method_Shipping_AgreementAbstract)) {
             return;
         }
         if (!Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/use')) {

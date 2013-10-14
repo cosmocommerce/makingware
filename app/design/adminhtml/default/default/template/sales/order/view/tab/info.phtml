@@ -42,7 +42,7 @@
                 <h4 class="icon-head head-payment-method"><?php echo Mage::helper('sales')->__('Payment Information') ?></h4>
             </div>
             <fieldset>
-                <?php echo $this->getPaymentHtml() ?>
+                <?php echo $this->getPaymentHtml();?>
                 <div><?php echo Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode()) ?></div>
             </fieldset>
         </div>
@@ -55,27 +55,44 @@
                 <h4 class="icon-head head-shipping-method"><?php echo Mage::helper('sales')->__('Shipping &amp; Handling Information') ?></h4>
             </div>
             <fieldset>
+				<!-- Added Tracking Information -->
+				<?php $_results = $this->getTrackingInfo() ?>
+				<?php if(sizeof($_results)>0): ?>
+				<?php foreach($_results as $shipid => $_result): ?>
+				    <?php if($shipid): ?>
+				    <h3><?php echo $this->__('Shipment #').$shipid; ?></h3>
+				    <?php endif; ?>
+				    <?php if(sizeof($_result)>0): ?>
+				        <?php foreach($_result as $track): ?>
+								<?php echo ($track['title'] ? $this->escapeHtml($track['title']) : $this->__('N/A'));?>
+								<?php echo (isset($track['number']) ? $this->escapeHtml($track['number']) : '');?>
+				                <div class="divider"></div>
+
+				        <?php endforeach; ?>
+				    <?php else: ?>
+				        <p><?php echo $this->__('There is no tracking available for this shipment.'); ?></p>
+				    <?php endif; ?>
+
+				<?php endforeach; ?>
+				<?php else: ?>
+			    	<div><?php echo $this->__('There is no tracking available.'); ?></div>
+				<?php endif; ?>
+				<!-- End Added Tracking Information -->
                 <?php  if ($_order->getTracksCollection()->count()) : ?>
                 <a href="#" id="linkId" onclick="popWin('<?php echo $this->helper('shipping')->getTrackingPopupUrlBySalesModel($_order) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?php echo $this->__('Track Order') ?>"><?php echo $this->__('Track Order') ?></a>
                 <br/>
                 <?php endif; ?>
                 <?php if ($_order->getShippingDescription()): ?>
                     <strong><?php echo $_order->getShippingDescription() ?></strong>
-
-                    <?php if ($this->helper('tax')->displayShippingPriceIncludingTax()): ?>
-                        <?php $_excl = $this->displayShippingPriceInclTax($_order); ?>
-                    <?php else: ?>
-                        <?php $_excl = $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
-                    <?php endif; ?>
-                    <?php $_incl = $this->displayShippingPriceInclTax($_order); ?>
-
-                    <?php echo $_excl; ?>
-                    <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
-                        (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
-                    <?php endif; ?>
+                    <?php echo $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
                 <?php else: ?>
                     <?php echo $this->helper('sales')->__('No shipping information available'); ?>
                 <?php endif; ?>
+                 <?php if ($this->canShowShippingBestTime()): ?>
+                 	<br/>
+                    <?php echo $this->helper('sales')->__('Shipping Date:'); ?>
+                    <?php echo $this->getChildHtml('shipping_time') ?>
+                 <?php endif; ?>
             </fieldset>
         </div>
     </div>
@@ -89,6 +106,10 @@
         </div>
     </div>
     <?php echo $this->getItemsHtml() ?>
+    <div class="clear"></div>
+
+    <!-- Customer Comment -->
+    <?php echo $this->getCustomerCommentHtml() ?>
     <div class="clear"></div>
 
     <div class="box-left">

@@ -110,6 +110,8 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Form_Abstract
     {
         return array(
             'region'    => $this->getLayout()->createBlock('adminhtml/customer_edit_renderer_region'),
+        	'city'		=> $this->getLayout()->createBlock('adminhtml/customer_edit_renderer_city'),
+        	'area'		=> $this->getLayout()->createBlock('adminhtml/customer_edit_renderer_area'),
         );
     }
 

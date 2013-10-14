@@ -241,16 +241,18 @@ Layout handle for configurable products
                 <block type="adminhtml/catalog_product_edit_action_attribute_tab_attributes" name="tab_attributes"/>
                 <block type="adminhtml/catalog_product_edit_action_attribute_tab_inventory" name="tab_inventory" template="catalog/product/edit/action/inventory.phtml" />
                 <block type="adminhtml/catalog_product_edit_action_attribute_tab_websites" name="tab_websites" template="catalog/product/edit/action/websites.phtml" />
+                <block type="adminhtml/catalog_product_edit_action_attribute_tab_options" name="tab_options" />
                 <action method="addTab"><name>attributes</name><block>tab_attributes</block></action>
                 <action method="addTab"><name>inventory</name><block>tab_inventory</block></action>
                 <action method="addTab"><name>websites</name><block>tab_websites</block></action>
+                <action method="addTab"><name>options</name><block>tab_options</block></action>
             </block>
         </reference>
         <reference name="content">
             <block type="adminhtml/catalog_product_edit_action_attribute" name="attribute" template="catalog/product/edit/action/attribute.phtml" />
         </reference>
     </adminhtml_catalog_product_action_attribute_edit>
-    
+
     <adminhtml_catalog_product_attribute_edit>
         <reference name="left">
             <block type="adminhtml/catalog_product_attribute_edit_tabs" name="attribute_edit_tabs"></block>
@@ -288,11 +290,11 @@ Layout handle for configurable products
             <block type="adminhtml/catalog_product_composite_fieldset_qty" name="product.composite.fieldset.qty" template="catalog/product/composite/fieldset/qty.phtml"/>
         </block>
     </ADMINHTML_CATALOG_PRODUCT_COMPOSITE_CONFIGURE>
-    
+
     <ADMINHTML_CATALOG_PRODUCT_COMPOSITE_CONFIGURE_ERROR>
         <block type="adminhtml/catalog_product_composite_error" name="product.composite.error" output="toHtml" />
     </ADMINHTML_CATALOG_PRODUCT_COMPOSITE_CONFIGURE_ERROR>
-    
+
     <ADMINHTML_CATALOG_PRODUCT_COMPOSITE_UPDATE_RESULT>
         <block type="adminhtml/catalog_product_composite_update_result" name="product.composite.update.result" output="toHtml" />
     </ADMINHTML_CATALOG_PRODUCT_COMPOSITE_UPDATE_RESULT>

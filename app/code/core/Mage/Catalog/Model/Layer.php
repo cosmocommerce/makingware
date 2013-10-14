@@ -119,7 +119,6 @@ class Mage_Catalog_Model_Layer extends Varien_Object
             ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
             ->addMinimalPrice()
             ->addFinalPrice()
-            ->addTaxPercents()
             //->addStoreFilter()
             ->addUrlRewrite($this->getCurrentCategory()->getId());
 

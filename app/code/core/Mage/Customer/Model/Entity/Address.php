@@ -47,13 +47,10 @@ class Mage_Customer_Model_Entity_Address extends Mage_Eav_Model_Entity_Abstract
         if ($address->getIsCustomerSaveTransaction()) {
             return $this;
         }
-        if ($address->getId() && ($address->getIsDefaultBilling() || $address->getIsDefaultShipping())) {
+        if ($address->getId() && $address->getIsDefaultShipping()) {
             $customer = Mage::getModel('customer/customer')
                 ->load($address->getCustomerId());
 
-            if ($address->getIsDefaultBilling()) {
-                $customer->setDefaultBilling($address->getId());
-            }
             if ($address->getIsDefaultShipping()) {
                 $customer->setDefaultShipping($address->getId());
             }

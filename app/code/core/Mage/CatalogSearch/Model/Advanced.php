@@ -289,7 +289,6 @@ class Mage_CatalogSearch_Model_Advanced extends Mage_Core_Model_Abstract
         $collection->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
             ->setStore(Mage::app()->getStore())
             ->addMinimalPrice()
-            ->addTaxPercents()
             ->addStoreFilter();
 
         Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);

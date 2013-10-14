@@ -305,4 +305,28 @@ class Mage_Sales_OrderController extends Mage_Core_Controller_Front_Action
             $this->_redirect('*/*/history');
         }
     }
+
+    public function cancelAction ()
+    {
+        $session = Mage::getSingleton('catalog/session');
+        $orderId = (int) $this->getRequest()->getParam('order_id');
+        $back = $this->getRequest()->getParam('back');
+
+        if (! $orderId) {
+            $this->_forward('noRoute');
+            return false;
+        }
+
+        $order = Mage::getModel('sales/order')->load($orderId);
+        $order->cancel()->save();
+
+        if ($back) {
+            $session = Mage::getSingleton('customer/session');
+            $session->addSuccess($this->__('Order was successfully cancelled.'));
+            $this->_redirect('customer/account/index');
+        } else {
+            $session->addSuccess($this->__('Order was successfully cancelled.'));
+            $this->_redirect('sales/order/history');
+        }
+    }
 }

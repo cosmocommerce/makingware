@@ -231,25 +231,12 @@ class Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option extends Mage_Bun
      */
     public function formatPriceString($price, $includeContainer = true)
     {
-        $taxHelper  = Mage::helper('tax');
-        $coreHelper = $this->helper('core');
         if ($this->getFormatProduct()) {
             $product = $this->getFormatProduct();
         } else {
             $product = $this->getProduct();
         }
 
-        $priceTax    = $taxHelper->getPrice($product, $price);
-        $priceIncTax = $taxHelper->getPrice($product, $price, true);
-
-        $formated = $coreHelper->currencyByStore($priceTax, $product->getStore(), true, $includeContainer);
-        if ($taxHelper->displayBothPrices() && $priceTax != $priceIncTax) {
-            $formated .=
-                    ' (+' .
-                    $coreHelper->currencyByStore($priceIncTax, $product->getStore(), true, $includeContainer) .
-                    ' ' . $this->__('Incl. Tax') . ')';
-        }
-
-        return $formated;
+        return $this->helper('core')->currencyByStore($price, $product->getStore(), true, $includeContainer);
     }
 }

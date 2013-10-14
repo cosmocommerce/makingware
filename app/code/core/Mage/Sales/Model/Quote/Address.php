@@ -34,8 +34,6 @@
  */
 class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstract
 {
-    const TYPE_BILLING  = 'billing';
-    const TYPE_SHIPPING = 'shipping';
     const RATES_FETCH = 1;
     const RATES_RECALCULATE = 2;
 
@@ -111,6 +109,9 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
                 $this->_dataSaveAllowed = false;
             }
             $this->setCustomerId($this->getQuote()->getCustomerId());
+            if (!$this->getCountryId()) {
+            	$this->setCountryId(Mage::helper('directory')->getDefaultCountry());
+            }
             /**
              * Init customer address id if customer address is assigned
              */
@@ -203,10 +204,9 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
      */
     public function importOrderAddress(Mage_Sales_Model_Order_Address $address)
     {
-        $this->setAddressType($address->getAddressType())
-            ->setCustomerId($address->getCustomerId())
-            ->setCustomerAddressId($address->getCustomerAddressId())
-            ->setEmail($address->getEmail());
+        $this->setCustomerId($address->getCustomerId())
+             ->setCustomerAddressId($address->getCustomerAddressId())
+             ->setEmail($address->getEmail());
 
         Mage::helper('core')->copyFieldset('sales_convert_order_address', 'to_quote_address', $address, $this);
 
@@ -292,11 +292,10 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
                 }
             } else {
                 /*
-                * For virtual quote we assign items only to billing address, otherwise - only to shipping address
+                * For virtual quote we assign items only to shipping address, otherwise - only to shipping address
                 */
-                $addressType = $this->getAddressType();
-                $canAddItems = $this->getQuote()->isVirtual() ? ($addressType == self::TYPE_BILLING) : ($addressType == self::TYPE_SHIPPING);
-
+            	#var_dump($this->getCollectShippingRates());
+            	$canAddItems = true;#$this->getQuote()->isVirtual();
                 if ($canAddItems) {
                     foreach ($quoteItems as $qItem) {
                         if ($qItem->isDeleted()) {
@@ -673,9 +672,13 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         if (!$this->getCollectShippingRates()) {
             return $this;
         }
-
         $this->setCollectShippingRates(false);
-
+        
+        Mage::dispatchEvent(
+        	$this->_eventPrefix . '_collect_shipping_rates_before',
+        	array($this->_eventObject => $this)
+        );
+        
         $this->removeAllShippingRates();
 
         if (!$this->getCountryId()) {
@@ -689,6 +692,11 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
                 ->setShippingMethod('')
                 ->setShippingDescription('');
         }
+        
+        Mage::dispatchEvent(
+        	$this->_eventPrefix . '_collect_shipping_rates_after',
+        	array($this->_eventObject => $this)
+        );
 
         return $this;
     }
@@ -744,7 +752,6 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         $request->setLimitCarrier($this->getLimitCarrier());
 
         $result = Mage::getModel('shipping/shipping')->collectRates($request)->getResult();
-
         $found = false;
         if ($result) {
             $shippingRates = $result->getAllRates();
@@ -811,7 +818,9 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     public function collectTotals()
     {
         foreach ($this->getTotalCollector()->getCollectors() as $model) {
-            $model->collect($this);
+        	if ($model instanceof Mage_Sales_Model_Quote_Address_Total_Abstract) {
+            	$model->collect($this);
+        	}
         }
         return $this;
     }
@@ -824,7 +833,9 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     public function getTotals()
     {
         foreach ($this->getTotalCollector()->getRetrievers() as $model) {
-            $model->fetch($this);
+        	if ($model instanceof Mage_Sales_Model_Quote_Address_Total_Abstract) {
+            	$model->fetch($this);
+        	}
         }
         return $this->_totals;
     }
@@ -870,10 +881,10 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
             return true;
         }
 
-        if ($this->getQuote()->getIsVirtual() && $this->getAddressType() == self::TYPE_SHIPPING) {
+        if ($this->getQuote()->getIsVirtual()) {
             return true;
         }
-        elseif (!$this->getQuote()->getIsVirtual() && $this->getAddressType() != self::TYPE_SHIPPING) {
+        elseif (!$this->getQuote()->getIsVirtual()) {
             return true;
         }
 
@@ -885,34 +896,12 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     }
 
     /**
-     * Retrieve applied taxes
-     *
-     * @return array
-     */
-    public function getAppliedTaxes()
-    {
-        return unserialize($this->getData('applied_taxes'));
-    }
-
-    /**
-     * Set applied taxes
-     *
-     * @param array $data
-     * @return Mage_Sales_Model_Quote_Address
-     */
-    public function setAppliedTaxes($data)
-    {
-        return $this->setData('applied_taxes', serialize($data));
-    }
-
-    /**
      * Set shipping amount
      *
      * @param float $value
-     * @param bool $alreadyExclTax
      * @return Mage_Sales_Model_Quote_Address
      */
-    public function setShippingAmount($value, $alreadyExclTax = false)
+    public function setShippingAmount($value)
     {
         return $this->setData('shipping_amount', $value);
     }
@@ -921,10 +910,9 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
      * Set base shipping amount
      *
      * @param float $value
-     * @param bool $alreadyExclTax
      * @return Mage_Sales_Model_Quote_Address
      */
-    public function setBaseShippingAmount($value, $alreadyExclTax = false)
+    public function setBaseShippingAmount($value)
     {
         return $this->setData('base_shipping_amount', $value);
     }

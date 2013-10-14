@@ -46,8 +46,8 @@ class Mage_Sales_Model_Mysql4_Order_Attribute_Backend_Shipping extends Mage_Eav_
     {
         $shippingAddressId = false;
         foreach ($object->getAddressesCollection() as $address) {
-            if ('shipping' == $address->getAddressType()) {
-                $shippingAddressId = $address->getId();
+            if ($shippingAddressId = $address->getId()) {
+                break;
             }
         }
         if ($shippingAddressId) {

@@ -34,7 +34,9 @@ class Mage_Eav_Model_Adminhtml_System_Config_Source_Inputtype
             array('value' => 'date', 'label' => Mage::helper('eav')->__('Date')),
             array('value' => 'boolean', 'label' => Mage::helper('eav')->__('Yes/No')),
             array('value' => 'multiselect', 'label' => Mage::helper('eav')->__('Multiple Select')),
-            array('value' => 'select', 'label' => Mage::helper('eav')->__('Dropdown'))
+            array('value' => 'select', 'label' => Mage::helper('eav')->__('Dropdown')),
+            array('value' => 'color', 'label' => Mage::helper('eav')->__('Color')),
+            array('value' => 'size', 'label' => Mage::helper('eav')->__('Size'))
         );
     }
 

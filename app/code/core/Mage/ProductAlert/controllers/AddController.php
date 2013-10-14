@@ -65,7 +65,7 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
         $product = Mage::getModel('catalog/product')->load($productId);
         if (!$product->getId()) {
             /* @var $product Mage_Catalog_Model_Product */
-            $session->addError($this->__('Not enough parameters.'));
+            $session->addError($this->__('没有足够的数量。'));
             $this->_redirectUrl($backUrl);
             return ;
         }
@@ -77,10 +77,10 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
                 ->setPrice($product->getFinalPrice())
                 ->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
             $model->save();
-            $session->addSuccess($this->__('The alert subscription has been saved.'));
+            $session->addSuccess($this->__('提醒添加成功'));
         }
         catch (Exception $e) {
-            $session->addException($e, $this->__('Unable to update the alert subscription.'));
+            $session->addException($e, $this->__('已取消所选提醒'));
         }
         $this->_redirectReferer();
     }
@@ -98,7 +98,7 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
 
         if (!$product = Mage::getModel('catalog/product')->load($productId)) {
             /* @var $product Mage_Catalog_Model_Product */
-            $session->addError($this->__('Not enough parameters.'));
+            $session->addError($this->__('没有足够的数量。'));
             $this->_redirectUrl($backUrl);
             return ;
         }
@@ -109,10 +109,10 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
                 ->setProductId($product->getId())
                 ->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
             $model->save();
-            $session->addSuccess($this->__('Alert subscription has been saved.'));
+            $session->addSuccess($this->__('订阅提醒已保存。'));
         }
         catch (Exception $e) {
-            $session->addException($e, $this->__('Unable to update the alert subscription.'));
+            $session->addException($e, $this->__('已取消订阅提醒。'));
         }
         $this->_redirectReferer();
     }

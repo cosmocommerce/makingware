@@ -89,4 +89,13 @@ class Mage_Sales_Helper_Data extends Mage_Core_Helper_Data
         return Mage::getStoreConfigFlag(Mage_Sales_Model_Order_Creditmemo::XML_PATH_UPDATE_EMAIL_ENABLED, $store);
     }
 
+	/**
+     * Retrieve my order page url
+     *
+     * @return string
+     */
+    public function getOrderUrl()
+    {
+        return $this->_getUrl('sales/order/history');
+    }
 }

@@ -25,19 +25,12 @@
  */
 
 /**
- * One page checkout status
+ * One page checkout shipping
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Checkout_Block_Onepage_Shipping extends Mage_Checkout_Block_Onepage_Abstract
 {
-    /**
-     * Sales Qoute Shipping Address instance
-     *
-     * @var Mage_Sales_Model_Quote_Address
-     */
-    protected $_address = null;
-
     /**
      * Initialize shipping address step
      */
@@ -62,24 +55,6 @@ class Mage_Checkout_Block_Onepage_Shipping extends Mage_Checkout_Block_Onepage_A
     }
 
     /**
-     * Return Sales Quote Address model (shipping address)
-     *
-     * @return Mage_Sales_Model_Quote_Address
-     */
-    public function getAddress()
-    {
-        if (is_null($this->_address)) {
-            if ($this->isCustomerLoggedIn()) {
-                $this->_address = $this->getQuote()->getShippingAddress();
-            } else {
-                $this->_address = Mage::getModel('sales/quote_address');
-            }
-        }
-
-        return $this->_address;
-    }
-
-    /**
      * Retrieve is allow and show block
      *
      * @return bool
@@ -87,5 +62,40 @@ class Mage_Checkout_Block_Onepage_Shipping extends Mage_Checkout_Block_Onepage_A
     public function isShow()
     {
         return !$this->getQuote()->isVirtual();
+    }
+    
+	public function getCountryMore()
+    {
+    	return Mage::helper('directory')->getMoreCountry();
+    }
+    
+    public function getCustomerDefaultAddress()
+    {
+    	if (!$this->hasData('customer_default_address')) {
+    		$this->setData('customer_default_address', $this->getCustomer()->getDefaultShippingAddress());
+    	}
+    	return $this->getData('customer_default_address');
+    }
+    
+	public function getCountryId()
+    {
+    	if ($countryId = $this->getAddress()->getCountryId()) {
+    		return $countryId;
+    	}
+    	if (($address = $this->getCustomerDefaultAddress()) && ($countryId = $address->getCountryId())) {
+    		return $countryId;
+    	}
+        return Mage::helper('directory')->getDefaultCountry();
+    }
+    
+    public function __call($method, $args)
+    {
+    	if ($result = $this->getAddress()->__call($method, $args)) {
+    		return $result;
+    	}
+    	if (($address = $this->getCustomerDefaultAddress()) && ($result = $address->__call($method, $args))) {
+    		return $result;
+    	}
+    	return parent::__call($method, $args);
     }
 }

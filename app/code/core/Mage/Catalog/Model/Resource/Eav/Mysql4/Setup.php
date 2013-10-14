@@ -795,7 +795,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity
                         'visible'           => true,
                         'required'          => true,
                         'user_defined'      => false,
-                        'default'           => '',
+                        'default'           => 0,
                         'searchable'        => false,
                         'filterable'        => false,
                         'comparable'        => false,
@@ -1110,29 +1110,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity
                         'used_in_product_listing' => true,
                         'unique'            => false,
                     ),
-                    'tax_class_id' => array(
-                        'group'             => 'Prices',
-                        'type'              => 'int',
-                        'backend'           => '',
-                        'frontend'          => '',
-                        'label'             => 'Tax Class',
-                        'input'             => 'select',
-                        'class'             => '',
-                        'source'            => 'tax/class_source_product',
-                        'global'            => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
-                        'visible'           => true,
-                        'required'          => true,
-                        'user_defined'      => false,
-                        'default'           => '',
-                        'searchable'        => true,
-                        'filterable'        => false,
-                        'comparable'        => false,
-                        'visible_on_front'  => false,
-                        'visible_in_advanced_search' => true,
-                        'used_in_product_listing' => true,
-                        'unique'            => false,
-                        'apply_to'          => 'simple,configurable,virtual',
-                    ),
                     'url_key' => array(
                         'label'             => 'URL key',
                         'backend'           => 'catalog/product_attribute_backend_urlkey',
@@ -1179,6 +1156,8 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity
                         'unique'            => false,
                         'apply_to'          => 'simple,configurable,virtual',
                     ),
+                    /*
+                     * 删除定期扣款属性   2012.02.11
                     'is_recurring' => array(
                         'group'             => 'Recurring Profile',
                         'type'              => 'int',
@@ -1224,6 +1203,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity
                         'apply_to'          => 'simple,virtual',
                         'is_configurable'   => false
                     ),
+                    */
                     'visibility' => array(
                         'group'             => 'General',
                         'type'              => 'int',

@@ -81,16 +81,10 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
             'index'     => 'customer_id'
         ));
 
-        $this->addColumn('firstname', array(
-            'header'    => Mage::helper('customer')->__('First Name'),
+        $this->addColumn('name', array(
+            'header'    => Mage::helper('customer')->__('Name'),
             'default'   => Mage::helper('customer')->__('Guest'),
-            'index'     => 'customer_firstname'
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    => Mage::helper('customer')->__('Last Name'),
-            'default'   => Mage::helper('customer')->__('n/a'),
-            'index'     => 'customer_lastname'
+            'index'     => 'customer_name'
         ));
 
         $this->addColumn('email', array(

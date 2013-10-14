@@ -36,6 +36,8 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
             $this->_redirect('/');
             return;
         }
+        
+        set_time_limit(0);
         $this->setFlag('', self::FLAG_NO_CHECK_INSTALLATION, true);
         return parent::preDispatch();
     }
@@ -116,6 +118,10 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
         $this->getLayout()->getBlock('content')->append(
             $this->getLayout()->createBlock('install/begin', 'install.begin')
         );
+        
+    	try {
+			Mage::helper('install')->sendInstallationInformation('begin');
+		}catch (Exception $ex) {}
 
         $this->renderLayout();
     }
@@ -134,58 +140,6 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
         else {
             $this->_redirect('install');
         }
-    }
-
-    /**
-     * Localization settings
-     */
-    public function localeAction()
-    {
-        $this->_checkIfInstalled();
-        $this->setFlag('', self::FLAG_NO_DISPATCH_BLOCK_EVENT, true);
-        $this->setFlag('', self::FLAG_NO_POST_DISPATCH, true);
-
-        $this->_prepareLayout();
-        $this->_initLayoutMessages('install/session');
-        $this->getLayout()->getBlock('content')->append(
-            $this->getLayout()->createBlock('install/locale', 'install.locale')
-        );
-
-        $this->renderLayout();
-    }
-
-    /**
-     * Change current locale
-     */
-    public function localeChangeAction()
-    {
-        $this->_checkIfInstalled();
-
-        $locale = $this->getRequest()->getParam('locale');
-        $timezone = $this->getRequest()->getParam('timezone');
-        $currency = $this->getRequest()->getParam('currency');
-        if ($locale) {
-            Mage::getSingleton('install/session')->setLocale($locale);
-            Mage::getSingleton('install/session')->setTimezone($timezone);
-            Mage::getSingleton('install/session')->setCurrency($currency);
-        }
-
-        $this->_redirect('*/*/locale');
-    }
-
-    /**
-     * Saving localization settings
-     */
-    public function localePostAction()
-    {
-        $this->_checkIfInstalled();
-        $step = $this->_getWizard()->getStepByName('locale');
-
-        if ($data = $this->getRequest()->getPost('config')) {
-            Mage::getSingleton('install/session')->setLocaleData($data);
-        }
-
-        $this->getResponse()->setRedirect($step->getNextUrl());
     }
 
     public function downloadAction()
@@ -288,9 +242,12 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
         $this->setFlag('', self::FLAG_NO_DISPATCH_BLOCK_EVENT, true);
         $this->setFlag('', self::FLAG_NO_POST_DISPATCH, true);
 
-        if ($data = $this->getRequest()->getQuery('config')) {
-            Mage::getSingleton('install/session')->setLocaleData($data);
-        }
+       	$data = array(
+			'locale' => 'zh_CN',
+			'timezone' => 'Asia/Shanghai',
+			'currency' => 'CNY'
+		);
+       	Mage::getSingleton('install/session')->setLocaleData($data);
 
         $this->_prepareLayout();
         $this->_initLayoutMessages('install/session');
@@ -326,7 +283,19 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
                             Mage::helper('install')->__('The table prefix should contain only letters (a-z), numbers (0-9) or underscores (_), the first character should be a letter.'));
                     }
                 }
+
                 $this->_getInstaller()->installConfig($data);
+
+	            if(isset($data['drop_db']) && $data['drop_db'] !='') {
+	            	$dbname=$data['db_name'];
+					$sql="DROP DATABASE IF EXISTS `$dbname`";
+	                $write = Mage::getSingleton('core/resource')->getConnection('install');
+					$write->query($sql);
+					$sql="CREATE DATABASE `$dbname`";
+					$write->query($sql);
+					Mage::getSingleton('install/installer_db')->checkDatabase($data);
+	            }
+
                 $this->_redirect('*/*/installDb');
                 return $this;
             }
@@ -362,6 +331,89 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
         }
     }
 
+    	/**
+	 * Install the demo data
+	 */
+	public function demoAction()
+	{
+		$this->_checkIfInstalled();
+
+		#-- start --- Calculate the total number of #
+		$totalCount = 0;
+		$sqlFile = Mage::getModuleDir('sql', 'Mage_Install') . DS . 'demo.sql';
+		$fp = fopen($sqlFile, 'r');
+		while (($line = fgets($fp)) !== false ) {
+			$line = trim($line);
+			if (empty($line) || substr($line, -1) != ';') {continue ;}
+			$totalCount++;
+		}
+		fclose($fp);
+		Mage::helper('install')->setProgress(array('totalCount' => $totalCount, 'currentCount' => 0));
+		#-- end --- #
+
+		$this->_prepareLayout();
+		$this->_initLayoutMessages('install/session');
+
+		$this->getLayout()->getBlock('content')->append(
+			$this->getLayout()->createBlock('install/demo', 'install.demo')
+		);
+
+		$this->renderLayout();
+	}
+
+	/**
+	 * Process demo instalation POST data
+	 */
+	public function demoPostAction()
+	{
+		$this->_checkIfInstalled();
+		$step = $this->_getWizard()->getStepByName('demo');
+
+		if ($this->getRequest()->isPost()) {
+			try {
+				if (($data = $this->getRequest()->getPost('config')) && isset($data['demo'])) {
+					$sqlFile = Mage::getModuleDir('sql', 'Mage_Install') . DS . 'demo.sql';
+					if (is_readable($sqlFile)) {
+						$installer = Mage::getModel('core/resource_setup', 'core_setup');
+						$installer->startSetup();
+
+						$helper = Mage::helper('install');
+
+						$i = 0;
+						$str = '';
+						$fp = fopen($sqlFile, 'r');
+						while (($line = fgets($fp)) !== false ) {
+							$line = trim($line);
+							if (empty($line)) {continue ;}
+
+							$str .= $line;
+							if (substr($line, -1) == ';') {
+								$sql = preg_replace('/^(INSERT\s+INTO|DROP\s+TABLE\s+IF\s+EXISTS|CREATE\s+TABLE)(\s+)`(.+?)`([^;]*;)/i', "$1$2`" . $installer->getTable("$3") . "`$4", $str);
+								try {
+									$installer->run($sql);
+								}catch (Exception $ex) {}
+								$str = '';
+
+								# record progress
+								$helper->setProgress(array('currentCount' => ++$i));
+							}
+						}
+						fclose($fp);
+
+						$installer->endSetup();
+						# move media files
+						$helper->moveDirectory(Mage::getModuleDir('sql', 'Mage_Install') . DS . 'media', Mage::getBaseDir('media'));
+					}
+				}
+				return $this->getResponse()->setRedirect($step->getNextUrl());
+			}
+			catch (Exception $e){
+				Mage::getSingleton('install/session')->addError($e->getMessage());
+				$this->getResponse()->setRedirect($step->getUrl());
+			}
+		}
+		$this->getResponse()->setRedirect($step->getUrl());
+	}
     /**
      * Install admininstrator account
      */
@@ -412,6 +464,12 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
         try {
             $this->_getInstaller()->createAdministrator($user);
             $this->_getInstaller()->installEnryptionKey($encryptionKey);
+            $allIndexs=Mage::getSingleton('index/indexer')->getProcessesCollection();
+
+			foreach($allIndexs as $index)
+			{
+				$index->reindexEverything();
+			}
         } catch (Exception $e){
             Mage::getSingleton('install/session')
                 ->setAdminData($adminData)
@@ -437,7 +495,10 @@ class Mage_Install_WizardController extends Mage_Install_Controller_Action
 
         $this->_getInstaller()->finish();
 
-        Mage_AdminNotification_Model_Survey::saveSurveyViewed(true);
+        //Mage_AdminNotification_Model_Survey::saveSurveyViewed(true);
+    	try {
+			Mage::helper('install')->sendInstallationInformation('end');
+		}catch (Exception $ex) {}
 
         $this->_prepareLayout();
         $this->_initLayoutMessages('install/session');

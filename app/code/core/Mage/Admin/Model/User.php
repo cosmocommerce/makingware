@@ -63,8 +63,7 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
     protected function _beforeSave()
     {
         $data = array(
-            'firstname' => $this->getFirstname(),
-            'lastname'  => $this->getLastname(),
+            'name' => $this->getName(),
             'email'     => $this->getEmail(),
             'modified'  => now(),
             'extra'     => serialize($this->getExtra())
@@ -192,11 +191,6 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
         $translate->setTranslateInline(true);
 
         return $this;
-    }
-
-    public function getName($separator=' ')
-    {
-        return $this->getFirstname() . $separator . $this->getLastname();
     }
 
     public function getId()
@@ -381,12 +375,8 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
             $errors[] = Mage::helper('adminhtml')->__('User Name is required field.');
         }
 
-        if (!Zend_Validate::is($this->getFirstname(), 'NotEmpty')) {
-            $errors[] = Mage::helper('adminhtml')->__('First Name is required field.');
-        }
-
-        if (!Zend_Validate::is($this->getLastname(), 'NotEmpty')) {
-            $errors[] = Mage::helper('adminhtml')->__('Last Name is required field.');
+        if (!Zend_Validate::is($this->getName(), 'NotEmpty')) {
+            $errors[] = Mage::helper('adminhtml')->__('Name is required field.');
         }
 
         if (!Zend_Validate::is($this->getEmail(), 'EmailAddress')) {

@@ -65,7 +65,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos
             ->addFieldToSelect('state')
             ->addFieldToSelect('grand_total')
             ->addFieldToSelect('base_grand_total')
-            ->addFieldToSelect('billing_name')
+            ->addFieldToSelect('shipping_name')
             ->setOrderFilter($this->getOrder())
         ;
         $this->setCollection($collection);
@@ -80,9 +80,9 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos
             'index' => 'increment_id',
         ));
 
-        $this->addColumn('billing_name', array(
+        $this->addColumn('shipping_name', array(
             'header' => Mage::helper('sales')->__('Bill to Name'),
-            'index' => 'billing_name',
+            'index' => 'shipping_name',
         ));
 
         $this->addColumn('created_at', array(

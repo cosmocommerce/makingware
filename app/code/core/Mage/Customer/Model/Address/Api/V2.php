@@ -57,11 +57,7 @@ class Mage_Customer_Model_Address_Api_V2 extends Mage_Customer_Model_Address_Api
                 $address->setData($attributeCode, $addressData->$attributeCode);
             }
         }
-
-        if (isset($addressData->is_default_billing)) {
-            $address->setIsDefaultBilling($addressData->is_default_billing);
-        }
-
+        
         if (isset($addressData->is_default_shipping)) {
             $address->setIsDefaultShipping($addressData->is_default_shipping);
         }
@@ -110,7 +106,6 @@ class Mage_Customer_Model_Address_Api_V2 extends Mage_Customer_Model_Address_Api
 
 
         if ($customer = $address->getCustomer()) {
-            $result['is_default_billing']  = $customer->getDefaultBilling() == $address->getId();
             $result['is_default_shipping'] = $customer->getDefaultShipping() == $address->getId();
         }
 
@@ -137,10 +132,6 @@ class Mage_Customer_Model_Address_Api_V2 extends Mage_Customer_Model_Address_Api
             if (isset($addressData->$attributeCode)) {
                 $address->setData($attributeCode, $addressData->$attributeCode);
             }
-        }
-
-        if (isset($addressData->is_default_billing)) {
-            $address->setIsDefaultBilling($addressData->is_default_billing);
         }
 
         if (isset($addressData->is_default_shipping)) {

@@ -86,6 +86,42 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
     }
 
     /**
+     * $excludeAttr is optional array of attribute codes to
+     * exclude them from additional data array
+     *
+     * @param array $excludeAttr
+     * @return array
+     */
+    public function getAllAdditionalData(array $excludeAttr = array())
+    {
+        $data = array();
+        $product = $this->getProduct();
+        $attributes = $product->getAttributes();
+        foreach ($attributes as $attribute) {
+			$value = $attribute->getFrontend()->getValue($product);
+
+			if (!$product->hasData($attribute->getAttributeCode())) {
+				continue;
+				$value = Mage::helper('catalog')->__('N/A');
+			} elseif ((string)$value == '') {
+				continue;
+				$value = Mage::helper('catalog')->__('No');
+			} elseif ($attribute->getFrontendInput() == 'price' && is_string($value)) {
+				$value = Mage::app()->getStore()->convertPrice($value, true);
+			}
+
+			if (is_string($value) && strlen($value)) {
+				$data[$attribute->getAttributeCode()] = array(
+					'label' => $attribute->getStoreLabel(),
+					'value' => $value,
+					'code'  => $attribute->getAttributeCode()
+				);
+			}
+        }
+        return $data;
+    }
+
+    /**
      * Check if product can be emailed to friend
      *
      * @return bool
@@ -125,30 +161,15 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
             return Mage::helper('core')->jsonEncode($config);
         }
 
-        $_request = Mage::getSingleton('tax/calculation')->getRateRequest(false, false, false);
-        $_request->setProductClassId($this->getProduct()->getTaxClassId());
-        $defaultTax = Mage::getSingleton('tax/calculation')->getRate($_request);
-
-        $_request = Mage::getSingleton('tax/calculation')->getRateRequest();
-        $_request->setProductClassId($this->getProduct()->getTaxClassId());
-        $currentTax = Mage::getSingleton('tax/calculation')->getRate($_request);
-
         $_regularPrice = $this->getProduct()->getPrice();
         $_finalPrice = $this->getProduct()->getFinalPrice();
-        $_priceInclTax = Mage::helper('tax')->getPrice($this->getProduct(), $_finalPrice, true);
-        $_priceExclTax = Mage::helper('tax')->getPrice($this->getProduct(), $_finalPrice);
 
         $config = array(
             'productId'           => $this->getProduct()->getId(),
             'priceFormat'         => Mage::app()->getLocale()->getJsPriceFormat(),
-            'includeTax'          => Mage::helper('tax')->priceIncludesTax() ? 'true' : 'false',
-            'showIncludeTax'      => Mage::helper('tax')->displayPriceIncludingTax(),
-            'showBothPrices'      => Mage::helper('tax')->displayBothPrices(),
             'productPrice'        => Mage::helper('core')->currency($_finalPrice, false, false),
             'productOldPrice'     => Mage::helper('core')->currency($_regularPrice, false, false),
-            'skipCalculate'       => ($_priceExclTax != $_priceInclTax ? 0 : 1),
-            'defaultTax'          => $defaultTax,
-            'currentTax'          => $currentTax,
+            'skipCalculate'       => 1,
             'idSuffix'            => '_clone',
             'oldPlusDisposition'  => 0,
             'plusDisposition'     => 0,
@@ -225,5 +246,32 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
         }
 
         return $qty;
+    }
+    
+    public function canLeaveMessage()
+    {
+        if(Mage::getStoreConfig('catalog/makingware_leavemessage/enable')){
+            return true; 
+        }
+        
+        return false;
+    }
+    
+    public function canShowReview()
+    {
+        if(Mage::getStoreConfig('catalog/review/enable')){
+            return true; 
+        }
+        
+        return false;
+    }
+
+    public function canBuyRecords()
+    {
+        if(Mage::getStoreConfig('catalog/buyrecords/active')){
+            return true;
+        }
+
+        return false;
     }
 }

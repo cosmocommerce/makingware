@@ -46,11 +46,11 @@ class Mage_Adminhtml_Cms_WysiwygController extends Mage_Adminhtml_Controller_Act
         $url = Mage::getModel('core/email_template_filter')->filter($directive);
         try {
             $image = Varien_Image_Adapter::factory('GD2');
-            $image->open($url);
+            $image->open($this->_urlToPath($url));
             $image->display();
         } catch (Exception $e) {
             $image = Varien_Image_Adapter::factory('GD2');
-            $image->open(Mage::getSingleton('cms/wysiwyg_config')->getSkinImagePlaceholderUrl());
+            $image->open($this->_urlToPath(Mage::getSingleton('cms/wysiwyg_config')->getSkinImagePlaceholderUrl()));
             $image->display();
             /*
             $image = imagecreate(100, 100);
@@ -63,5 +63,17 @@ class Mage_Adminhtml_Cms_WysiwygController extends Mage_Adminhtml_Controller_Act
             imagedestroy($image);
             */
         }
+    }
+    
+    protected function _urlToPath($url)
+    {
+    	$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+    	if (false !== stripos($url, $baseUrl)) {
+    		$file = str_replace('/', DS, str_ireplace(rtrim($baseUrl, '/'), Mage::getBaseDir(), $url));
+    		if (is_file($file)) {
+    			return $file;
+    		}
+    	}
+    	return $url;
     }
 }

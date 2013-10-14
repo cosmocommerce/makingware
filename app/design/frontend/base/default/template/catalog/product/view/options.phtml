@@ -20,7 +20,7 @@
  *
  * @category    design
  * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
@@ -77,7 +77,7 @@
                 $('option_'+data.optionId+'_file').value = '';
                 $('option_'+data.optionId+'_file').hide();
                 $('option_'+data.optionId+'').hide();
-                template = '<div id="option_'+data.optionId+'_file_box"><a href="#"><img src="var/options/'+data.fileName+'" alt=""><\/a><a href="#" onclick="optionFileUpload.removeFile('+data.optionId+')" title="Remove file" \/>Remove file<\/a>';
+                template = '<div id="option_'+data.optionId+'_file_box"><a href="#"><img src="var/options/'+data.fileName+'"><\/a><a href="#" onclick="optionFileUpload.removeFile('+data.optionId+')" alt="Remove file" title="Remove file" \/>Remove file<\/a>';
 
                 Element.insert($('option_'+data.optionId+'_uploaded_file'), {after: template});
             }
@@ -101,63 +101,57 @@
         }
     }
 
-    Product.Options = Class.create();
+    Product.Options = function(config){
+    	this.config = config;
+        this.reloadPrice();
+    };
     Product.Options.prototype = {
-        initialize : function(config){
-            this.config = config;
-            this.reloadPrice();
-            document.observe("dom:loaded", this.reloadPrice.bind(this));
-        },
         reloadPrice : function(){
-            price = new Number();
-            config = this.config;
+            var price = new Number();
+            var config = this.config;
             skipIds = [];
-            $$('.product-custom-option').each(function(element){
-                var optionId = 0;
-                element.name.sub(/[0-9]+/, function(match){
-                    optionId = match[0];
-                });
-                if (this.config[optionId]) {
+            $('.product-custom-option').each(function(key, element){
+                var optionId = /[0-9]+/.exec(element.name);
+                if(! optionId) {optionId = 0;}
+                if (config[optionId]) {
                     if (element.type == 'checkbox' || element.type == 'radio') {
                         if (element.checked) {
-                            if (config[optionId][element.getValue()]) {
-                                price += parseFloat(config[optionId][element.getValue()]);
+                            if (config[optionId][$(element).val()]) {
+                                price += parseFloat(config[optionId][$(element).val()]);
                             }
                         }
-                    } else if(element.hasClassName('datetime-picker') && !skipIds.include(optionId)) {
+                    } else if($(element).hasClass('datetime-picker') && $.inArray(optionId, skipIds) == -1) {
                         dateSelected = true;
-                        $$('.product-custom-option[id^="options_' + optionId + '"]').each(function(dt){
-                            if (dt.getValue() == '') {
+                        $('.product-custom-option[id^="options_' + optionId + '"]').each(function(key, dt){
+                            if ($(dt).val() == '') {
                                 dateSelected = false;
                             }
                         });
                         if (dateSelected) {
-                            price += parseFloat(this.config[optionId]);
+                            price += parseFloat(config[optionId]);
                             skipIds[optionId] = optionId;
                         }
                     } else if(element.type == 'select-one' || element.type == 'select-multiple') {
                         if (element.options) {
-                            $A(element.options).each(function(selectOption){
-                                if (selectOption.selected) {
-                                    if (this.config[optionId][selectOption.value]) {
-                                        price += parseFloat(this.config[optionId][selectOption.value]);
+                        	$.each(element.options, function(key, selectOption){
+                        		if (selectOption.selected) {
+                                    if (config[optionId][selectOption.value]) {
+                                        price += parseFloat(config[optionId][selectOption.value]);
                                     }
                                 }
                             });
                         }
                     } else {
-                        if (element.getValue().strip() != '') {
-                            price += parseFloat(this.config[optionId]);
+                        if (element.getVal().strip() != '') {
+                            price += parseFloat(config[optionId]);
                         }
                     }
                 }
             });
             try {
                 optionsPrice.changePrice('options', price);
-                optionsPrice.changePrice('optionsPriceInclTax', price);
                 optionsPrice.reload();
             } catch (e) {
-
             }
         }
     }

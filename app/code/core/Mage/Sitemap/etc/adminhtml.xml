@@ -27,15 +27,15 @@
 -->
 <config>
     <menu>
-        <catalog>
+        <system>
             <children>
                 <sitemap translate="title" module="sitemap">
                     <title>Google Sitemap</title>
-                    <sort_order>180</sort_order>
+                    <sort_order>108</sort_order>
                     <action>adminhtml/sitemap/</action>
                 </sitemap>
             </children>
-        </catalog>
+        </system>
     </menu>
     <acl>
         <resources>

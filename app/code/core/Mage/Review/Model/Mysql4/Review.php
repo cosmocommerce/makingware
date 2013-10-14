@@ -99,6 +99,7 @@ class Mage_Review_Model_Mysql4_Review extends Mage_Core_Model_Mysql4_Abstract
             'title'     => $object->getTitle(),
             'detail'    => $object->getDetail(),
             'nickname'  => $object->getNickname(),
+            'reply_content'=> $object->getReplyContent(),
         );
         $select = $this->_getWriteAdapter()->select()
             ->from($this->_reviewDetailTable, 'detail_id')

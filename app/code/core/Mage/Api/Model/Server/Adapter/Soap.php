@@ -115,7 +115,7 @@ class Mage_Api_Model_Server_Adapter_Soap
             $wsdlConfig->setUrl(
                 htmlspecialchars(Mage::getUrl('*/*/*', array('_query'=>$queryParams) ))
             );
-            $wsdlConfig->setName('Magento');
+            $wsdlConfig->setName('Makingware');
             $wsdlConfig->setHandler($this->getHandler());
 
             $template->setVariables(array('wsdl'=>$wsdlConfig));

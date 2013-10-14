@@ -76,9 +76,24 @@ class Mage_ImportExport_Block_Adminhtml_Export_Filter extends Mage_Adminhtml_Blo
             'extra_params' => 'style="width:85px !important"',
             'image'        => $this->getSkinUrl('images/grid-cal.gif')
         ));
-        return '<strong>' . $this->_helper->__('From') . ':</strong>&nbsp;' . $dateBlock->getHtml()
-             . '&nbsp;<strong>' . $this->_helper->__('To') . ':</strong>&nbsp;'
-             . $dateBlock->setId($dateBlock->getId() . '_to')->getHtml();
+        
+        if ($values = $this->getData($attribute->getAttributeCode())) {
+        	$fromValue = empty($values[0]) ? '' : $values[0];
+        	$toValue = empty($values[1]) ? '' : $values[1];
+        }
+        
+        $html = '<strong>' . $this->_helper->__('From') . ':</strong>&nbsp;';
+        if (isset($fromValue)) {
+        	$dateBlock->setValue($fromValue);
+        }
+        $html .= $dateBlock->getHtml();
+        if (isset($toValue)) {
+        	$dateBlock->setValue($toValue);
+        }else {
+        	$dateBlock->unsValue();
+        }
+        $html .= '&nbsp;<strong>' . $this->_helper->__('To') . ':</strong>&nbsp;' . $dateBlock->setId($dateBlock->getId() . '_to')->getHtml();
+        return $html;
     }
 
     /**
@@ -90,7 +105,7 @@ class Mage_ImportExport_Block_Adminhtml_Export_Filter extends Mage_Adminhtml_Blo
     protected function _getInputHtml(Mage_Eav_Model_Entity_Attribute $attribute)
     {
         return '<input type="text" name="' . $this->getFilterElementName($attribute->getAttributeCode())
-             . '" class="input-text" style="width:274px;"/>';
+             . '" class="input-text" style="width:274px;" value="' . $this->getData($attribute->getAttributeCode()) . '"/>';
     }
 
     /**
@@ -135,12 +150,18 @@ class Mage_ImportExport_Block_Adminhtml_Export_Filter extends Mage_Adminhtml_Blo
      */
     protected function _getNumberFromToHtml(Mage_Eav_Model_Entity_Attribute $attribute)
     {
+    	$fromValue = $toValue = '';
+    	if ($values = $this->getData($attribute->getAttributeCode())) {
+    		$fromValue = empty($values[0]) ? '' : $values[0];
+    		$toValue = empty($values[1]) ? '' : $values[1];
+    	}
+    	
         $name = $this->getFilterElementName($attribute->getAttributeCode());
         return '<strong>' . $this->_helper->__('From') . ':</strong>&nbsp;'
              . '<input type="text" name="' . $this->getFilterElementName($attribute->getAttributeCode())
-             . '[]" class="input-text" style="width:100px;"/>&nbsp;<strong>' . $this->_helper->__('To')
+             . '[]" class="input-text" style="width:100px;" value="'.$fromValue.'"/>&nbsp;<strong>' . $this->_helper->__('To')
              . ':</strong>&nbsp;<input type="text" name="' . $name
-             . '[]" class="input-text" style="width:100px;"/>';
+             . '[]" class="input-text" style="width:100px;" value="'.$toValue.'"/>';
     }
 
     /**
@@ -173,7 +194,8 @@ class Mage_ImportExport_Block_Adminhtml_Export_Filter extends Mage_Adminhtml_Blo
                 'name'         => $this->getFilterElementName($attribute->getAttributeCode()),
                 'id'           => $this->getFilterElementId($attribute->getAttributeCode()),
                 'class'        => 'select',
-                'extra_params' => 'style="width:280px"'
+                'extra_params' => 'style="width:280px"',
+            	'value'		   => $this->getData($attribute->getAttributeCode())
             ));
             return $selectBlock->setOptions($options)->getHtml();
         } else {
@@ -294,5 +316,14 @@ class Mage_ImportExport_Block_Adminhtml_Export_Filter extends Mage_Adminhtml_Blo
         $this->_prepareGrid();
 
         return $this->_collection;
+    }
+    
+    protected function _toHtml()
+    {
+    	$html = '';
+    	if ($notice = $this->getNoticeMessage()) {
+    		$html = '<ul class="messages"><li class="notice-msg"><ul><li><span>' . $notice . '</span></li></ul></li></ul>';
+    	}
+    	return $html . parent::_toHtml();
     }
 }

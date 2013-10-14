@@ -59,7 +59,7 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
      *
      * @var array
      */
-    protected $_disabledAttrs = array('default_billing', 'default_shipping');
+    protected $_disabledAttrs = array('default_shipping', 'password_hash');
 
     /**
      * Attributes with index (not label) value.
@@ -97,10 +97,14 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
     public function __construct()
     {
         parent::__construct();
-
-        $this->_initAttrValues()
-                ->_initStores()
+        
+        $this->_initAttrValues();
+        if (Mage::app()->isSingleStoreMode()) {
+        	$this->_permanentAttributes = array(self::COL_EMAIL);
+        }else {
+        	$this->_initStores()
                 ->_initWebsites();
+        }
     }
 
     /**
@@ -125,7 +129,7 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
      */
     protected function _prepareEntityCollection(Mage_Eav_Model_Entity_Collection_Abstract $collection)
     {
-        // forced addition default billing and shipping addresses attributes
+        // forced addition default shipping addresses attributes
         return parent::_prepareEntityCollection($collection)->addAttributeToSelect(
             Mage_ImportExport_Model_Import_Entity_Customer_Address::getDefaultAddressAttrMapping()
         );
@@ -139,55 +143,59 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
     public function export()
     {
         $collection     = $this->_prepareEntityCollection(Mage::getResourceModel('customer/customer_collection'));
-        $validAttrCodes = $this->_getExportAttrCodes();
+        $validAttrCodes = array_merge($this->_getExportAttrCodes(), array_keys($this->getCustomAttrs()));
         $writer         = $this->getWriter();
-        $defaultAddrMap = Mage_ImportExport_Model_Import_Entity_Customer_Address::getDefaultAddressAttrMapping();
-
-        // prepare address data
-        $addrAttributes = array();
-        $addrColNames   = array();
-        $customerAddrs  = array();
-
-        foreach (Mage::getResourceModel('customer/address_attribute_collection')
-                    ->addSystemHiddenFilter()
-                    ->addExcludeHiddenFrontendFilter() as $attribute) {
-            $options  = array();
-            $attrCode = $attribute->getAttributeCode();
-
-            if ($attribute->usesSource() && 'country_id' != $attrCode) {
-                foreach ($attribute->getSource()->getAllOptions(false) as $option) {
-                    foreach (is_array($option['value']) ? $option['value'] : array($option) as $innerOption) {
-                        if (strlen($innerOption['value'])) { // skip ' -- Please Select -- ' option
-                            $options[$innerOption['value']] = $innerOption['label'];
-                        }
-                    }
-                }
-            }
-            $addrAttributes[$attrCode] = $options;
-            $addrColNames[] = Mage_ImportExport_Model_Import_Entity_Customer_Address::getColNameForAttrCode($attrCode);
-        }
-        foreach (Mage::getResourceModel('customer/address_collection')->addAttributeToSelect('*') as $address) {
-            $addrRow = array();
-
-            foreach ($addrAttributes as $attrCode => $attrValues) {
-                if (null !== $address->getData($attrCode)) {
-                    $value = $address->getData($attrCode);
-
-                    if ($attrValues) {
-                        $value = $attrValues[$value];
-                    }
-                    $addrRow[Mage_ImportExport_Model_Import_Entity_Customer_Address::getColNameForAttrCode($attrCode)] = $value;
-                }
-            }
-            $customerAddrs[$address['parent_id']][$address->getId()] = $addrRow;
-        }
-
+        
         // create export file
-        $writer->setHeaderCols(array_merge(
-            $this->_permanentAttributes, $validAttrCodes,
-            array('password'), $addrColNames,
-            array_keys($defaultAddrMap)
-        ));
+        $headerCols = array_merge($this->_permanentAttributes, $validAttrCodes);
+        
+        if (!array_search('address', $this->_disabledAttrs)) {
+        	$defaultAddrMap = Mage_ImportExport_Model_Import_Entity_Customer_Address::getDefaultAddressAttrMapping();
+        	
+        	// prepare address data
+        	$addrAttributes = array();
+        	$addrColNames   = array();
+        	$customerAddrs  = array();
+        	
+        	foreach (Mage::getResourceModel('customer/address_attribute_collection')
+        		->addSystemHiddenFilter()
+        		->addExcludeHiddenFrontendFilter() as $attribute) {
+        		$options  = array();
+        		$attrCode = $attribute->getAttributeCode();
+        	
+        		if ($attribute->usesSource() && 'country_id' != $attrCode) {
+        			foreach ($attribute->getSource()->getAllOptions(false) as $option) {
+        				foreach (is_array($option['value']) ? $option['value'] : array($option) as $innerOption) {
+        					if (strlen($innerOption['value'])) {
+        						// skip ' -- Please Select -- ' option
+        						$options[$innerOption['value']] = $innerOption['label'];
+        					}
+        				}
+        			}
+        		}
+        		$addrAttributes[$attrCode] = $options;
+        		$addrColNames[] = Mage_ImportExport_Model_Import_Entity_Customer_Address::getColNameForAttrCode($attrCode);
+        	}
+        	foreach (Mage::getResourceModel('customer/address_collection')->addAttributeToSelect('*') as $address) {
+        		$addrRow = array();
+        	
+        		foreach ($addrAttributes as $attrCode => $attrValues) {
+        			if (null !== $address->getData($attrCode)) {
+        				$value = $address->getData($attrCode);
+        	
+        				if ($attrValues) {
+        					$value = $attrValues[$value];
+        				}
+        				$addrRow[Mage_ImportExport_Model_Import_Entity_Customer_Address::getColNameForAttrCode($attrCode)] = $value;
+        			}
+        		}
+        		$customerAddrs[$address['parent_id']][$address->getId()] = $addrRow;
+        	}
+        	
+        	$headerCols = array_merge($headerCols, $addrColNames, array_keys($defaultAddrMap));
+        }
+        
+        $writer->setHeaderCols($headerCols);
         foreach ($collection as $itemId => $item) { // go through all customers
             $row = array();
 
@@ -204,18 +212,25 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
                     $row[$attrCode] = $attrValue;
                 }
             }
-            $row[self::COL_WEBSITE] = $this->_websiteIdToCode[$item['website_id']];
-            $row[self::COL_STORE]   = $this->_storeIdToCode[$item['store_id']];
+            
+            if (in_array(self::COL_WEBSITE, $headerCols)) {
+            	$row[self::COL_WEBSITE] = $this->_websiteIdToCode[$item['website_id']];
+            }
+            if (in_array(self::COL_STORE, $headerCols)) {
+            	$row[self::COL_STORE]   = $this->_storeIdToCode[$item['store_id']];
+            }
 
             // addresses injection
-            $defaultAddrs = array();
-
-            foreach ($defaultAddrMap as $colName => $addrAttrCode) {
-                if (!empty($item[$addrAttrCode])) {
-                    $defaultAddrs[$item[$addrAttrCode]][] = $colName;
-                }
+            if (isset($defaultAddrMap)) {
+	            $defaultAddrs = array();
+	            foreach ($defaultAddrMap as $colName => $addrAttrCode) {
+	                if (!empty($item[$addrAttrCode])) {
+	                    $defaultAddrs[$item[$addrAttrCode]][] = $colName;
+	                }
+	            }
             }
-            if (isset($customerAddrs[$itemId])) {
+            
+            if (isset($defaultAddrs) && isset($customerAddrs[$itemId])) {
                 while (($addrRow = each($customerAddrs[$itemId]))) {
                     if (isset($defaultAddrs[$addrRow['key']])) {
                         foreach ($defaultAddrs[$addrRow['key']] as $colName) {
@@ -226,7 +241,7 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
 
                     $row = array();
                 }
-            } else {
+            }else {
                 $writer->writeRow($row);
             }
         }
@@ -241,6 +256,10 @@ class Mage_ImportExport_Model_Export_Entity_Customer extends Mage_ImportExport_M
      */
     public function filterAttributeCollection(Mage_Eav_Model_Mysql4_Entity_Attribute_Collection $collection)
     {
+    	if ($attrs = Mage::getStoreConfig('export/disabled/customer_attribute')) {
+    		$this->_disabledAttrs = array_merge($this->_disabledAttrs, array_keys($attrs));
+    	}
+    	
         foreach (parent::filterAttributeCollection($collection) as $attribute) {
             if (!empty($this->_attributeOverrides[$attribute->getAttributeCode()])) {
                 $data = $this->_attributeOverrides[$attribute->getAttributeCode()];

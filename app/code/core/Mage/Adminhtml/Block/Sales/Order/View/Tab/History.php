@@ -50,6 +50,15 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_History
     {
         return Mage::registry('current_order');
     }
+    
+    public function getUser($userId)
+    {
+    	static $_user = array();
+    	if (false == isset($_user[$userId])) {
+    		$_user[$userId] = Mage::getModel('admin/user')->load($userId);
+    	}
+    	return $_user[$userId];
+    }
 
     /**
      * Compose and get order full history.
@@ -66,43 +75,75 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_History
                 $orderComment->getStatusLabel(),
                 $orderComment->getIsCustomerNotified(),
                 $orderComment->getCreatedAtDate(),
-                $orderComment->getComment()
+                $orderComment->getComment(),
+                $orderComment->getUserId() ? $orderComment->getName() . ' [' . $orderComment->getUsername() . ']' : ''
             );
         }
 
         foreach ($order->getCreditmemosCollection() as $_memo){
+       		$userInfo = '';
+            if (($userId = $_memo->getUserId()) && ($user = $this->getUser($userId)) && $user->getId()) {
+            	$userInfo = $user->getName() . ' [' . $user->getUsername() . ']';
+            }
+            
             $history[$_memo->getEntityId()] =
                 $this->_prepareHistoryItem($this->__('Credit memo #%s created', $_memo->getIncrementId()),
-                    $_memo->getEmailSent(), $_memo->getCreatedAtDate());
+                    $_memo->getEmailSent(), $_memo->getCreatedAtDate(), '', $userInfo);
 
             foreach ($_memo->getCommentsCollection() as $_comment){
                 $history[$_comment->getEntityId()] =
-                    $this->_prepareHistoryItem($this->__('Credit memo #%s comment added', $_memo->getIncrementId()),
-                        $_comment->getIsCustomerNotified(), $_comment->getCreatedAtDate(), $_comment->getComment());
+                    $this->_prepareHistoryItem(
+                    	$this->__('Credit memo #%s comment added', $_memo->getIncrementId()),
+                        $_comment->getIsCustomerNotified(), 
+                        $_comment->getCreatedAtDate(), 
+                        $_comment->getComment(),
+                        $_comment->getUserId() ? $_comment->getName() . ' [' . $_comment->getUsername() . ']' : ''
+                    );
             }
         }
 
         foreach ($order->getShipmentsCollection() as $_shipment){
+        	$userInfo = '';
+            if (($userId = $_shipment->getUserId()) && ($user = $this->getUser($userId)) && $user->getId()) {
+            	$userInfo = $user->getName() . ' [' . $user->getUsername() . ']';
+            }
+            
             $history[$_shipment->getEntityId()] =
                 $this->_prepareHistoryItem($this->__('Shipment #%s created', $_shipment->getIncrementId()),
-                    $_shipment->getEmailSent(), $_shipment->getCreatedAtDate());
+                    $_shipment->getEmailSent(), $_shipment->getCreatedAtDate(), '', $userInfo);
+            
 
             foreach ($_shipment->getCommentsCollection() as $_comment){
                 $history[$_comment->getEntityId()] =
-                    $this->_prepareHistoryItem($this->__('Shipment #%s comment added', $_shipment->getIncrementId()),
-                        $_comment->getIsCustomerNotified(), $_comment->getCreatedAtDate(), $_comment->getComment());
+                    $this->_prepareHistoryItem(
+                    	$this->__('Shipment #%s comment added', $_shipment->getIncrementId()),
+                        $_comment->getIsCustomerNotified(), 
+                        $_comment->getCreatedAtDate(), 
+                        $_comment->getComment(), 
+                        $_comment->getUserId() ? $_comment->getName() . ' [' . $_comment->getUsername() . ']' : ''
+                    );
             }
         }
 
         foreach ($order->getInvoiceCollection() as $_invoice){
+        	$userInfo = '';
+            if (($userId = $_invoice->getUserId()) && ($user = $this->getUser($userId)) && $user->getId()) {
+            	$userInfo = $user->getName() . ' [' . $user->getUsername() . ']';
+            }
+            
             $history[$_invoice->getEntityId()] =
                 $this->_prepareHistoryItem($this->__('Invoice #%s created', $_invoice->getIncrementId()),
-                    $_invoice->getEmailSent(), $_invoice->getCreatedAtDate());
+                    $_invoice->getEmailSent(), $_invoice->getCreatedAtDate(), '', $userInfo);
 
             foreach ($_invoice->getCommentsCollection() as $_comment){
                 $history[$_comment->getEntityId()] =
-                    $this->_prepareHistoryItem($this->__('Invoice #%s comment added', $_invoice->getIncrementId()),
-                        $_comment->getIsCustomerNotified(), $_comment->getCreatedAtDate(), $_comment->getComment());
+                    $this->_prepareHistoryItem(
+                    	$this->__('Invoice #%s comment added', $_invoice->getIncrementId()),
+                        $_comment->getIsCustomerNotified(), 
+                        $_comment->getCreatedAtDate(), 
+                        $_comment->getComment(),
+                        $_comment->getUserId() ? $_comment->getName() . ' [' . $_comment->getUsername() . ']' : ''
+                    );
             }
         }
 
@@ -165,6 +206,17 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_History
         $allowedTags = array('b','br','strong','i','u');
         return (isset($item['comment']) ? $this->escapeHtml($item['comment'], $allowedTags) : '');
     }
+    
+ 	/**
+     * Status history item user_info getter
+     * @param array $item
+     * @return string
+     */
+    public function getItemUserInfo(array $item)
+    {
+        $allowedTags = array('b','br','strong','i','u');
+        return (isset($item['user_info']) ? $this->escapeHtml($item['user_info'], $allowedTags) : '');
+    }
 
     /**
      * Map history items as array
@@ -173,13 +225,14 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_History
      * @param Zend_Date $created
      * @param string $comment
      */
-    protected function _prepareHistoryItem($label, $notified, $created, $comment = '')
+    protected function _prepareHistoryItem($label, $notified, $created, $comment = '', $userInfo = '')
     {
         return array(
             'title'      => $label,
             'notified'   => $notified,
-            'comment'    => $comment,
-            'created_at' => $created
+            'created_at' => $created,
+        	'comment'    => $comment,
+        	'user_info'	 => $userInfo
         );
     }
 

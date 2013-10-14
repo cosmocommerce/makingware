@@ -1,31 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE_AFL.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
- *
- * @category    design
- * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-
--->
 <layout version="0.1.0">
 
     <customer_account>
@@ -45,11 +18,11 @@
         </reference>
     </downloadable_customer_products>
 
-    <checkout_cart_index>
+    <!--<checkout_cart_index>
         <reference name="checkout.cart">
             <action method="addItemRender"><type>downloadable</type><block>downloadable/checkout_cart_item_renderer</block><template>downloadable/checkout/cart/item/default.phtml</template></action>
         </reference>
-    </checkout_cart_index>
+    </checkout_cart_index>-->
 
     <checkout_onepage_review>
         <reference name="root">
@@ -97,7 +70,7 @@
             <action method="addItemRender"><type>downloadable</type><block>downloadable/checkout_cart_item_renderer</block><template>downloadable/checkout/onepage/review/item.phtml</template></action>
         </reference>
     </paypal_express_review_details>
-
+    
     <paypaluk_express_review>
         <reference name="paypal.express.review.details">
             <action method="addItemRender"><type>downloadable</type><block>downloadable/checkout_cart_item_renderer</block><template>downloadable/checkout/onepage/review/item.phtml</template></action>
@@ -126,12 +99,6 @@
             <action method="addItemRender"><type>downloadable</type><block>downloadable/sales_order_item_renderer_downloadable</block><template>downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml</template></action>
         </reference>
     </sales_order_creditmemo>
-    
-    <wishlist_index_index>
-        <reference name="customer.wishlist">
-            <action method="addOptionsRenderCfg"><type>downloadable</type><helper>downloadable/catalog_product_configuration</helper></action>
-        </reference>
-    </wishlist_index_index>
 
 <!--
 Print pages
@@ -186,7 +153,6 @@ Emails
         <reference name="product.info">
             <block type="downloadable/catalog_product_view_type" name="product.info.downloadable" as="product_type_data" template="downloadable/catalog/product/type.phtml">
                  <block type="downloadable/catalog_product_samples" name="product.info.downloadable.samples" as="samples" template="downloadable/catalog/product/samples.phtml"/>
-                 <block type="cataloginventory/stockqty_default" name="product.info.downloadable.extra" as="product_type_data_extra" template="cataloginventory/stockqty/default.phtml"/>
             </block>
         </reference>
         <reference name="product.info.options.wrapper">

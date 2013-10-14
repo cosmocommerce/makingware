@@ -135,23 +135,23 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_Edit_Form extends Mage_Adminh
         $schedule->addField('start_date_is_editable', 'select', array(
             'name'    => 'start_date_is_editable',
             'label'   => Mage::helper('sales')->__('Customer Can Define Start Date'),
-            'comment' => Mage::helper('sales')->__('Whether buyer can define the date when billing for the profile begins.'),
+            'comment' => Mage::helper('sales')->__('Whether buyer can define the date when shipping for the profile begins.'),
             'options' => array('No', 'Yes')
         ));
         $this->_addField($schedule, 'schedule_description');
         $this->_addField($schedule, 'suspension_threshold');
         $this->_addField($schedule, 'bill_failed_later', array('options' => $noYes), 'select');
 
-        // billing
-        $billing = $form->addFieldset('billing_fieldset', array(
-            'legend' => Mage::helper('sales')->__('Billing'),
+        // shipping
+        $shipping = $form->addFieldset('shipping_fieldset', array(
+            'legend' => Mage::helper('sales')->__('Shipping'),
             'disabled'  => $this->_isReadOnly
         ));
-        $this->_addField($billing, 'period_unit', array(
+        $this->_addField($shipping, 'period_unit', array(
             'options' => $this->_getPeriodUnitOptions(Mage::helper('adminhtml')->__('-- Please Select --')),
         ), 'select');
-        $this->_addField($billing, 'period_frequency');
-        $this->_addField($billing, 'period_max_cycles');
+        $this->_addField($shipping, 'period_frequency');
+        $this->_addField($shipping, 'period_max_cycles');
 
         // trial
         $trial = $form->addFieldset('trial_fieldset', array(
@@ -163,7 +163,7 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_Edit_Form extends Mage_Adminh
         ), 'select');
         $this->_addField($trial, 'trial_period_frequency');
         $this->_addField($trial, 'trial_period_max_cycles');
-        $this->_addField($trial, 'trial_billing_amount');
+        $this->_addField($trial, 'trial_shipping_amount');
 
         // initial fees
         $initial = $form->addFieldset('initial_fieldset', array(

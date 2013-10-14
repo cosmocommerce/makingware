@@ -220,29 +220,21 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
         $items = array();
         $itemInfoObjects = func_get_args();
 
-        $billingAmount = 0;
         $shippingAmount = 0;
-        $taxAmount = 0;
         $isVirtual = 1;
         $weight = 0;
         foreach ($itemInfoObjects as $itemInfo) {
             $item = $this->_getItem($itemInfo);
-            $billingAmount += $item->getPrice();
             $shippingAmount += $item->getShippingAmount();
-            $taxAmount += $item->getTaxAmount();
             $weight += $item->getWeight();
             if (!$item->getIsVirtual()) {
                 $isVirtual = 0;
             }
             $items[] = $item;
         }
-        $grandTotal = $billingAmount + $shippingAmount + $taxAmount;
+        $grandTotal = $shippingAmount;
 
         $order = Mage::getModel('sales/order');
-
-        $billingAddress = Mage::getModel('sales/order_address')
-            ->setData($this->getBillingAddressInfo())
-            ->setId(null);
 
         $shippingInfo = $this->getShippingAddressInfo();
         $shippingAddress = Mage::getModel('sales/order_address')
@@ -254,12 +246,11 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
 
         $transferDataKays = array(
             'store_id',             'store_name',           'customer_id',          'customer_email',
-            'customer_firstname',   'customer_lastname',    'customer_middlename',  'customer_prefix',
-            'customer_suffix',      'customer_taxvat',      'customer_gender',      'customer_is_guest',
-            'customer_note_notify', 'customer_group_id',    'customer_note',        'shipping_method',
-            'shipping_description', 'base_currency_code',   'global_currency_code', 'order_currency_code',
-            'store_currency_code',  'base_to_global_rate',  'base_to_order_rate',   'store_to_base_rate',
-            'store_to_order_rate'
+            'customer_name',   	 	'customer_prefix',		'customer_suffix',      'customer_gender',
+            'customer_is_guest',	'customer_note_notify', 'customer_group_id',	'customer_comment',    
+            'customer_note',        'shipping_method',		'shipping_description', 'base_currency_code',   
+            'global_currency_code', 'order_currency_code',	'store_currency_code',  'base_to_global_rate',  
+            'base_to_order_rate',   'store_to_base_rate',	'store_to_order_rate'
         );
 
         $orderInfo = $this->getOrderInfo();
@@ -276,18 +267,15 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
             ->setBaseToOrderRate($this->getInfoValue('order_info', 'base_to_quote_rate'))
             ->setStoreToOrderRate($this->getInfoValue('order_info', 'store_to_quote_rate'))
             ->setOrderCurrencyCode($this->getInfoValue('order_info', 'quote_currency_code'))
-            ->setBaseSubtotal($billingAmount)
-            ->setSubtotal($billingAmount)
+            ->setBaseSubtotal($shippingAmount)
+            ->setSubtotal($shippingAmount)
             ->setBaseShippingAmount($shippingAmount)
             ->setShippingAmount($shippingAmount)
-            ->setBaseTaxAmount($taxAmount)
-            ->setTaxAmount($taxAmount)
             ->setBaseGrandTotal($grandTotal)
             ->setGrandTotal($grandTotal)
             ->setIsVirtual($isVirtual)
             ->setWeight($weight)
             ->setTotalQtyOrdered($this->getInfoValue('order_info', 'items_qty'))
-            ->setBillingAddress($billingAddress)
             ->setShippingAddress($shippingAddress)
             ->setPayment($payment);
 
@@ -333,9 +321,6 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
         $this->_cleanupArray($orderInfo);
         $this->setOrderInfo($orderInfo);
 
-        $addressInfo = $quote->getBillingAddress()->getData();
-        $this->_cleanupArray($addressInfo);
-        $this->setBillingAddressInfo($addressInfo);
         if (!$quote->isVirtual()) {
             $addressInfo = $quote->getShippingAddress()->getData();
             $this->_cleanupArray($addressInfo);
@@ -360,10 +345,7 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
         $this->setQuoteItemInfo($item);
 
         // TODO: make it abstract from amounts
-        $this->setBillingAmount($item->getBaseRowTotal())
-            ->setTaxAmount($item->getBaseTaxAmount())
-            ->setShippingAmount($item->getBaseShippingAmount())
-        ;
+        $this->setShippingAmount($item->getBaseShippingAmount());
         if (!$this->getScheduleDescription()) {
             $this->setScheduleDescription($item->getName());
         }
@@ -620,9 +602,8 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
      */
     protected function _getRegularItem($itemInfo)
     {
-        $price = $itemInfo->getPrice() ? $itemInfo->getPrice() : $this->getBillingAmount();
+        $price = $itemInfo->getPrice() ? $itemInfo->getPrice() : $this->getShippingAmount();
         $shippingAmount = $itemInfo->getShippingAmount() ? $itemInfo->getShippingAmount() : $this->getShippingAmount();
-        $taxAmount = $itemInfo->getTaxAmount() ? $itemInfo->getTaxAmount() : $this->getTaxAmount();
 
         $item = Mage::getModel('sales/order_item')
             ->setData($this->getOrderItemInfo())
@@ -632,7 +613,6 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
             ->setBasePrice($price)
             ->setRowTotal($price)
             ->setBaseRowTotal($price)
-            ->setTaxAmount($taxAmount)
             ->setShippingAmount($shippingAmount)
             ->setId(null);
         return $item;
@@ -674,7 +654,6 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
     {
         $price = $itemInfo->getPrice() ? $itemInfo->getPrice() : $this->getInitAmount();
         $shippingAmount = $itemInfo->getShippingAmount() ? $itemInfo->getShippingAmount() : 0;
-        $taxAmount = $itemInfo->getTaxAmount() ? $itemInfo->getTaxAmount() : 0;
         $item = Mage::getModel('sales/order_item')
             ->setStoreId($this->getStoreId())
             ->setProductType(Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL)
@@ -690,7 +669,6 @@ class Mage_Sales_Model_Recurring_Profile extends Mage_Payment_Model_Recurring_Pr
             ->setBaseOriginalPrice($price)
             ->setRowTotal($price)
             ->setBaseRowTotal($price)
-            ->setTaxAmount($taxAmount)
             ->setShippingAmount($shippingAmount);
 
         $option = array(

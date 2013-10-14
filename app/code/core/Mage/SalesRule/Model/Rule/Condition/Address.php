@@ -117,7 +117,7 @@ class Mage_SalesRule_Model_Rule_Condition_Address extends Mage_Rule_Model_Condit
         $address = $object;
         if (!$address instanceof Mage_Sales_Model_Quote_Address) {
             if ($object->getQuote()->isVirtual()) {
-                $address = $object->getQuote()->getBillingAddress();
+                return true;
             }
             else {
                 $address = $object->getQuote()->getShippingAddress();

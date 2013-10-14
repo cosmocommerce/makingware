@@ -115,9 +115,6 @@ abstract class Mage_Catalog_Block_Product_View_Options_Abstract extends Mage_Cor
             return '';
         }
 
-        $taxHelper = Mage::helper('tax');
-        $store = $this->getProduct()->getStore();
-
         $sign = '+';
         if ($value['pricing_value'] < 0) {
             $sign = '-';
@@ -125,42 +122,11 @@ abstract class Mage_Catalog_Block_Product_View_Options_Abstract extends Mage_Cor
         }
 
         $priceStr = $sign;
-        $_priceInclTax = $this->getPrice($value['pricing_value'], true);
-        $_priceExclTax = $this->getPrice($value['pricing_value']);
-        if ($taxHelper->displayPriceIncludingTax()) {
-            $priceStr .= $this->helper('core')->currencyByStore($_priceInclTax, $store, true, $flag);
-        } elseif ($taxHelper->displayPriceExcludingTax()) {
-            $priceStr .= $this->helper('core')->currencyByStore($_priceExclTax, $store, true, $flag);
-        } elseif ($taxHelper->displayBothPrices()) {
-            $priceStr .= $this->helper('core')->currencyByStore($_priceExclTax, $store, true, $flag);
-            if ($_priceInclTax != $_priceExclTax) {
-                $priceStr .= ' ('.$sign.$this->helper('core')
-                    ->currencyByStore($_priceInclTax, $store, true, $flag).' '.$this->__('Incl. Tax').')';
-            }
-        }
-
         if ($flag) {
             $priceStr = '<span class="price-notice">'.$priceStr.'</span>';
         }
 
         return $priceStr;
-    }
-
-    /**
-     * Get price with including/excluding tax
-     *
-     * @param decimal $price
-     * @param bool $includingTax
-     * @return decimal
-     */
-    public function getPrice($price, $includingTax = null)
-    {
-        if (!is_null($includingTax)) {
-            $price = Mage::helper('tax')->getPrice($this->getProduct(), $price, true);
-        } else {
-            $price = Mage::helper('tax')->getPrice($this->getProduct(), $price);
-        }
-        return $price;
     }
 
     /**

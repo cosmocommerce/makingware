@@ -96,7 +96,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
             $object = $this->getEntity()->getQuote();
         }
 
-        return $object->getBillingAddress()->getName();
+        return $object->getShippingAddress()->getName();
     }
 
     /**
@@ -122,8 +122,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
         if ($object->getShippingAddress()) {
             return $object->getShippingAddress()->getName();
         }
-        else if ($object->getBillingAddress()) {
-            return $object->getBillingAddress()->getName();
+        else if ($object->getShippingAddress()) {
+            return $object->getShippingAddress()->getName();
         }
 
         return '';
@@ -153,7 +153,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
             $this->_prepareVisibleFields($fieldset);
         }
 
-        // Set default sender and recipient from billing and shipping adresses
+        // Set default sender and recipient from shipping and shipping adresses
         if(!$this->getMessage()->getSender()) {
             $this->getMessage()->setSender($this->getDefaultSender());
         }

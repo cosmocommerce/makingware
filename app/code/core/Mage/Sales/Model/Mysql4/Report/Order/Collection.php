@@ -70,8 +70,6 @@ class Mage_Sales_Model_Mysql4_Report_Order_Collection extends Mage_Sales_Model_M
                 'total_canceled_amount'          => 'SUM(total_canceled_amount)',
                 'total_paid_amount'              => 'SUM(total_paid_amount)',
                 'total_refunded_amount'          => 'SUM(total_refunded_amount)',
-                'total_tax_amount'               => 'SUM(total_tax_amount)',
-                'total_tax_amount_actual'        => 'SUM(total_tax_amount_actual)',
                 'total_shipping_amount'          => 'SUM(total_shipping_amount)',
                 'total_shipping_amount_actual'   => 'SUM(total_shipping_amount_actual)',
                 'total_discount_amount'          => 'SUM(total_discount_amount)',

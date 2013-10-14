@@ -34,7 +34,7 @@ class Mage_Sales_Model_Mysql4_Order_Invoice_Attribute_Backend_Order
     {
         if ($object->getOrder()) {
             $object->setOrderId($object->getOrder()->getId());
-            $object->setBillingAddressId($object->getOrder()->getBillingAddress()->getId());
+            $object->setShippingAddressId($object->getOrder()->getShippingAddress()->getId());
         }
         return parent::beforeSave($object);
     }

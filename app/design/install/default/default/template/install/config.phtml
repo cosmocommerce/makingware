@@ -64,6 +64,7 @@
                 <input type="password" name="config[db_pass]" id="password" value="" title="<?php echo $this->__('Database user password') ?>" class="input-text" />
             </div>
         </li>
+        <!--
         <li>
             <div class="input-box">
                 <label for="prefix"><?php echo $this->__('Tables Prefix') ?></label><br />
@@ -72,6 +73,11 @@
                     <small><?php echo $this->__('(Optional. Leave blank for no prefix)') ?></small>
                 </p>
             </div>
+        </li>
+        -->
+        <li>
+            <input type="hidden" name="config[db_prefix]" id="prefix" value="" />
+        	<input type="checkbox" name="config[drop_db]" id="dropdb" value="1" /> <label for="dropdb"><?php echo $this->__('Delete the database if it exists.') ?></label>
         </li>
     </ul>
 </fieldset>
@@ -162,6 +168,9 @@
 </fieldset>
 
 <div class="button-set">
+    <p>
+       <?php echo $this->__('点击继续开始创建数据表结构，该步骤执行时间较长，视乎机器速度和操作系统，大概需要 1-5 分钟，请耐心等候。') ?>
+    </p>
     <p class="required">* <?php echo $this->__('Required Fields') ?></p>
     <button class="form-button" type="submit"><span><?php echo $this->__('Continue') ?></span></button>
 </div>

@@ -35,9 +35,14 @@ class Mage_Customer_Block_Account_Dashboard extends Mage_Core_Block_Template
 {
     protected $_subscription = null;
 
+    public function getSession()
+    {
+    	return Mage::getSingleton('customer/session');
+    }
+    
     public function getCustomer()
     {
-        return Mage::getSingleton('customer/session')->getCustomer();
+        return $this->getSession()->getCustomer();
     }
 
     public function getAccountUrl()

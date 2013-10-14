@@ -46,7 +46,7 @@ class Mage_Review_Block_Form extends Mage_Core_Block_Template
         if (!$data->getNickname()) {
             $customer = $customerSession->getCustomer();
             if ($customer && $customer->getId()) {
-                $data->setNickname($customer->getFirstname());
+                $data->setNickname($customer->getName());
             }
         }
 
@@ -90,5 +90,15 @@ class Mage_Review_Block_Form extends Mage_Core_Block_Template
             ->load()
             ->addOptionToItems();
         return $ratingCollection;
+    }
+    
+    public function generalImage()
+    {
+        return Mage::getUrl('review/product/generalImage', array('sid' => md5(time())));
+    }
+    
+    public  function canShowSecureCode()
+    {
+        return Mage::helper('review')->canShowSecureCode();
     }
 }

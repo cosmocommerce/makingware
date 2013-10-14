@@ -152,27 +152,6 @@ class Mage_Bundle_Model_Sales_Order_Pdf_Items_Creditmemo extends Mage_Bundle_Mod
                     'align' => 'center',
                     'width' => 30
                 );
-                $x += 30;
-
-                // draw Tax
-                $text = $order->formatPriceTxt($_item->getTaxAmount());
-                $line[] = array(
-                    'text'  => $text,
-                    'feed'  => $x,
-                    'font'  => 'bold',
-                    'align' => 'right',
-                    'width' => 45
-                );
-                $x += 45;
-
-                // draw Total(inc)
-                $text = $order->formatPriceTxt($_item->getRowTotal()+$_item->getTaxAmount()-$_item->getDiscountAmount());
-                $line[] = array(
-                    'text'  => $text,
-                    'feed'  => $rightBound,
-                    'font'  => 'bold',
-                    'align' => 'right',
-                );
             }
 
             $drawItems[$optionId]['lines'][] = $line;

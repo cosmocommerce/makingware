@@ -25,7 +25,7 @@
  */
 
 /**
- * Adminhtml Tax Rule Edit Form
+ * Adminhtml Rule Edit Form
  *
  * @category   Mage
  * @package    Mage_Adminhtml

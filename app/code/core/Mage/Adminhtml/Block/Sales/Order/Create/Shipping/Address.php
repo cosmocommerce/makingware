@@ -82,16 +82,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Address
     }
 
     /**
-     * Same as billing address flag
-     *
-     * @return boolean
-     */
-    public function getIsAsBilling()
-    {
-        return $this->getCreateOrderModel()->getShippingAddress()->getSameAsBilling();
-    }
-
-    /**
      * Return Form Elements values
      *
      * @return array
@@ -112,7 +102,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Address
     }
 
     /**
-     * Return billing address object
+     * Return shipping address object
      *
      * @return Mage_Customer_Model_Address
      */

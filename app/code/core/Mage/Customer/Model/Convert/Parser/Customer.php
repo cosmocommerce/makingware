@@ -274,27 +274,8 @@ class Mage_Customer_Model_Convert_Parser_Customer
                 $row[$field] = $value;
             }
 
-            $defaultBillingId  = $customer->getDefaultBilling();
             $defaultShippingId = $customer->getDefaultShipping();
-
             $customerAddress = $this->getCustomerAddressModel();
-
-            if (!$defaultBillingId) {
-                foreach ($this->getFields() as $code=>$node) {
-                    if ($node->is('billing')) {
-                        $row['billing_'.$code] = null;
-                    }
-                }
-            }
-            else {
-                $customerAddress->load($defaultBillingId);
-
-                foreach ($this->getFields() as $code=>$node) {
-                    if ($node->is('billing')) {
-                        $row['billing_'.$code] = $customerAddress->getDataUsingMethod($code);
-                    }
-                }
-            }
 
             if (!$defaultShippingId) {
                 foreach ($this->getFields() as $code=>$node) {
@@ -304,9 +285,6 @@ class Mage_Customer_Model_Convert_Parser_Customer
                 }
             }
             else {
-                if ($defaultShippingId != $defaultBillingId) {
-                    $customerAddress->load($defaultShippingId);
-                }
                 foreach ($this->getFields() as $code=>$node) {
                     if ($node->is('shipping')) {
                         $row['shipping_'.$code] = $customerAddress->getDataUsingMethod($code);
@@ -359,7 +337,6 @@ class Mage_Customer_Model_Convert_Parser_Customer
             'website_id',
             'group_id',
             'created_in',
-            'default_billing',
             'default_shipping',
             'country_id'
         );
@@ -394,12 +371,12 @@ class Mage_Customer_Model_Convert_Parser_Customer
             }
 
             if ($code == 'street') {
-                $attributes['billing_'.$code.'_full'] = 'billing_'.$code;
+                $attributes['shipping_'.$code.'_full'] = 'shipping_'.$code;
             } else {
-                $attributes['billing_'.$code] = 'billing_'.$code;
+                $attributes['shipping_'.$code] = 'shipping_'.$code;
             }
         }
-        $attributes['billing_country'] = 'billing_country';
+        $attributes['shipping_country'] = 'shipping_country';
 
         foreach ($addressAttributes as $attr) {
             $code = $attr->getAttributeCode();
@@ -501,18 +478,6 @@ class Mage_Customer_Model_Convert_Parser_Customer
                     }
                     $row[$field] = $value;
 
-                    $billingAddress = $model->getDefaultBillingAddress();
-                    if($billingAddress instanceof Mage_Customer_Model_Address){
-                        $billingAddress->explodeStreetAddress();
-                        $row['billing_street1']     = $billingAddress->getStreet1();
-                        $row['billing_street2']     = $billingAddress->getStreet2();
-                        $row['billing_city']        = $billingAddress->getCity();
-                        $row['billing_region']      = $billingAddress->getRegion();
-                        $row['billing_country']     = $billingAddress->getCountry();
-                        $row['billing_postcode']    = $billingAddress->getPostcode();
-                        $row['billing_telephone']   = $billingAddress->getTelephone();
-                    }
-
                     $shippingAddress = $model->getDefaultShippingAddress();
                     if($shippingAddress instanceof Mage_Customer_Model_Address){
                         $shippingAddress->explodeStreetAddress();
@@ -590,17 +555,10 @@ class Mage_Customer_Model_Convert_Parser_Customer
                     $row['group'] = 'General';
                 }
 
-                if (empty($row['firstname'])) {
-                    $this->addException(Mage::helper('customer')->__('Missing firstname, skipping the record.'), Varien_Convert_Exception::ERROR);
+                if (empty($row['name'])) {
+                    $this->addException(Mage::helper('customer')->__('Missing name, skipping the record.'), Varien_Convert_Exception::ERROR);
                     continue;
                 }
-                //$this->setPosition('Line: '.($i+1).', Firstname: '.$row['firstname']);
-
-                if (empty($row['lastname'])) {
-                    $this->addException(Mage::helper('customer')->__('Missing lastname, skipping the record.'), Varien_Convert_Exception::ERROR);
-                    continue;
-                }
-                //$this->setPosition('Line: '.($i+1).', Lastname: '.$row['lastname']);
 
                 /*
                 // get product type_id, if not throw error
@@ -652,50 +610,7 @@ class Mage_Customer_Model_Convert_Parser_Customer
 
                     }//foreach ($row as $field=>$value)
 
-
-                    $billingAddress = $model->getPrimaryBillingAddress();
                     $customer = Mage::getModel('customer/customer')->load($model->getId());
-
-
-                    if (!$billingAddress  instanceof Mage_Customer_Model_Address) {
-                        $billingAddress = new Mage_Customer_Model_Address();
-                        if ($customer->getId() && $customer->getDefaultBilling()) {
-                            $billingAddress->setId($customer->getDefaultBilling());
-                        }
-                    }
-
-                    $regions = Mage::getResourceModel('directory/region_collection')->addRegionNameFilter($row['billing_region'])->load();
-                    if ($regions) foreach($regions as $region) {
-                       $regionId = $region->getId();
-                    }
-
-                    $billingAddress->setFirstname($row['firstname']);
-                    $billingAddress->setLastname($row['lastname']);
-                    $billingAddress->setCity($row['billing_city']);
-                    $billingAddress->setRegion($row['billing_region']);
-                    $billingAddress->setRegionId($regionId);
-                    $billingAddress->setCountryId($row['billing_country']);
-                    $billingAddress->setPostcode($row['billing_postcode']);
-                    $billingAddress->setStreet(array($row['billing_street1'],$row['billing_street2']));
-                    if (!empty($row['billing_telephone'])) {
-                        $billingAddress->setTelephone($row['billing_telephone']);
-                    }
-
-                    if (!$model->getDefaultBilling()) {
-                        $billingAddress->setCustomerId($model->getId());
-                        $billingAddress->setIsDefaultBilling(true);
-                        $billingAddress->save();
-                        $model->setDefaultBilling($billingAddress->getId());
-                        $model->addAddress($billingAddress);
-                        if ($customer->getDefaultBilling()) {
-                            $model->setDefaultBilling($customer->getDefaultBilling());
-                        } else {
-                            $shippingAddress->save();
-                            $model->setDefaultShipping($billingAddress->getId());
-                            $model->addAddress($billingAddress);
-
-                        }
-                    }
 
                     $shippingAddress = $model->getPrimaryShippingAddress();
                     if (!$shippingAddress instanceof Mage_Customer_Model_Address) {
@@ -710,8 +625,7 @@ class Mage_Customer_Model_Convert_Parser_Customer
                        $regionId = $region->getId();
                     }
 
-                    $shippingAddress->setFirstname($row['firstname']);
-                    $shippingAddress->setLastname($row['lastname']);
+                    $shippingAddress->setName($row['name']);
                     $shippingAddress->setCity($row['shipping_city']);
                     $shippingAddress->setRegion($row['shipping_region']);
                     $shippingAddress->setRegionId($regionId);

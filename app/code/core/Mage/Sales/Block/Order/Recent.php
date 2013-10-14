@@ -34,6 +34,7 @@
 
 class Mage_Sales_Block_Order_Recent extends Mage_Core_Block_Template
 {
+	protected $_notAllowOnlinePayment = array('free', 'cod','bankremittance','exchangepayment');
 
     public function __construct()
     {
@@ -42,8 +43,7 @@ class Mage_Sales_Block_Order_Recent extends Mage_Core_Block_Template
         //TODO: add full name logic
         $orders = Mage::getResourceModel('sales/order_collection')
             ->addAttributeToSelect('*')
-            ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
-            ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
+            ->joinAttribute('shipping_name', 'order_address/name', 'shipping_address_id', null, 'left')
             ->addAttributeToFilter('customer_id', Mage::getSingleton('customer/session')->getCustomer()->getId())
             ->addAttributeToFilter('state', array('in' => Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates()))
             ->addAttributeToSort('created_at', 'desc')
@@ -75,5 +75,10 @@ class Mage_Sales_Block_Order_Recent extends Mage_Core_Block_Template
     public function getReorderUrl($order)
     {
         return $this->getUrl('sales/order/reorder', array('order_id' => $order->getId()));
+    }
+
+    public function canOnlinePayment($order)
+    {
+    	return !in_array($order->getPayment()->getMethodInstance()->getCode(), $this->_notAllowOnlinePayment);
     }
 }

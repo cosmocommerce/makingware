@@ -39,6 +39,7 @@ class Mage_Shipping_Model_Carrier_Flatrate
 
     protected $_code = 'flatrate';
     protected $_isFixed = true;
+    protected $_formBlockType = 'shipping/form_flatrate';
 
     /**
      * Enter description here...
@@ -111,5 +112,15 @@ class Mage_Shipping_Model_Carrier_Flatrate
     {
         return array('flatrate'=>$this->getConfigData('name'));
     }
+
+    public function getMethodCode()
+	{
+		return $this->_code;
+	}
+	
+	public function getShippingBaseTime()
+	{
+		return true;
+	}
 
 }

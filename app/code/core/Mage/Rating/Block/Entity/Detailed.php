@@ -38,6 +38,14 @@ class Mage_Rating_Block_Entity_Detailed extends Mage_Core_Block_Template
         parent::__construct();
         $this->setTemplate('rating/detailed.phtml');
     }
+    
+	public function canShowReview()
+    {
+        if(Mage::getStoreConfig('catalog/review/enable')){
+        	return true; 
+        }
+        return false;
+    }
 
     protected function _toHtml()
     {
@@ -66,6 +74,7 @@ class Mage_Rating_Block_Entity_Detailed extends Mage_Core_Block_Template
             $ratingCollection->addEntitySummaryToItem($entityId, Mage::app()->getStore()->getId());
         }
 
+        $this->assign('reviewsCount', $reviewsCount);
         $this->assign('collection', $ratingCollection);
         return parent::_toHtml();
     }

@@ -72,22 +72,6 @@ class Mage_Downloadable_Model_Sales_Order_Pdf_Items_Invoice extends Mage_Downloa
             'align' => 'right'
         );
 
-        // draw Tax
-        $lines[0][] = array(
-            'text'  => $order->formatPriceTxt($item->getTaxAmount()),
-            'feed'  => 495,
-            'font'  => 'bold',
-            'align' => 'right'
-        );
-
-        // draw Subtotal
-        $lines[0][] = array(
-            'text'  => $order->formatPriceTxt($item->getRowTotal()),
-            'feed'  => 565,
-            'font'  => 'bold',
-            'align' => 'right'
-        );
-
         // custom options
         $options = $this->getItemOptions();
         if ($options) {

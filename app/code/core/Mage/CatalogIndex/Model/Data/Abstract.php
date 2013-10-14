@@ -208,26 +208,6 @@ class Mage_CatalogIndex_Model_Data_Abstract extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get tax class id for a product
-     *
-     * @param int $productId
-     * @param Mage_Core_Model_Store $store
-     * @return int
-     */
-    public function getTaxClassId($productId, $store)
-    {
-        $attributeId = Mage::getSingleton('eav/entity_attribute')->getIdByCode('catalog_product', 'tax_class_id');
-        $taxClassId  = $this->getResource()->getAttributeData(array($productId), array($attributeId), $store->getId());
-        if (is_array($taxClassId) && isset($taxClassId[0]['value'])) {
-            $taxClassId = $taxClassId[0]['value'];
-        }
-        else {
-            $taxClassId = 0;
-        }
-        return $taxClassId;
-    }
-
-    /**
      * Return tier data for specified products in specified store
      *
      * @param array $products

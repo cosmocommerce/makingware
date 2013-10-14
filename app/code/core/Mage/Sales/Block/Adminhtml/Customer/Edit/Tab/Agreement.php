@@ -25,12 +25,12 @@
  */
 
 /**
- * Adminhtml customer billing agreement tab
+ * Adminhtml customer shipping agreement tab
  *
  * @author Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
-    extends Mage_Sales_Block_Adminhtml_Billing_Agreement_Grid
+    extends Mage_Sales_Block_Adminhtml_Shipping_Agreement_Grid
     implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
     /**
@@ -38,7 +38,7 @@ class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
      *
      * @var array
      */
-    protected $_columnsToRemove = array('customer_email', 'customer_firstname', 'customer_lastname');
+    protected $_columnsToRemove = array('customer_email', 'customer_name');
 
     /**
      * Disable filters and paging
@@ -57,7 +57,7 @@ class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
      */
     public function getTabLabel()
     {
-        return $this->__('Billing Agreements');
+        return $this->__('Shipping Agreements');
     }
 
     /**
@@ -67,7 +67,7 @@ class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
      */
     public function getTabTitle()
     {
-        return $this->__('Billing Agreements');
+        return $this->__('Shipping Agreements');
     }
 
     /**
@@ -93,7 +93,7 @@ class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/sales_billing_agreement/customerGrid', array('_current'=>true));
+        return $this->getUrl('*/sales_shipping_agreement/customerGrid', array('_current'=>true));
     }
 
     /**
@@ -113,7 +113,7 @@ class Mage_Sales_Block_Adminhtml_Customer_Edit_Tab_Agreement
      */
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('sales/billing_agreement_collection')
+        $collection = Mage::getResourceModel('sales/shipping_agreement_collection')
             ->addFieldToFilter('customer_id', Mage::registry('current_customer')->getId())
             ->setOrder('created_at');
         $this->setCollection($collection);

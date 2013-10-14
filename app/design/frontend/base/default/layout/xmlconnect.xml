@@ -208,8 +208,6 @@
             <block type="xmlconnect/checkout_payment_method_ccsave" name="xmlconnect.checkout.method.ccsave" as="payment_ccsave" output=""/>
             <block type="xmlconnect/checkout_payment_method_checkmo" name="xmlconnect.checkout.method.checkmo" as="payment_checkmo" output=""/>
             <block type="xmlconnect/checkout_payment_method_purchaseorder" name="xmlconnect.checkout.method.purchaseorder" as="payment_purchaseorder" output=""/>
-            <block type="xmlconnect/checkout_payment_method_paypal_payflow" name="xmlconnect.checkout.method.paypal.payflow" as="payment_paypal_payflow" output=""/>
-            <block type="xmlconnect/checkout_payment_method_paypal_direct" name="xmlconnect.checkout.method.paypal.direct" as="payment_paypal_direct" output=""/>
             <block type="xmlconnect/checkout_payment_method_authorizenet" name="xmlconnect.checkout.method.authorizenet" as="payment_authorizenet" output=""/>
         </block>
     </xmlconnect_checkout_paymentmethods>
@@ -227,16 +225,6 @@
             <block type="xmlconnect/checkout_agreements" name="xmlconnect.checkout.agreements" as="agreements" output=""/>
         </block>
     </xmlconnect_checkout_orderreview>
-
-    <!-- Checkout with PayPal MEP -->
-
-    <xmlconnect_paypal_mep_shippingmethods>
-        <block type="xmlconnect/checkout_shipping_method_avaliable" name="xmlconnect.checkout.shipping.method.avalieble" output="toHtml"/>
-    </xmlconnect_paypal_mep_shippingmethods>
-
-    <xmlconnect_paypal_mep_carttotals>
-        <block type="xmlconnect/cart_paypal_mep_totals" name="xmlconnect.cart.paypal.mep.totals" output="toHtml"/>
-    </xmlconnect_paypal_mep_carttotals>
 
     <!-- Cms -->
 

@@ -228,6 +228,19 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                     if (!$address) {
                         $address   = Mage::getModel('customer/address');
                     }
+                    
+                    if (empty($data['address'][$index]['region_id']) && 
+                    	isset($data['address'][$index]['region']) && is_numeric($data['address'][$index]['region'])) {
+                    	$address->setRegionId($data['address'][$index]['region']);
+                    }
+                	if (empty($data['address'][$index]['city_id']) && 
+                    	isset($data['address'][$index]['city']) && is_numeric($data['address'][$index]['city'])) {
+                    	$address->setCityId($data['address'][$index]['city']);
+                    }
+                    if (empty($data['address'][$index]['area_id']) && 
+                    	isset($data['address'][$index]['area']) && is_numeric($data['address'][$index]['area'])) {
+                    	$address->setAreaId($data['address'][$index]['area']);
+                    }
 
                     $requestScope = sprintf('address/%s', $index);
                     $formData = $addressForm->setEntity($address)
@@ -246,7 +259,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
 
                     $addressForm->compactData($formData);
 
-                    // Set post_index for detect default billing and shipping addresses
+                    // Set post_index for detect default shipping and shipping addresses
                     $address->setPostIndex($index);
 
                     if ($address->getId()) {
@@ -257,10 +270,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                 }
             }
 
-            // default billing and shipping
-            if (isset($data['account']['default_billing'])) {
-                $customer->setData('default_billing', $data['account']['default_billing']);
-            }
+            // default shipping
             if (isset($data['account']['default_shipping'])) {
                 $customer->setData('default_shipping', $data['account']['default_shipping']);
             }
@@ -608,6 +618,19 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                 $address = $customer->getAddressItemById($index);
                 if (!$address) {
                     $address   = Mage::getModel('customer/address');
+                }
+                
+                if (empty($addressesData[$index]['region_id']) &&
+                		isset($addressesData[$index]['region']) && is_numeric($addressesData[$index]['region'])) {
+                	$address->setRegionId($addressesData[$index]['region']);
+                }
+                if (empty($addressesData[$index]['city_id']) &&
+                		isset($addressesData[$index]['city']) && is_numeric($addressesData[$index]['city'])) {
+                	$address->setCityId($addressesData[$index]['city']);
+                }
+                if (empty($addressesData[$index]['area_id']) &&
+                		isset($addressesData[$index]['area']) && is_numeric($addressesData[$index]['area'])) {
+                	$address->setAreaId($addressesData[$index]['area']);
                 }
 
                 $requestScope = sprintf('address/%s', $index);

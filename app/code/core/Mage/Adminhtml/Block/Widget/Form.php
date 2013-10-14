@@ -201,7 +201,9 @@ class Mage_Adminhtml_Block_Widget_Form extends Mage_Adminhtml_Block_Widget
                     $element->setValues($attribute->getSource()->getAllOptions(true, true));
                 } else if ($inputType == 'date') {
                     $element->setImage($this->getSkinUrl('images/grid-cal.gif'));
-                    $element->setFormat(Mage::app()->getLocale()->getDateFormat(Mage_Core_Model_Locale::FORMAT_TYPE_SHORT));
+                    $element->setFormat('yyyy-MM-dd HH:mm:ss')
+                    	->setTime(true)
+                    	->setStyle('width:180px !important;');
                 } else if ($inputType == 'multiline') {
                     $element->setLineCount($attribute->getMultilineCount());
                 }

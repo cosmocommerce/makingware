@@ -467,13 +467,8 @@ Event.observe(window, 'load', function(){
             </div>
             <div class="profile_entity_type_customer">
                 <span class="field-row">
-                    <label for="customer_filter_firstname"><?php echo $this->__("First Name:") ?></label>
-                    <input class="input-text" id="customer_filter_firstname" name="gui_data[customer][filter][firstname]" value="<?php echo $this->getValue('gui_data/customer/filter/firstname') ?>"/>
-                    <?php echo $this->__('(Starting with)') ?>
-                </span>
-                <span class="field-row">
-                    <label for="customer_filter_lastname"><?php echo $this->__("Last Name:") ?></label>
-                    <input class="input-text" id="customer_filter_lastname" name="gui_data[customer][filter][lastname]" value="<?php echo $this->getValue('gui_data/customer/filter/lastname') ?>"/>
+                    <label for="customer_filter_name"><?php echo $this->__("Name:") ?></label>
+                    <input class="input-text" id="customer_filter_name" name="gui_data[customer][filter][name]" value="<?php echo $this->getValue('gui_data/customer/filter/name') ?>"/>
                     <?php echo $this->__('(Starting with)') ?>
                 </span>
                 <span class="field-row">

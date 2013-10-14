@@ -86,7 +86,8 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
 
             if (!$this->getQuoteId()) {
                 if ($customerSession->isLoggedIn()) {
-                    $quote->loadByCustomer($customerSession->getCustomer());
+                    #$quote->loadByCustomer($customerSession->getCustomer());
+                	$quote->loadByCustomer($customerSession->getCustomer(), $this->_getQuoteIdKey());
                     $this->setQuoteId($quote->getId());
                 } else {
                     $quote->setIsCheckoutCart(true);
@@ -99,6 +100,8 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                     $quote->setCustomer($customerSession->getCustomer());
                 }
             }
+            
+            $quote->setNamespace($this->_getQuoteIdKey());
 
             $quote->setStore(Mage::app()->getStore());
             $this->_quote = $quote;
@@ -114,7 +117,27 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
 
     protected function _getQuoteIdKey()
     {
-        return 'quote_id_' . Mage::app()->getStore()->getWebsiteId();
+    	static $_key = null;
+    	if (empty($_key)) {
+	    	$routers = Mage::app()->loadCache('checkout_session_use_quote_routers');
+	    	if (false === $routers) {
+	    		$routers = array();
+	    		if ($routersConfig = Mage::getConfig()->getNode('global/checkout/session/use_quote_key/routers')) {
+	    			$routers = $routersConfig->asArray();
+	    		}
+	    		Mage::app()->saveCache(serialize($routers), 'checkout_session_use_quote_routers', array(), null);
+	    	}else {
+	    		$routers = unserialize($routers);
+	    	}
+	
+	    	$currentRouter = Mage::app()->getRequest()->getRouteName();
+	    	if (isset($routers[$currentRouter])) {
+	    		$_key = $currentRouter . '_' . Mage::app()->getStore()->getWebsiteId();
+	    	}else {
+	        	$_key = 'checkout_' . Mage::app()->getStore()->getWebsiteId();
+	    	}
+    	}
+    	return $_key;
     }
 
     public function setQuoteId($quoteId)
@@ -303,7 +326,7 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
      */
     public function clearHelperData()
     {
-        $this->setLastBillingAgreementId(null)
+        $this->setLastShippingAgreementId(null)
             ->setRedirectUrl(null)
             ->setLastOrderId(null)
             ->setLastRealOrderId(null)

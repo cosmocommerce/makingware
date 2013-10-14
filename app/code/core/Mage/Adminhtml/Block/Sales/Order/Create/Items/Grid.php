@@ -89,11 +89,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
         } elseif ($item->hasCustomPrice()) {
             $result = $item->getCustomPrice()*1;
         } else {
-            if (Mage::helper('tax')->priceIncludesTax($this->getStore())) {
-                $result = $item->getPriceInclTax()*1;
-            } else {
-                $result = $item->getOriginalPrice()*1;
-            }
+            $result = $item->getOriginalPrice()*1;
         }
         return $result;
     }
@@ -122,40 +118,14 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
         return Mage::getSingleton('adminhtml/giftmessage_save')->getIsAllowedQuoteItem($item);
     }
 
-    /**
-     * Check if we need display grid totals include tax
-     *
-     * @return bool
-     */
-    public function displayTotalsIncludeTax()
-    {
-        $res = Mage::getSingleton('tax/config')->displayCartSubtotalInclTax($this->getStore())
-            || Mage::getSingleton('tax/config')->displayCartSubtotalBoth($this->getStore());
-        return $res;
-    }
-
     public function getSubtotal()
     {
-        $address = $this->getQuoteAddress();
-        if ($this->displayTotalsIncludeTax()) {
-            if ($address->getSubtotalInclTax()) {
-                return $address->getSubtotalInclTax();
-            }
-            return $address->getSubtotal()+$address->getTaxAmount();
-        } else {
-            return $address->getSubtotal();
-        }
-        return false;
+        return $this->getQuoteAddress()->getSubtotal();
     }
 
     public function getSubtotalWithDiscount()
     {
-        $address = $this->getQuoteAddress();
-        if ($this->displayTotalsIncludeTax()) {
-            return $address->getSubtotal()+$address->getTaxAmount()+$this->getDiscountAmount();
-        } else {
-            return $address->getSubtotal()+$this->getDiscountAmount();
-        }
+        return $this->getQuoteAddress()->getSubtotal()+$this->getDiscountAmount();
     }
 
     public function getDiscountAmount()
@@ -170,12 +140,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
      */
     public function getQuoteAddress()
     {
-        if ($this->getQuote()->isVirtual()) {
-            return $this->getQuote()->getBillingAddress();
-        }
-        else {
-            return $this->getQuote()->getShippingAddress();
-        }
+    	return $this->getQuote()->getShippingAddress();
     }
 
     public function usedCustomPriceForItem($item)
@@ -253,40 +218,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
     public function getMoveToCustomerStorage()
     {
         return $this->_moveToCustomerStorage;
-    }
-
-    public function displaySubtotalInclTax($item)
-    {
-        if ($item->getTaxBeforeDiscount()) {
-            $tax = $item->getTaxBeforeDiscount();
-        } else {
-            $tax = $item->getTaxAmount() ? $item->getTaxAmount() : 0;
-        }
-        return $this->formatPrice($item->getRowTotal() + $tax);
-    }
-
-    public function displayOriginalPriceInclTax($item)
-    {
-        $tax = 0;
-        if ($item->getTaxPercent()) {
-            $tax = $item->getPrice() * ($item->getTaxPercent() / 100);
-        }
-        return $this->convertPrice($item->getPrice()+($tax/$item->getQty()));
-    }
-
-    public function displayRowTotalWithDiscountInclTax($item)
-    {
-        $tax = ($item->getTaxAmount() ? $item->getTaxAmount() : 0);
-        return $this->formatPrice($item->getRowTotal()-$item->getDiscountAmount()+$tax);
-    }
-
-    public function getInclExclTaxMessage()
-    {
-        if (Mage::helper('tax')->priceIncludesTax($this->getStore())) {
-            return Mage::helper('sales')->__('* - Enter custom price including tax');
-        } else {
-            return Mage::helper('sales')->__('* - Enter custom price excluding tax');
-        }
     }
 
     public function getStore()

@@ -129,17 +129,17 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Retrieve available billing agreement methods
+     * Retrieve available shipping agreement methods
      *
      * @param mixed $store
      * @param Mage_Sales_Model_Quote $quote
      * @return array
      */
-    public function getBillingAgreementMethods($store = null, $quote = null)
+    public function getShippingAgreementMethods($store = null, $quote = null)
     {
         $result = array();
         foreach ($this->getStoreMethods($store, $quote) as $method) {
-            if ($method->canManageBillingAgreements()) {
+            if ($method->canManageShippingAgreements()) {
                 $result[] = $method;
             }
         }
@@ -217,7 +217,7 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
         if ($asLabelValue && $withGroups) {
             $groups = Mage::app()->getConfig()->getNode(self::XML_PATH_PAYMENT_GROUPS)->asCanonicalArray();
             foreach ($groups as $code => $title) {
-                $methods[$code] = $title; // for sorting, see below
+                $methods[$code] = $this->__($title); // for sorting, see below
             }
         }
         if ($sorted) {
@@ -245,14 +245,14 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Retrieve all billing agreement methods (code and label)
+     * Retrieve all shipping agreement methods (code and label)
      *
      * @return array
      */
-    public function getAllBillingAgreementMethods()
+    public function getAllShippingAgreementMethods()
     {
         $result = array();
-        $interface = 'Mage_Payment_Model_Billing_Agreement_MethodInterface';
+        $interface = 'Mage_Payment_Model_Shipping_Agreement_MethodInterface';
         foreach ($this->getPaymentMethods() as $code => $data) {
             if (!isset($data['model'])) {
                 continue;

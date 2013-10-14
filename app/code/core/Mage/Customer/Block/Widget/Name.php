@@ -77,11 +77,6 @@ class Mage_Customer_Block_Widget_Name extends Mage_Customer_Block_Widget_Abstrac
         return $options;
     }
 
-    public function showMiddlename()
-    {
-        return (bool)$this->_getAttribute('middlename')->getIsVisible();
-    }
-
     public function showSuffix()
     {
         return (bool)$this->_getAttribute('suffix')->getIsVisible();
@@ -117,7 +112,6 @@ class Mage_Customer_Block_Widget_Name extends Mage_Customer_Block_Widget_Abstrac
     {
         $class = $this->getClassName();
         $class .= $this->showPrefix() ? '-prefix' : '';
-        $class .= $this->showMiddlename() ? '-middlename' : '';
         $class .= $this->showSuffix() ? '-suffix' : '';
         return $class;
     }

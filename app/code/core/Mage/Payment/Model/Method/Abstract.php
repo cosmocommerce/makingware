@@ -64,7 +64,7 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     protected $_isInitializeNeeded          = false;
     protected $_canFetchTransactionInfo     = false;
     protected $_canReviewPayment            = false;
-    protected $_canCreateBillingAgreement   = false;
+    protected $_canCreateShippingAgreement   = false;
     protected $_canManageRecurringProfiles  = true;
     /**
      * TODO: whether a captured transaction may be voided by this gateway
@@ -208,13 +208,13 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * Check whether payment method instance can create billing agreements
+     * Check whether payment method instance can create shipping agreements
      *
      * @return bool
      */
-    public function canCreateBillingAgreement()
+    public function canCreateShippingAgreement()
     {
-        return $this->_canCreateBillingAgreement;
+        return $this->_canCreateShippingAgreement;
     }
 
     /**
@@ -250,7 +250,7 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * To check billing country is allowed for the payment method
+     * To check shipping country is allowed for the payment method
      *
      * @return bool
      */
@@ -281,13 +281,13 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * Check manage billing agreements availability
+     * Check manage shipping agreements availability
      *
      * @return bool
      */
-    public function canManageBillingAgreements()
+    public function canManageShippingAgreements()
     {
-        return ($this instanceof Mage_Payment_Model_Billing_Agreement_MethodInterface);
+        return ($this instanceof Mage_Payment_Model_Shipping_Agreement_MethodInterface);
     }
 
     /**
@@ -366,16 +366,16 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     public function validate()
     {
          /**
-          * to validate paymene method is allowed for billing country or not
+          * to validate paymene method is allowed for shipping country or not
           */
          $paymentInfo = $this->getInfoInstance();
          if ($paymentInfo instanceof Mage_Sales_Model_Order_Payment) {
-             $billingCountry = $paymentInfo->getOrder()->getBillingAddress()->getCountryId();
+             $shippingCountry = $paymentInfo->getOrder()->getShippingAddress()->getCountryId();
          } else {
-             $billingCountry = $paymentInfo->getQuote()->getBillingAddress()->getCountryId();
+             $shippingCountry = $paymentInfo->getQuote()->getShippingAddress()->getCountryId();
          }
-         if (!$this->canUseForCountry($billingCountry)) {
-             Mage::throwException($this->_getHelper()->__('Selected payment type is not allowed for billing country.'));
+         if (!$this->canUseForCountry($shippingCountry)) {
+             Mage::throwException($this->_getHelper()->__('Selected payment type is not allowed for shipping country.'));
          }
          return $this;
     }
@@ -597,11 +597,18 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
      */
     public function assignData($data)
     {
+    	$info = $this->getInfoInstance();
         if (is_array($data)) {
-            $this->getInfoInstance()->addData($data);
+            $info->addData($data);
+            foreach ($data as $key => $value) {
+            	$info->setAdditionalInformation($key, $value);
+            }
         }
         elseif ($data instanceof Varien_Object) {
-            $this->getInfoInstance()->addData($data->getData());
+            $info->addData($data->getData());
+            foreach ($data->getData() as $key => $value) {
+            	$info->setAdditionalInformation($key, $value);
+            }
         }
         return $this;
     }

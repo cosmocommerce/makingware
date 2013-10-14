@@ -44,6 +44,9 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     const EXCEPTION_EMAIL_NOT_CONFIRMED       = 1;
     const EXCEPTION_INVALID_EMAIL_OR_PASSWORD = 2;
     const EXCEPTION_EMAIL_EXISTS              = 3;
+    const EXCEPTION_USERNAME_EXISTS           = 4;
+    const EXCEPTION_USERPHONE_EXISTS          = 5;
+    const EXCEPTION_USERMOBILE_EXISTS         = 6;
 
     const SUBSCRIBED_YES = 'yes';
     const SUBSCRIBED_NO  = 'no';
@@ -109,12 +112,30 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function authenticate($login, $password)
     {
-        $this->loadByEmail($login);
+        $types = array('email' => 'loadByEmail', 'username' => 'loadByUsername', 'telephone' => 'loadByTelephone', 'mobile' => 'loadByMobile');
+        
+        $allowLoginType = explode(',', Mage::getStoreConfig('customer/startup/allow_login_type'));
+        empty($allowLoginType['email']) && array_unshift($allowLoginType, 'email');
+        
+        foreach ($allowLoginType as $type) {
+        	if ($this->getId()) {
+        		break;
+        	}
+        	
+        	if (empty($type)) {continue ;}
+        	
+        	if (empty($types[$type]) || !method_exists($this, $types[$type])) {
+        		Mage::throwException(Mage::helper('customer')->__('This account is not confirmed.'));
+        	}
+        	$this->$types[$type]($login);
+        }
         if ($this->getConfirmation() && $this->isConfirmationRequired()) {
             throw Mage::exception('Mage_Core', Mage::helper('customer')->__('This account is not confirmed.'),
                 self::EXCEPTION_EMAIL_NOT_CONFIRMED
             );
         }
+
+
         if (!$this->validatePassword($password)) {
             throw Mage::exception('Mage_Core', Mage::helper('customer')->__('Invalid login or password.'),
                 self::EXCEPTION_INVALID_EMAIL_OR_PASSWORD
@@ -136,6 +157,63 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     public function loadByEmail($customerEmail)
     {
         $this->_getResource()->loadByEmail($this, $customerEmail);
+        return $this;
+    }
+
+    /**
+     * Load customer by username
+     *
+     * @param   string $customerUsername
+     * @return  Mage_Customer_Model_Customer
+     */
+    public function loadByUsername($customerUsername)
+    {
+        $collection=$this->getResourceCollection();
+        $collection->addFieldToFilter('username', $customerUsername);
+        $item=$collection->load()->getFirstItem();
+
+        if($item){
+			 $this->_getResource()->load($this,$item->getId());
+        }
+
+        return $this;
+    }
+    
+    /**
+    * Load customer by telephone
+    *
+    * @param   string $customerMobile
+    * @return  Mage_Customer_Model_Customer
+    */
+    public function loadByTelephone($customerTelephone)
+    {
+    	$collection=$this->getResourceCollection();
+    	$collection->addFieldToFilter('telephone', $customerTelephone);
+    	$item=$collection->load()->getFirstItem();
+    
+    	if($item){
+    		$this->_getResource()->load($this,$item->getId());
+    	}
+    
+    	return $this;
+    }
+
+    /**
+     * Load customer by mobile
+     *
+     * @param   string $customerMobile
+     * @return  Mage_Customer_Model_Customer
+     */
+    public function loadByMobile($customerMobile)
+    {
+        $collection=$this->getResourceCollection();
+        $collection->addFieldToFilter('mobile', $customerMobile);
+        $item=$collection->load()->getFirstItem();
+
+        if($item){
+			 $this->_getResource()->load($this,$item->getId());
+        }
+
         return $this;
     }
 
@@ -182,11 +260,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         if ($config->getAttribute('customer', 'prefix')->getIsVisible() && $this->getPrefix()) {
             $name .= $this->getPrefix() . ' ';
         }
-        $name .= $this->getFirstname();
-        if ($config->getAttribute('customer', 'middlename')->getIsVisible() && $this->getMiddlename()) {
-            $name .= ' ' . $this->getMiddlename();
-        }
-        $name .=  ' ' . $this->getLastname();
+        $name .= $this->getData('name');
         if ($config->getAttribute('customer', 'suffix')->getIsVisible() && $this->getSuffix()) {
             $name .= ' ' . $this->getSuffix();
         }
@@ -386,26 +460,6 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get customer default billing address
-     *
-     * @return Mage_Customer_Model_Address
-     */
-    public function getPrimaryBillingAddress()
-    {
-        return $this->getPrimaryAddress('default_billing');
-    }
-
-    /**
-     * Get customer default billing address
-     *
-     * @return Mage_Customer_Model_Address
-     */
-    public function getDefaultBillingAddress()
-    {
-        return $this->getPrimaryBillingAddress();
-    }
-
-    /**
      * Get default customer shipping address
      *
      * @return Mage_Customer_Model_Address
@@ -433,9 +487,6 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     public function getPrimaryAddressIds()
     {
         $ids = array();
-        if ($this->getDefaultBilling()) {
-            $ids[] = $this->getDefaultBilling();
-        }
         if ($this->getDefaultShipping()) {
             $ids[] = $this->getDefaultShipping();
         }
@@ -450,21 +501,11 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     public function getPrimaryAddresses()
     {
         $addresses = array();
-        $primaryBilling = $this->getPrimaryBillingAddress();
-        if ($primaryBilling) {
-            $addresses[] = $primaryBilling;
-            $primaryBilling->setIsPrimaryBilling(true);
-        }
 
         $primaryShipping = $this->getPrimaryShippingAddress();
         if ($primaryShipping) {
-            if ($primaryBilling->getId() == $primaryShipping->getId()) {
-                $primaryBilling->setIsPrimaryShipping(true);
-            }
-            else {
-                $primaryShipping->setIsPrimaryShipping(true);
-                $addresses[] = $primaryShipping;
-            }
+        	$primaryShipping->setIsPrimaryShipping(true);
+        	$addresses[] = $primaryShipping;
         }
         return $addresses;
     }
@@ -491,7 +532,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         if (!$address->getId()) {
             return false;
         }
-        return ($address->getId() == $this->getDefaultBilling()) || ($address->getId() == $this->getDefaultShipping());
+        return $address->getId() == $this->getDefaultShipping();
     }
 
     /**
@@ -599,19 +640,6 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve customer tax class identifier
-     *
-     * @return int
-     */
-    public function getTaxClassId()
-    {
-        if (!$this->getData('tax_class_id')) {
-            $this->setTaxClassId(Mage::getModel('customer/group')->getTaxClassId($this->getGroupId()));
-        }
-        return $this->getData('tax_class_id');
-    }
-
-    /**
      * Check store availability for customer
      *
      * @param   mixed $store
@@ -709,12 +737,8 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     {
         $errors = array();
         $customerHelper = Mage::helper('customer');
-        if (!Zend_Validate::is( trim($this->getFirstname()) , 'NotEmpty')) {
-            $errors[] = $customerHelper->__('The first name cannot be empty.');
-        }
-
-        if (!Zend_Validate::is( trim($this->getLastname()) , 'NotEmpty')) {
-            $errors[] = $customerHelper->__('The last name cannot be empty.');
+        if (!Zend_Validate::is( trim($this->getName()) , 'NotEmpty')) {
+            $errors[] = $customerHelper->__('The name cannot be empty.');
         }
 
         if (!Zend_Validate::is($this->getEmail(), 'EmailAddress')) {
@@ -737,10 +761,6 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         $attribute = Mage::getModel('customer/attribute')->loadByCode($entityType, 'dob');
         if ($attribute->getIsRequired() && '' == trim($this->getDob())) {
             $errors[] = $customerHelper->__('The Date of Birth is required.');
-        }
-        $attribute = Mage::getModel('customer/attribute')->loadByCode($entityType, 'taxvat');
-        if ($attribute->getIsRequired() && '' == trim($this->getTaxvat())) {
-            $errors[] = $customerHelper->__('The TAX/VAT number is required.');
         }
         $attribute = Mage::getModel('customer/attribute')->loadByCode($entityType, 'gender');
         if ($attribute->getIsRequired() && '' == trim($this->getGender())) {
@@ -811,11 +831,8 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
             $row['group'] = 'General';
         }
 
-        if (empty($row['firstname'])) {
-            $this->addError($hlp->__('Missing first name, skipping the record, line: %s.', $line));
-        }
-        if (empty($row['lastname'])) {
-            $this->addError($hlp->__('Missing last name, skipping the record, line: %s.', $line));
+        if (empty($row['name'])) {
+            $this->addError($hlp->__('Missing name, skipping the record, line: %s.', $line));
         }
 
         if (!empty($row['password_new'])) {
@@ -831,61 +848,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         }
 //        $entity = $this->getResource();
         foreach ($row as $field=>$value) {
-
-//            $attribute = $entity->getAttribute($field);
-//            if (!$attribute) {
-//                echo $field;
-//                continue;
-//            }
-//            if ($attribute->usesSource()) {
-//                $source = $attribute->getSource();
-//                $optionId = $config->getSourceOptionId($source, $value);
-//                if (is_null($optionId)) {
-//                    $this->printError($hlp->__("Invalid attribute option specified for attribute attribute %s (%s).", $field, $value), $line);
-//                }
-//                $value = $optionId;
-//            }
-
             $this->setData($field, $value);
-        }
-
-        if (!$this->validateAddress($row, 'billing')) {
-            $this->printError($hlp->__('Invalid billing address for (%s).', $row['email']), $line);
-        } else {
-            // Handling billing address
-            $billingAddress = $this->getPrimaryBillingAddress();
-            if (!$billingAddress  instanceof Mage_Customer_Model_Address) {
-                $billingAddress = new Mage_Customer_Model_Address();
-            }
-
-            $regions->addRegionNameFilter($row['billing_region'])->load();
-            if ($regions) foreach($regions as $region) {
-                $regionId = $region->getId();
-            }
-
-            $billingAddress->setFirstname($row['firstname']);
-            $billingAddress->setLastname($row['lastname']);
-            $billingAddress->setCity($row['billing_city']);
-            $billingAddress->setRegion($row['billing_region']);
-            if (isset($regionId)) $billingAddress->setRegionId($regionId);
-            $billingAddress->setCountryId($row['billing_country']);
-            $billingAddress->setPostcode($row['billing_postcode']);
-            if (isset($row['billing_street2'])) {
-                $billingAddress->setStreet(array($row['billing_street1'],$row['billing_street2']));
-            } else {
-                $billingAddress->setStreet(array($row['billing_street1']));
-            }
-            if (isset($row['billing_telephone'])) {
-                $billingAddress->setTelephone($row['billing_telephone']);
-            }
-
-            if (!$billingAddress->getId()) {
-                $billingAddress->setIsDefaultBilling(true);
-                if ($this->getDefaultBilling()) {
-                    $this->setData('default_billing', '');
-                }
-                $this->addAddress($billingAddress);
-            } // End handling billing address
         }
 
         if (!$this->validateAddress($row, 'shipping')) {
@@ -903,8 +866,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
                $regionId = $region->getId();
             }
 
-            $shippingAddress->setFirstname($row['firstname']);
-            $shippingAddress->setLastname($row['lastname']);
+            $shippingAddress->setName($row['name']);
             $shippingAddress->setCity($row['shipping_city']);
             $shippingAddress->setRegion($row['shipping_region']);
             if (isset($regionId)) $shippingAddress->setRegionId($regionId);
@@ -973,7 +935,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         echo "</li>";
     }
 
-    function validateAddress(array $data, $type = 'billing')
+    function validateAddress(array $data, $type = 'shipping')
     {
         $fields = array('city',
             'country', 'postcode',
@@ -1130,7 +1092,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         }
         return $entityTypeId;
     }
-    
+
     /**
      * Get either first store ID from a set website or the provided as default
      *

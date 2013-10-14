@@ -431,25 +431,27 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
      */
     public function canEdit()
     {
-        if ($this->canUnhold()) {
-            return false;
-        }
-
-        $state = $this->getState();
-        if ($this->isCanceled() || $this->isPaymentReview()
-            || $state === self::STATE_COMPLETE || $state === self::STATE_CLOSED) {
-            return false;
-        }
-
-        if (!$this->getPayment()->getMethodInstance()->canEdit()) {
-            return false;
-        }
-
-        if ($this->getActionFlag(self::ACTION_FLAG_EDIT) === false) {
-            return false;
-        }
-
-        return true;
+    	// disable edit order function
+    	return false;
+//        if ($this->canUnhold()) {
+//            return false;
+//        }
+//
+//        $state = $this->getState();
+//        if ($this->isCanceled() || $this->isPaymentReview()
+//            || $state === self::STATE_COMPLETE || $state === self::STATE_CLOSED) {
+//            return false;
+//        }
+//
+//        if (!$this->getPayment()->getMethodInstance()->canEdit()) {
+//            return false;
+//        }
+//
+//        if ($this->getActionFlag(self::ACTION_FLAG_EDIT) === false) {
+//            return false;
+//        }
+//
+//        return true;
     }
 
     /**
@@ -575,22 +577,6 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
     }
 
     /**
-     * Declare order billing address
-     *
-     * @param   Mage_Sales_Model_Order_Address $address
-     * @return  Mage_Sales_Model_Order
-     */
-    public function setBillingAddress(Mage_Sales_Model_Order_Address $address)
-    {
-        $old = $this->getBillingAddress();
-        if (!empty($old)) {
-            $address->setId($old->getId());
-        }
-        $this->addAddress($address->setAddressType('billing'));
-        return $this;
-    }
-
-    /**
      * Declare order shipping address
      *
      * @param   Mage_Sales_Model_Order_Address $address
@@ -602,23 +588,8 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
         if (!empty($old)) {
             $address->setId($old->getId());
         }
-        $this->addAddress($address->setAddressType('shipping'));
+        $this->addAddress($address);
         return $this;
-    }
-
-    /**
-     * Retrieve order billing address
-     *
-     * @return Mage_Sales_Model_Order_Address
-     */
-    public function getBillingAddress()
-    {
-        foreach ($this->getAddressesCollection() as $address) {
-            if ($address->getAddressType()=='billing' && !$address->isDeleted()) {
-                return $address;
-            }
-        }
-        return false;
     }
 
     /**
@@ -629,7 +600,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
     public function getShippingAddress()
     {
         foreach ($this->getAddressesCollection() as $address) {
-            if ($address->getAddressType()=='shipping' && !$address->isDeleted()) {
+            if (!$address->isDeleted()) {
                 return $address;
             }
         }
@@ -829,17 +800,14 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
             $this->setSubtotalCanceled($this->getSubtotal() - $this->getSubtotalInvoiced());
             $this->setBaseSubtotalCanceled($this->getBaseSubtotal() - $this->getBaseSubtotalInvoiced());
 
-            $this->setTaxCanceled($this->getTaxAmount() - $this->getTaxInvoiced());
-            $this->setBaseTaxCanceled($this->getBaseTaxAmount() - $this->getBaseTaxInvoiced());
-
             $this->setShippingCanceled($this->getShippingAmount() - $this->getShippingInvoiced());
             $this->setBaseShippingCanceled($this->getBaseShippingAmount() - $this->getBaseShippingInvoiced());
 
             $this->setDiscountCanceled(abs($this->getDiscountAmount()) - $this->getDiscountInvoiced());
             $this->setBaseDiscountCanceled(abs($this->getBaseDiscountAmount()) - $this->getBaseDiscountInvoiced());
 
-            $this->setTotalCanceled($this->getSubtotalCanceled() + $this->getTaxCanceled() + $this->getShippingCanceled() - $this->getDiscountCanceled());
-            $this->setBaseTotalCanceled($this->getBaseSubtotalCanceled() + $this->getBaseTaxCanceled() + $this->getBaseShippingCanceled() - $this->getBaseDiscountCanceled());
+            $this->setTotalCanceled($this->getSubtotalCanceled() + $this->getShippingCanceled() - $this->getDiscountCanceled());
+            $this->setBaseTotalCanceled($this->getBaseSubtotalCanceled() + $this->getBaseShippingCanceled() - $this->getBaseDiscountCanceled());
 
             $this->_setState($cancelState, true, $comment);
         } elseif (!$graceful) {
@@ -920,7 +888,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($this->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $this->getBillingAddress()->getName();
+            $customerName = $this->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_TEMPLATE, $storeId);
             $customerName = $this->getCustomerName();
@@ -952,7 +920,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
         $mailer->setTemplateId($templateId);
         $mailer->setTemplateParams(array(
                 'order'        => $this,
-                'billing'      => $this->getBillingAddress(),
+                'shipping'      => $this->getShippingAddress(),
                 'payment_html' => $paymentBlockHtml
             )
         );
@@ -989,7 +957,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($this->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $this->getBillingAddress()->getName();
+            $customerName = $this->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_TEMPLATE, $storeId);
             $customerName = $this->getCustomerName();
@@ -1024,7 +992,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
         $mailer->setTemplateParams(array(
                 'order'   => $this,
                 'comment' => $comment,
-                'billing' => $this->getBillingAddress()
+                'shipping' => $this->getShippingAddress()
             )
         );
         $mailer->send();
@@ -1291,7 +1259,14 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
     public function getStatusHistoryCollection($reload=false)
     {
         if (is_null($this->_statusHistory) || $reload) {
-            $this->_statusHistory = Mage::getResourceModel('sales/order_status_history_collection')
+        	$collection = Mage::getResourceModel('sales/order_status_history_collection');
+        	$collection->getSelect()
+        	->joinLeft(
+        		array('admin_user' => $collection->getTable('admin/user')),
+                'main_table.user_id = admin_user.user_id',
+                array('username', 'name', 'email')
+            );
+            $this->_statusHistory = $collection
                 ->setOrderFilter($this)
                 ->setOrder('created_at', 'desc')
                 ->setOrder('entity_id', 'desc');
@@ -1617,9 +1592,9 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
 
     public function getCustomerName()
     {
-        if ($this->getCustomerFirstname()) {
-            $customerName = $this->getCustomerFirstname() . ' ' . $this->getCustomerLastname();
-        }
+    	if ($this->getData('customer_name')) {
+    		$customerName = $this->getData('customer_name');
+    	}
         else {
             $customerName = Mage::helper('sales')->__('Guest');
         }
@@ -1699,10 +1674,6 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
             $this->setCustomerId($this->getCustomer()->getId());
         }
 
-        if ($this->hasBillingAddressId() && $this->getBillingAddressId() === null) {
-            $this->unsBillingAddressId();
-        }
-
         if ($this->hasShippingAddressId() && $this->getShippingAddressId() === null) {
             $this->unsShippingAddressId();
         }
@@ -1757,12 +1728,7 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
     {
         if (null !== $this->_addresses) {
             $this->_addresses->save();
-            $billingAddress = $this->getBillingAddress();
             $attributesForSave = array();
-            if ($billingAddress && $this->getBillingAddressId() != $billingAddress->getId()) {
-                $this->setBillingAddressId($billingAddress->getId());
-                $attributesForSave[] = 'billing_address_id';
-            }
 
             $shippingAddress = $this->getShippingAddress();
             if ($shippingAddress && $this->getShippigAddressId() != $shippingAddress->getId()) {
@@ -1827,12 +1793,6 @@ class Mage_Sales_Model_Order extends Mage_Sales_Model_Abstract
     public function getIsNotVirtual()
     {
         return !$this->getIsVirtual();
-    }
-
-    public function getFullTaxInfo()
-    {
-        $rates = Mage::getModel('tax/sales_order_tax')->getCollection()->loadByOrder($this)->toArray();
-        return Mage::getSingleton('tax/calculation')->reproduceProcess($rates['items']);
     }
 
     /**

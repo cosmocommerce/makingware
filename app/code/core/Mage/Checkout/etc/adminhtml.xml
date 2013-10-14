@@ -26,6 +26,7 @@
  */
 -->
 <config>
+	<!-- 隐藏条件与条款
     <menu>
          <sales>
             <children>
@@ -37,6 +38,7 @@
             </children>
          </sales>
     </menu>
+    -->
     <acl>
         <resources>
             <admin>

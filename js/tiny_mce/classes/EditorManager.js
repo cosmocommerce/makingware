@@ -114,7 +114,7 @@
 
 			s = extend({
 				theme : "simple",
-				language : "en"
+				language : "zh"
 			}, s);
 
 			t.settings = s;

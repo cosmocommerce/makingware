@@ -45,10 +45,8 @@ foreach ($websites as $website) {
     // customer attributes
     $attributes = array(
         'prefix',
-        'middlename',
         'suffix',
         'dob',
-        'taxvat',
         'gender'
     );
 
@@ -80,7 +78,6 @@ foreach ($websites as $website) {
     // customer address attributes
     $attributes = array(
         'prefix',
-        'middlename',
         'suffix',
     );
 

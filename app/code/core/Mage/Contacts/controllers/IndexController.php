@@ -115,7 +115,6 @@ class Mage_Contacts_IndexController extends Mage_Core_Controller_Front_Action
                 return;
             } catch (Exception $e) {
                 $translate->setTranslateInline(true);
-
                 Mage::getSingleton('customer/session')->addError(Mage::helper('contacts')->__('Unable to submit your request. Please, try again later'));
                 $this->_redirect('*/*/');
                 return;

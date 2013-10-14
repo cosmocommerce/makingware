@@ -54,52 +54,20 @@
         </blocks>
 
         <payment>
-
-            <cc>
-                <types>
-                    <AE>
-                        <code>AE</code>
-                        <name>American Express</name>
-                        <order>0</order>
-                    </AE>
-                    <VI>
-                        <code>VI</code>
-                        <name>Visa</name>
-                        <order>10</order>
-                    </VI>
-                    <MC>
-                        <code>MC</code>
-                        <name>MasterCard</name>
-                        <order>20</order>
-                    </MC>
-                    <DI>
-                        <code>DI</code>
-                        <name>Discover</name>
-                        <order>30</order>
-                    </DI>
-                    <SM>
-                        <code>SM</code>
-                        <name>Maestro/Switch</name>
-                        <order>40</order>
-                    </SM>
-                    <SO>
-                        <code>SO</code>
-                        <name>Solo</name>
-                        <order>45</order>
-                    </SO>
-                    <JCB>
-                        <code>JCB</code>
-                        <name>JCB</name>
-                        <order>50</order>
-                    </JCB>
-                    <OT>
-                        <code>OT</code>
-                        <name>Other</name>
-                        <order>1000</order>
-                    </OT>
-                </types>
-            </cc>
-
+            <cod>
+            	<types>
+            		<CASH>
+            			<code>CASH</code>
+            			<name>Cash</name>
+            			<order>0</order>
+            		</CASH>
+            		<POS>
+            			<code>POS</code>
+            			<name>Pos</name>
+            			<order>10</order>
+            		</POS>
+            	</types>
+            </cod>
             <groups>
                 <offline>Offline Payment Methods</offline>
             </groups>
@@ -158,49 +126,27 @@
    </adminhtml>
 
     <default>
-        <payment>
-            <ccsave>
+        <payment module="Mage_Payment">
+			<cod translate="title">
                 <active>1</active>
-                <cctypes>AE,VI,MC,DI</cctypes>
-                <model>payment/method_ccsave</model>
-                <order_status>pending</order_status>
-                <title>Credit Card (saved)</title>
+                <codtypes>CASH,POS</codtypes>
+                <model>payment/method_cod</model>
+                <order_status>processing</order_status>
+                <title>货到付款</title>
                 <allowspecific>0</allowspecific>
                 <group>offline</group>
-            </ccsave>
-
-            <checkmo>
-                <active>1</active>
-                <model>payment/method_checkmo</model>
-                <order_status>pending</order_status>
-                <title>Check / Money order</title>
-                <allowspecific>0</allowspecific>
-                <group>offline</group>
-            </checkmo>
-
-            <free>
+            </cod>
+            <free translate="title">
                 <active>1</active>
                 <model>payment/method_free</model>
-                <order_status>pending</order_status>
-                <title>No Payment Information Required</title>
+                <order_status>processing</order_status>
+                <title>Free</title>
                 <allowspecific>0</allowspecific>
-<!--
-                <min_order_total>0</min_order_total>
-                <max_order_total>0</max_order_total>
--->
+				<!--<min_order_total>0</min_order_total>
+                <max_order_total>0</max_order_total>-->
                 <sort_order>1</sort_order>
                 <group>offline</group>
             </free>
-
-            <purchaseorder>
-                <active>0</active>
-                <model>payment/method_purchaseorder</model>
-                <order_status>pending</order_status>
-                <title>Purchase Order</title>
-                <allowspecific>0</allowspecific>
-                <group>offline</group>
-            </purchaseorder>
-
          </payment>
     </default>
 </config>

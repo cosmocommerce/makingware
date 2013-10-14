@@ -328,8 +328,6 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         if ($this->getStatusId() !== self::STATUS_CANCELED) {
             Mage::dispatchEvent('sales_order_item_cancel', array('item'=>$this));
             $this->setQtyCanceled($this->getQtyToCancel());
-            $this->setTaxCanceled($this->getTaxCanceled() + $this->getBaseTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered());
-            $this->setHiddenTaxCanceled($this->getHiddenTaxCanceled() + $this->getHiddenTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered());
         }
         return $this;
     }
@@ -552,5 +550,17 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         $buyRequest = new Varien_Object($option);
         $buyRequest->setQty($this->getQtyOrdered() * 1);
         return $buyRequest;
+    }
+    
+    /**
+     * 如果后台设置开启了“添加商店代码到URL”，那么
+     * 这个函数返回的是当前store的URL，如果是后台的话store是admin
+     */
+    public function getProductUrl()
+    {
+    	if ($productId = $this->getProductId()) {
+    		return Mage::getSingleton('catalog/product_url')->getProductUrl(Mage::getModel('catalog/product')->setId($productId));
+    	}
+    	return '';
     }
 }

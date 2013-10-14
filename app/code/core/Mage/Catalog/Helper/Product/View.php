@@ -148,4 +148,12 @@ class Mage_Catalog_Helper_Product_View extends Mage_Core_Helper_Abstract
 
         return $this;
     }
+	
+	public function getClearViewListUrl()
+	{
+		$params = array(
+			Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED => Mage::helper('core/url')->getEncodedUrl()
+		);
+		return $this->_getUrl('catalog/product/clear', $params);
+	}
 }

@@ -91,31 +91,7 @@ class Mage_Downloadable_Block_Catalog_Product_Links extends Mage_Catalog_Block_P
             return '';
         }
 
-        $taxCalculation = Mage::getSingleton('tax/calculation');
-        if (!$taxCalculation->getCustomer() && Mage::registry('current_customer')) {
-            $taxCalculation->setCustomer(Mage::registry('current_customer'));
-        }
-
-        $taxHelper = Mage::helper('tax');
-        $coreHelper = $this->helper('core');
-        $_priceInclTax = $taxHelper->getPrice($link->getProduct(), $price, true);
-        $_priceExclTax = $taxHelper->getPrice($link->getProduct(), $price);
-
-        $priceStr = '<span class="price-notice">+';
-        if ($taxHelper->displayPriceIncludingTax()) {
-            $priceStr .= $coreHelper->currencyByStore($_priceInclTax, $store);
-        } elseif ($taxHelper->displayPriceExcludingTax()) {
-            $priceStr .= $coreHelper->currencyByStore($_priceExclTax, $store);
-        } elseif ($taxHelper->displayBothPrices()) {
-            $priceStr .= $coreHelper->currencyByStore($_priceExclTax, $store);
-            if ($_priceInclTax != $_priceExclTax) {
-                $priceStr .= ' (+'.$coreHelper
-                    ->currencyByStore($_priceInclTax, $store).' '.$this->__('Incl. Tax').')';
-            }
-        }
-        $priceStr .= '</span>';
-
-        return $priceStr;
+        return '<span class="price-notice">+' . $price . '</span>';
     }
 
     /**

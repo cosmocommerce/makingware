@@ -111,8 +111,7 @@ class Mage_Catalog_Block_Product_Compare_List extends Mage_Catalog_Block_Product
             $this->_items
                 ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
                 ->loadComparableAttributes()
-                ->addMinimalPrice()
-                ->addTaxPercents();
+                ->addMinimalPrice();
 
             Mage::getSingleton('catalog/product_visibility')
                 ->addVisibleInSiteFilterToCollection($this->_items);

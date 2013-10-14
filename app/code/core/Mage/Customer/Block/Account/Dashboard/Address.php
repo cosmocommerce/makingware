@@ -50,25 +50,9 @@ class Mage_Customer_Block_Account_Dashboard_Address extends Mage_Core_Block_Temp
         }
     }
 
-    public function getPrimaryBillingAddressHtml()
-    {
-        $address = $this->getCustomer()->getPrimaryBillingAddress();
-
-        if( $address instanceof Varien_Object ) {
-            return $address->format('html');
-        } else {
-            return Mage::helper('customer')->__('You have not set a default billing address.');
-        }
-    }
-
     public function getPrimaryShippingAddressEditUrl()
     {
         return Mage::getUrl('customer/address/edit', array('id'=>$this->getCustomer()->getDefaultShipping()));
-    }
-
-    public function getPrimaryBillingAddressEditUrl()
-    {
-        return Mage::getUrl('customer/address/edit', array('id'=>$this->getCustomer()->getDefaultBilling()));
     }
 
     public function getAddressBookUrl()

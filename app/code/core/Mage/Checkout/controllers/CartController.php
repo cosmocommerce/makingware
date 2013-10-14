@@ -112,6 +112,13 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
         }
         return false;
     }
+    
+    public function linkAction()
+    {
+    	$this->getResponse()->setBody(
+    		$this->getLayout()->getBlockSingleton('checkout/onepage_link')->toHtml()
+    	);
+    }
 
     /**
      * Shopping cart display action
@@ -158,15 +165,16 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     {
         $cart   = $this->_getCart();
         $params = $this->getRequest()->getParams();
+        
         try {
-            if (isset($params['qty'])) {
-                $filter = new Zend_Filter_LocalizedToNormalized(
-                    array('locale' => Mage::app()->getLocale()->getLocaleCode())
-                );
-                $params['qty'] = $filter->filter($params['qty']);
-            }
+        	if (isset($params['qty'])) {
+        		$filter = new Zend_Filter_LocalizedToNormalized(
+        			array('locale' => Mage::app()->getLocale()->getLocaleCode())
+        		);
+        		$params['qty'] = $filter->filter($params['qty']);
+        	}
 
-            $product = $this->_initProduct();
+		    $product = $this->_initProduct();
             $related = $this->getRequest()->getParam('related_product');
 
             /**
@@ -176,6 +184,10 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
                 $this->_goBack();
                 return;
             }
+            
+            Mage::dispatchEvent('checkout_cart_add_product_prepare',
+            	array('product' => $product, 'request' => $this->getRequest(), 'response' => $this->getResponse())
+            );
 
             $cart->addProduct($product, $params);
             if (!empty($related)) {
@@ -251,6 +263,16 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
             $cart->save();
             $this->_getSession()->setCartWasUpdated(true);
         }
+        $this->_goBack();
+    }
+
+    public function clearAction(){
+        foreach( Mage::getSingleton('checkout/session')->getQuote()->getItemsCollection() as $item ){
+            Mage::getSingleton('checkout/cart')->removeItem( $item->getId() )->save();
+        }
+
+        $message = $this->__('Shopping cart was successfully cleared');
+        $this->_getSession()->addSuccess($message);
         $this->_goBack();
     }
 
@@ -364,8 +386,9 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     /**
      * Update shoping cart data action
      */
-    public function updatePostAction()
+    public function modifyAction()
     {
+    	$result = array();
         try {
             $cartData = $this->getRequest()->getParam('cart');
             if (is_array($cartData)) {
@@ -385,15 +408,16 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
                 $cartData = $cart->suggestItemsQty($cartData);
                 $cart->updateItems($cartData)
                     ->save();
+                
+                $result['html'] = $this->loadLayout('checkout_cart_index')->getLayout()->getBlock('checkout.cart')->toHtml();
             }
-            $this->_getSession()->setCartWasUpdated(true);
         } catch (Mage_Core_Exception $e) {
-            $this->_getSession()->addError($e->getMessage());
+        	$result['error'] = $e->getMessage();
         } catch (Exception $e) {
-            $this->_getSession()->addException($e, $this->__('Cannot update shopping cart.'));
+        	$result['error'] = $this->__('Cannot update shopping cart.');
             Mage::logException($e);
         }
-        $this->_goBack();
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
 
     /**

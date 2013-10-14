@@ -113,14 +113,10 @@ _gaq.push(['_trackPageview'{$optPageURL}]);
         ;
         $result = array();
         foreach ($collection as $order) {
-            if ($order->getIsVirtual()) {
-                $address = $order->getBillingAddress();
-            } else {
-                $address = $order->getShippingAddress();
-            }
-            $result[] = sprintf("_gaq.push(['_addTrans', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']);",
+            $address = $order->getShippingAddress();
+            $result[] = sprintf("_gaq.push(['_addTrans', '%s', '%s', '%s', '%s', '%s', '%s', '%s']);",
                 $order->getIncrementId(), Mage::app()->getStore()->getFrontendName(), $order->getBaseGrandTotal(),
-                $order->getBaseTaxAmount(), $order->getBaseShippingAmount(),
+                $order->getBaseShippingAmount(),
                 $this->jsQuoteEscape($address->getCity()),
                 $this->jsQuoteEscape($address->getRegion()),
                 $this->jsQuoteEscape($address->getCountry())

@@ -126,6 +126,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
         if(!$attributes) {
             return '[]';
         }
+        
+        //print_r($attributes);die;
+        
+    
         return Mage::helper('core')->jsonEncode($attributes);
     }
 
@@ -316,5 +320,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
     {
         return !Mage::helper('catalog')->isPriceGlobal()
             && $this->_getProduct()->getStoreId();
+    }
+    
+    public function getImageUrl()
+    {
+        return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product';
     }
 }

@@ -620,6 +620,7 @@ Ajax.InPlaceEditor = Class.create({
     if (e) Event.stop(e);
   },
   handleFormSubmission: function(e) {
+    if (this._saving) return;
     var form = this._form;
     var value = $F(this._controls.editor);
     this.prepareSubmission();

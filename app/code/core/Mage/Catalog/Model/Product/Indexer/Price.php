@@ -93,7 +93,6 @@ class Mage_Catalog_Model_Product_Indexer_Price extends Mage_Index_Model_Indexer_
             'special_price',
             'special_from_date',
             'special_to_date',
-            'tax_class_id',
             'status',
             'required_options',
             'force_reindex_required'

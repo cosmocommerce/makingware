@@ -1,34 +1,28 @@
-<?php
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE_AFL.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
- *
- * @category    design
- * @package     base_default
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-?>
-<div class="page-title">
-    <h1><?php echo $this->__('Shopping Cart is Empty') ?></h1>
-</div>
-<div class="cart-empty">
-    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
-    <p><?php echo $this->__('You have no items in your shopping cart.') ?></p>
-    <p><?php echo $this->__('Click <a href="%s">here</a> to continue shopping.', $this->getContinueShoppingUrl()) ?></p>
+<div class="cartnoItems">
+    <table id="shopping-cart-table" class="cart-table">
+        <col width="80"/>
+        <col/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="100"/>
+        <thead>
+        <tr>
+            <th><span class="table_first"> 图片</span></th>
+            <th><span class="nobr"><?php echo $this->__('Product Name') ?></span></th>
+            <th><?php echo $this->__('单价(元)') ?></th>
+            <th><?php echo $this->__('数量') ?></th>
+            <th><?php echo $this->__('小计(元)') ?></th>
+            <th><?php echo $this->__('') ?>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <td colspan="6">
+            <div class="noitem">
+                <h2><?php echo $this->__('您的购物车暂无商品，赶快选择心爱的商品吧！') ?></h2>
+                <p><?php echo $this->__('<a href="%s">点击继续购物</a>.', $this->getContinueShoppingUrl()) ?></p>
+            </div>
+        </td>
+        </tbody>
+    </table>
 </div>

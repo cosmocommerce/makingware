@@ -60,8 +60,7 @@ class Mage_Log_Model_Mysql4_Visitor_Online_Collection extends Mage_Core_Model_My
         $customer   = Mage::getModel('customer/customer');
         // alias => attribute_code
         $attributes = array(
-            'customer_lastname'     => 'lastname',
-            'customer_firstname'    => 'firstname',
+            'customer_name'    		=> 'name',
             'customer_email'        => 'email'
         );
 
@@ -122,8 +121,7 @@ class Mage_Log_Model_Mysql4_Visitor_Online_Collection extends Mage_Core_Model_My
      *
      * If $attribute is an array will add OR condition with following format:
      * array(
-     *     array('attribute'=>'firstname', 'like'=>'test%'),
-     *     array('attribute'=>'lastname', 'like'=>'test%'),
+     *     array('attribute'=>'name', 'like'=>'test%'),
      * )
      *
      * @see self::_getConditionSql for $condition

@@ -54,7 +54,7 @@ class Mage_Adminhtml_Block_Sales_Order_Address_Form
     /**
      * Define form attributes (id, method, action)
      *
-     * @return Mage_Adminhtml_Block_Sales_Order_Create_Billing_Address
+     * @return Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Address
      */
     protected function _prepareForm()
     {

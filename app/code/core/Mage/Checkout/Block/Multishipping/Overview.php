@@ -66,9 +66,9 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
         return parent::_prepareLayout();
     }
 
-    public function getBillingAddress()
+    public function getShippingAddress()
     {
-        return $this->getCheckout()->getQuote()->getBillingAddress();
+        return $this->getCheckout()->getQuote()->getShippingAddress();
     }
 
     public function getPaymentHtml()
@@ -114,18 +114,6 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
         return false;
     }
 
-    public function getShippingPriceInclTax($address)
-    {
-        $exclTax = $address->getShippingAmount();
-        $taxAmount = $address->getShippingTaxAmount();
-        return $this->formatPrice($exclTax + $taxAmount);
-    }
-
-    public function getShippingPriceExclTax($address)
-    {
-        return $this->formatPrice($address->getShippingAmount());
-    }
-
     public function formatPrice($price)
     {
         return $this->getQuote()->getStore()->formatPrice($price);
@@ -141,12 +129,7 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
         $totals = $address->getTotals();
         foreach ($totals as $total) {
             if ($total->getCode()=='grand_total') {
-                if ($address->getAddressType() == Mage_Sales_Model_Quote_Address::TYPE_BILLING) {
-                    $total->setTitle($this->__('Total'));
-                }
-                else {
-                    $total->setTitle($this->__('Total for this address'));
-                }
+            	$total->setTitle($this->__('Total for this address'));
             }
         }
         return $totals;
@@ -167,9 +150,9 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
         return $this->getUrl('*/multishipping_address/editShipping', array('id'=>$address->getCustomerAddressId()));
     }
 
-    public function getEditBillingAddressUrl($address)
+    public function getEditShippingAddressUrl($address)
     {
-        return $this->getUrl('*/multishipping_address/editBilling', array('id'=>$address->getCustomerAddressId()));
+        return $this->getUrl('*/multishipping_address/editShipping', array('id'=>$address->getCustomerAddressId()));
     }
 
     public function getEditShippingUrl()
@@ -182,14 +165,14 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
         return $this->getUrl('*/*/overviewPost');
     }
 
-    public function getEditBillingUrl()
+    public function getEditShippingUrl()
     {
-        return $this->getUrl('*/*/backtobilling');
+        return $this->getUrl('*/*/backtoshipping');
     }
 
     public function getBackUrl()
     {
-        return $this->getUrl('*/*/backtobilling');
+        return $this->getUrl('*/*/backtoshipping');
     }
 
     /**
@@ -210,7 +193,7 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
     public function getVirtualItems()
     {
         $items = array();
-        foreach ($this->getBillingAddress()->getItemsCollection() as $_item) {
+        foreach ($this->getShippingAddress()->getItemsCollection() as $_item) {
             if ($_item->isDeleted()) {
                 continue;
             }
@@ -233,7 +216,7 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
 
     public function getBillinAddressTotals()
     {
-        $_address = $this->getQuote()->getBillingAddress();
+        $_address = $this->getQuote()->getShippingAddress();
         return $this->getShippingAddressTotals($_address);
     }
 
@@ -241,7 +224,7 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Sales_Block_Items_
     public function renderTotals($totals, $colspan=null)
     {
         if ($colspan === null) {
-            $colspan = $this->helper('tax')->displayCartBothPrices() ? 5 : 3;
+            $colspan = 3;
         }
         $totals = $this->getChild('totals')->setTotals($totals)->renderTotals('', $colspan)
             . $this->getChild('totals')->setTotals($totals)->renderTotals('footer', $colspan);

@@ -36,30 +36,6 @@ class Mage_Bundle_Block_Catalog_Product_Price extends Mage_Catalog_Block_Product
 
     public function isRatesGraterThenZero()
     {
-        $_request = Mage::getSingleton('tax/calculation')->getRateRequest(false, false, false);
-        $_request->setProductClassId($this->getProduct()->getTaxClassId());
-        $defaultTax = Mage::getSingleton('tax/calculation')->getRate($_request);
-
-        $_request = Mage::getSingleton('tax/calculation')->getRateRequest();
-        $_request->setProductClassId($this->getProduct()->getTaxClassId());
-        $currentTax = Mage::getSingleton('tax/calculation')->getRate($_request);
-
-        return (floatval($defaultTax) > 0 || floatval($currentTax) > 0);
-    }
-
-    /**
-     * Check if we have display prices including and excluding tax
-     * With corrections for Dynamic prices
-     *
-     * @return bool
-     */
-    public function displayBothPrices()
-    {
-        $product = $this->getProduct();
-        if ($product->getPriceType() == Mage_Bundle_Model_Product_Price::PRICE_TYPE_DYNAMIC &&
-            $product->getPriceModel()->getIsPricesCalculatedByIndex() !== false) {
-            return false;
-        }
-        return $this->helper('tax')->displayBothPrices();
+        return true;
     }
 }

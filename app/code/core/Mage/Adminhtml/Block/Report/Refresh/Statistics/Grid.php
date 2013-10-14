@@ -63,12 +63,6 @@ class Mage_Adminhtml_Block_Report_Refresh_Statistics_Grid extends Mage_Adminhtml
                 'updated_at'    => $this->_getUpdatedAt(Mage_Reports_Model_Flag::REPORT_ORDER_FLAG_CODE)
             ),
             array(
-                'id'            => 'tax',
-                'report'        => Mage::helper('sales')->__('Tax'),
-                'comment'       => Mage::helper('sales')->__('Order Taxes Report Grouped by Tax Rates'),
-                'updated_at'    => $this->_getUpdatedAt(Mage_Reports_Model_Flag::REPORT_TAX_FLAG_CODE)
-            ),
-            array(
                 'id'            => 'shipping',
                 'report'        => Mage::helper('sales')->__('Shipping'),
                 'comment'       => Mage::helper('sales')->__('Total Shipped Report'),

@@ -286,13 +286,11 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4
         if ($isFilter == 0) {
             $this->getSelect()->columns(array(
                 'revenue' => 'SUM((main_table.base_subtotal-IFNULL(main_table.base_subtotal_refunded,0)-IFNULL(main_table.base_subtotal_canceled,0)-ABS(IFNULL(main_table.base_discount_amount,0))+IFNULL(main_table.base_discount_refunded,0))*main_table.base_to_global_rate)',
-                'tax' => 'SUM((main_table.base_tax_amount-IFNULL(main_table.base_tax_refunded,0)-IFNULL(main_table.base_tax_canceled,0))*main_table.base_to_global_rate)',
                 'shipping' => 'SUM((main_table.base_shipping_amount-IFNULL(main_table.base_shipping_refunded,0)-IFNULL(main_table.base_shipping_canceled,0))*main_table.base_to_global_rate)',
             ));
         } else {
             $this->getSelect()->columns(array(
                 'revenue' => 'SUM((main_table.base_subtotal-IFNULL(main_table.base_subtotal_refunded,0)-IFNULL(main_table.base_subtotal_canceled,0)-ABS(IFNULL(main_table.base_discount_amount,0))+IFNULL(main_table.base_discount_refunded,0)))',
-                'tax' => 'SUM((main_table.base_tax_amount-IFNULL(main_table.base_tax_refunded,0)-IFNULL(main_table.base_tax_canceled,0)))',
                 'shipping' => 'SUM((main_table.base_shipping_amount-IFNULL(main_table.base_shipping_refunded,0)-IFNULL(main_table.base_shipping_canceled,0)))',
             ));
         }
@@ -319,7 +317,6 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4
 
         $this->getSelect()->columns(array(
             'revenue' => 'SUM(main_table.total_revenue_amount)',
-            'tax' => 'SUM(main_table.total_tax_amount_actual)',
             'shipping' => 'SUM(main_table.total_shipping_amount_actual)',
             'quantity' => 'SUM(orders_count)',
         ));
@@ -433,7 +430,6 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4
         if ($storeIds) {
             $this->getSelect()->columns(array(
                 'subtotal' => 'SUM(main_table.base_subtotal)',
-                'tax' => 'SUM(main_table.base_tax_amount)',
                 'shipping' => 'SUM(main_table.base_shipping_amount)',
                 'discount' => 'SUM(main_table.base_discount_amount)',
                 'total' => 'SUM(main_table.base_grand_total)',
@@ -444,7 +440,6 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4
         } else {
             $this->getSelect()->columns(array(
                 'subtotal' => 'SUM(main_table.base_subtotal * main_table.base_to_global_rate)',
-                'tax' => 'SUM(main_table.base_tax_amount * main_table.base_to_global_rate)',
                 'shipping' => 'SUM(main_table.base_shipping_amount * main_table.base_to_global_rate)',
                 'discount' => 'SUM(main_table.base_discount_amount * main_table.base_to_global_rate)',
                 'total' => 'SUM(main_table.base_grand_total * main_table.base_to_global_rate)',
@@ -476,7 +471,7 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4
      */
     public function joinCustomerName($alias = 'name')
     {
-        $this->getSelect()->columns(array($alias => 'CONCAT(main_table.customer_firstname," ", main_table.customer_lastname)'));
+        $this->getSelect()->columns(array($alias => 'main_table.customer_name'));
         return $this;
     }
 

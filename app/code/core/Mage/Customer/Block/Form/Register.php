@@ -159,4 +159,9 @@ class Mage_Customer_Block_Form_Register extends Mage_Directory_Block_Data
 
         return $this;
     }
+    
+    public function isRegisterRequireLoginAttribute($code)
+    {
+    	return $this->helper('customer')->isRegisterRequireLoginAttribute($code);
+    }
 }

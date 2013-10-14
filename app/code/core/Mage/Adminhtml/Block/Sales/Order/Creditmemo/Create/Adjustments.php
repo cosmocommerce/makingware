@@ -28,8 +28,6 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Adjustments extends Mag
     protected $_source;
     /**
      * Initialize creditmemo agjustment totals
-     *
-     * @return Mage_Tax_Block_Sales_Order_Tax
      */
     public function initTotals()
     {
@@ -57,13 +55,7 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Adjustments extends Mag
      */
     public function getShippingAmount()
     {
-        $config = Mage::getSingleton('tax/config');
-        $source = $this->getSource();
-        if ($config->displaySalesShippingInclTax($source->getOrder()->getStoreId())) {
-            $shipping = $source->getBaseShippingInclTax();
-        } else {
-            $shipping = $source->getBaseShippingAmount();
-        }
+    	$shipping = $this->getSource()->getBaseShippingAmount();
         return Mage::app()->getStore()->roundPrice($shipping) * 1;
     }
 
@@ -73,15 +65,6 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Adjustments extends Mag
      */
     public function getShippingLabel()
     {
-        $config = Mage::getSingleton('tax/config');
-        $source = $this->getSource();
-        if ($config->displaySalesShippingInclTax($source->getOrder()->getStoreId())) {
-            $label = $this->helper('sales')->__('Refund Shipping (Incl. Tax)');
-        } elseif ($config->displaySalesShippingBoth($source->getOrder()->getStoreId())) {
-            $label = $this->helper('sales')->__('Refund Shipping (Excl. Tax)');
-        } else {
-            $label = $this->helper('sales')->__('Refund Shipping');
-        }
-        return $label;
+    	return $this->helper('sales')->__('Refund Shipping');
     }
 }

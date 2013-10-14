@@ -71,6 +71,17 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
                     ))
             );
         }
+        
+        if ($this->getProduct()->getId() && $this->getProduct()->isVisibleInSiteVisibility()) {
+            $this->setChild('display_button',
+                $this->getLayout()->createBlock('adminhtml/widget_button')
+                    ->setData(array(
+                        'label'     => Mage::helper('catalog')->__('查看'),
+                        'onclick'   => 'popWin(\''.$this->getProduct()->getProductUrl().'\', \'_blank\')',
+                        'class'     => 'add-widget'
+                    ))
+            );
+        }
 
         if (!$this->getProduct()->isReadonly()) {
             $this->setChild('reset_button',
@@ -131,6 +142,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
     public function getBackButtonHtml()
     {
         return $this->getChildHtml('back_button');
+    }
+    
+    public function getDisplayButtonHtml()
+    {
+        return $this->getChildHtml('display_button');
     }
 
     public function getCancelButtonHtml()

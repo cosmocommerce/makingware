@@ -160,6 +160,15 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </generate_human_friendly_id>
+                        <register_required_login_attributes translate="label">
+                            <label>Register Required Login Attributes</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_customer_loginattributes</source_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </register_required_login_attributes>
                     </fields>
                 </create_account>
                 <password translate="label">
@@ -197,15 +206,6 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <street_lines translate="label comment">
-                            <label>Number of Lines in a Street Address </label>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <backend_model>adminhtml/system_config_backend_customer_address_street</backend_model>
-                            <comment>Leave empty for default (2). Valid range: 1-4</comment>
-                        </street_lines>
                         <prefix_show translate="label comment">
                             <label>Show Prefix</label>
                             <frontend_type>select</frontend_type>
@@ -225,17 +225,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </prefix_options>
-                        <middlename_show translate="label comment">
-                            <label>Show Middle Name (initial)</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>Always optional.</comment>
-                            <backend_model>adminhtml/system_config_backend_customer_show_address</backend_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </middlename_show>
                         <suffix_show translate="label comment">
                             <label>Show Suffix</label>
                             <frontend_type>select</frontend_type>
@@ -265,16 +254,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </dob_show>
-                        <taxvat_show translate="label">
-                            <label>Show Tax/VAT Number</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_nooptreq</source_model>
-                            <backend_model>adminhtml/system_config_backend_customer_show_customer</backend_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </taxvat_show>
                         <gender_show translate="label">
                             <label>Show Gender</label>
                             <frontend_type>select</frontend_type>
@@ -304,6 +283,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </redirect_dashboard>
+                        <allow_login_type translate="label">
+                            <label>Allow Login Type</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_customer_logintype</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </allow_login_type>
                     </fields>
                 </startup>
                 <address_templates translate="label">
@@ -315,7 +303,7 @@
                     <show_in_store>1</show_in_store>
                     <fields>
                         <text>
-                            <label>Text</label>    
+                            <label>Text</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
@@ -323,7 +311,7 @@
                             <show_in_store>1</show_in_store>
                         </text>
                         <oneline>
-                            <label>Text One Line</label>    
+                            <label>Text One Line</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
@@ -331,7 +319,7 @@
                             <show_in_store>1</show_in_store>
                         </oneline>
                         <html>
-                            <label>HTML</label>    
+                            <label>HTML</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
@@ -339,7 +327,7 @@
                             <show_in_store>1</show_in_store>
                         </html>
                         <pdf>
-                            <label>PDF</label>    
+                            <label>PDF</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
@@ -347,7 +335,7 @@
                             <show_in_store>1</show_in_store>
                         </pdf>
                         <js_template>
-                            <label>JavaScript Template</label>    
+                            <label>JavaScript Template</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>

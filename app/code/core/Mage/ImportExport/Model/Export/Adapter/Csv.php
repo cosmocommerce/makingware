@@ -106,6 +106,23 @@ class Mage_ImportExport_Model_Export_Adapter_Csv extends Mage_ImportExport_Model
      */
     public function writeRow(array $rowData)
     {
+    	static $_iconv = null;
+    	if (is_null($_iconv)) {
+    		$_iconv = false;
+	    	if ($language = Mage::app()->getRequest()->getHeader('Accept-Language')) {
+	    		$language = explode(';', $language);
+	    		if (isset($language[0]) && false !== strpos(strtolower($language[0]), 'zh')) {
+	    			$_iconv = true;
+	    		}
+	    	}
+    	}
+    	
+    	if ($_iconv) {
+    		foreach ($rowData as $key => $value) {
+    			$rowData[$key] = iconv('UTF-8', 'GBK//IGNORE', $value);
+    		}
+    	}
+    	
         if (null === $this->_headerCols) {
             $this->setHeaderCols(array_keys($rowData));
         }

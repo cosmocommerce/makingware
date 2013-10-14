@@ -90,11 +90,6 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_View_Tab_Orders
             'width' => '100px',
         ));
 
-        $this->addColumn('billing_name', array(
-            'header' => Mage::helper('sales')->__('Bill to Name'),
-            'index' => 'billing_name',
-        ));
-
         $this->addColumn('shipping_name', array(
             'header' => Mage::helper('sales')->__('Ship to Name'),
             'index' => 'shipping_name',

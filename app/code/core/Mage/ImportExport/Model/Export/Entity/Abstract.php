@@ -39,6 +39,8 @@ abstract class Mage_ImportExport_Model_Export_Entity_Abstract
      * @var array
      */
     protected $_attributeValues = array();
+    
+    protected $_customAttrs = array();
 
 
     /**
@@ -179,6 +181,21 @@ abstract class Mage_ImportExport_Model_Export_Entity_Abstract
 
         return $this;
     }
+    
+    public function setCustomAttrs($value)
+    {
+    	if (is_array($value)) {
+    		$this->_customAttrs = $value;
+    	}else {
+    		$this->_customAttrs[] = $value;
+    	}
+    	return $this;
+    }
+    
+    public function getCustomAttrs()
+    {
+    	return $this->_customAttrs;
+    }
 
     /**
      * Get attributes codes which are appropriate for export.
@@ -234,6 +251,7 @@ abstract class Mage_ImportExport_Model_Export_Entity_Abstract
         } else {
             $exportFilter = $this->_parameters[Mage_ImportExport_Model_Export::FILTER_ELEMENT_GROUP];
         }
+        
         $exportAttrCodes = $this->_getExportAttrCodes();
 
         foreach ($this->filterAttributeCollection($this->getAttributeCollection()) as $attribute) {
@@ -281,6 +299,12 @@ abstract class Mage_ImportExport_Model_Export_Entity_Abstract
                 $collection->addAttributeToSelect($attrCode);
             }
         }
+        
+        Mage::dispatchEvent('export_prepare_entity_collection', array(
+        	'collection' => $collection,
+        	'entity' 	 => $this
+        ));
+        
         return $collection;
     }
 
@@ -482,6 +506,11 @@ abstract class Mage_ImportExport_Model_Export_Entity_Abstract
         $this->_parameters = $parameters;
 
         return $this;
+    }
+    
+    public function getParameters()
+    {
+    	return $this->_parameters;
     }
 
     /**

@@ -91,13 +91,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
     protected $_allIdsCache = null;
 
     /**
-     * Is add tax percents to product collection flag
-     *
-     * @var bool
-     */
-    protected $_addTaxPercents = false;
-
-    /**
      * Product limitation filters
      *
      * Allowed filters
@@ -351,11 +344,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
         return parent::addAttributeToSelect($attribute, $joinType);
     }
 
-    /**
-     * Add tax class id attribute to select and join price rules data if needed
-     *
-     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
-     */
     protected function _beforeLoad()
     {
 //        if ($this->_addFinalPrice) {
@@ -368,7 +356,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
 
     /**
      * Processing collection items after loading
-     * Adding url rewrites, minimal prices, final prices, tax percents
+     * Adding url rewrites, minimal prices, final prices
      *
      * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
@@ -1210,46 +1198,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
     }
 
     /**
-     * Add requere tax percent flag for product collection
-     *
-     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
-     */
-    public function addTaxPercents()
-    {
-        $this->_addTaxPercents = true;
-        return $this;
-    }
-
-    /**
-     * Get require tax percent flag value
-     *
-     * @return bool
-     */
-    public function requireTaxPercent()
-    {
-        return $this->_addTaxPercents;
-    }
-
-    /**
-     * @deprecated from 1.3.0
-     */
-    protected function _addTaxPercents()
-    {
-        $classToRate = array();
-        $request = Mage::getSingleton('tax/calculation')->getRateRequest();
-        foreach ($this as &$item) {
-            if (null === $item->getTaxClassId()) {
-                $item->setTaxClassId($item->getMinimalTaxClassId());
-            }
-            if (!isset($classToRate[$item->getTaxClassId()])) {
-                $request->setProductClassId($item->getTaxClassId());
-                $classToRate[$item->getTaxClassId()] = Mage::getSingleton('tax/calculation')->getRate($request);
-            }
-            $item->setTaxPercent($classToRate[$item->getTaxClassId()]);
-        }
-    }
-
-    /**
      * Adding product custom options to result collection
      *
      * @return Mage_Catalog_Model_Entity_Product_Collection
@@ -1541,7 +1489,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
             $this->getSelect()->join(
                 array('price_index' => $this->getTable('catalog/product_index_price')),
                 $joinCond,
-                array('price', 'tax_class_id', 'final_price', 'minimal_price'=>$minimalExpr , 'min_price', 'max_price', 'tier_price')
+                array('price', 'final_price', 'minimal_price'=>$minimalExpr , 'min_price', 'max_price', 'tier_price')
             );
 
             // Set additional field filters

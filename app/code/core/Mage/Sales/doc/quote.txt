@@ -6,7 +6,7 @@
         checkout_method
         password_hash
         quote_status_id
-        billing_address_id
+        shipping_address_id
         converted_at
         coupon_code
         custbalance_amount
@@ -25,7 +25,6 @@
         is_multi_shipping
         is_multi_payment
         customer_id
-        customer_tax_class_id
         customer_group_id
         customer_email
         customer_note
@@ -53,8 +52,6 @@
         price
         discount_percent
         discount_amount
-        tax_percent
-        tax_amount
         row_total
         row_weight
         applied_rule_ids
@@ -64,12 +61,10 @@
     Attributes:
         id (entity_id)
         parent_id
-        address_type
         customer_id
         customer_address_id
         email
-        firstname
-        lastname
+        name
         company
         street
         city
@@ -79,14 +74,12 @@
         country_id
         telephone
         fax
-        same_as_billing
         weight
         free_shipping
         collect_shipping_rates
         shipping_method
         shipping_description
         subtotal
-        tax_amount
         shipping_amount
         discount_amount
         custbalance_amount
@@ -111,8 +104,6 @@
         price
         discount_percent
         discount_amount
-        tax_percent
-        tax_amount
         row_total
         row_weight
         applied_rule_ids
@@ -130,7 +121,7 @@
     Attributes:
     Events:
     API:
-7. Quote Billing Address
+7. Quote Shipping Address
     Attributes:
     Events:
     API:
@@ -140,13 +131,7 @@
         customer_payment_id
         method
         po_number
-        cc_type
-        cc_number_enc
-        cc_last4
-        cc_owner
-        cc_exp_month
-        cc_exp_year
-        cc_cid_enc
+        cod_type
     Events:
         sales_quote_payment_load_after
         sales_quote_payment_save_before

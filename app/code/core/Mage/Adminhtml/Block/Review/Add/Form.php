@@ -98,6 +98,14 @@ class Mage_Adminhtml_Block_Review_Add_Form extends Mage_Adminhtml_Block_Widget_F
             'style'     => 'width: 98%; height: 600px;',
             'required'  => true,
         ));
+        
+        $fieldset->addField('reply_content', 'textarea', array(
+            'name'      => 'reply_content',
+            'title'     => Mage::helper('review')->__('Reply Content'),
+            'label'     => Mage::helper('review')->__('Reply Content'),
+            'style'     => 'width: 98%; height: 600px;',
+            'required'  => false,
+        ));
 
         $fieldset->addField('product_id', 'hidden', array(
             'name'      => 'product_id',

@@ -59,7 +59,7 @@
                 <?php if (!$_readonly):?>
                 <input type="hidden" id="original_inventory_qty" name="<?php echo $this->getFieldSuffix() ?>[stock_data][original_inventory_qty]" value="<?php echo $this->getFieldValue('qty')*1 ?>"/>
                 <?php endif;?>
-                <input type="text" class="input-text required-entry validate-number" id="inventory_qty" name="<?php echo $this->getFieldSuffix() ?>[stock_data][qty]" value="<?php echo $this->getFieldValue('qty')*1 ?>" <?php echo $_readonly;?>/>
+                <input type="text" class="input-text required-entry validate-number" id="inventory_qty" name="<?php echo $this->getFieldSuffix() ?>[stock_data][qty]" value="<?php if ($myqty = $this->getFieldValue('qty')) echo $myqty*1 ?>" <?php echo $_readonly;?>/>
             </td>
             <td class="value scope-label"><?php echo Mage::helper('catalog')->__('[GLOBAL]') ?></td>
         </tr>
@@ -163,7 +163,11 @@
             <td class="label"><label for="inventory_stock_availability"><?php echo Mage::helper('catalog')->__('Stock Availability') ?></label></td>
             <td class="value"><select id="inventory_stock_availability" name="<?php echo $this->getFieldSuffix() ?>[stock_data][is_in_stock]" class="select" <?php echo $_readonly;?>>
             <?php foreach ($this->getStockOption() as $option): ?>
-                <?php $_selected = ($option['value'] == $this->getFieldValue('is_in_stock')) ? 'selected="selected"' : '' ?>
+                <?php if(is_null($this->getFieldValue('is_in_stock'))):?>
+                    <?php $_selected = ($option['value'] == Mage_CatalogInventory_Model_Stock::STOCK_IN_STOCK) ? 'selected="selected"' : ''; ?>
+                <?php else:?>
+                <?php $_selected = ($option['value'] == $this->getFieldValue('is_in_stock')) ? 'selected="selected"' : ''; ?>
+                 <?php endif;?>
                 <option value="<?php echo $option['value'] ?>" <?php echo $_selected ?>><?php echo $option['label'] ?></option>
             <?php endforeach; ?>
             </select>

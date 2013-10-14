@@ -116,16 +116,8 @@ class Mage_Checkout_Model_Cart_Customer_Api extends Mage_Checkout_Model_Api_Reso
         }
         
         foreach ($customerAddressData as $addressItem) {
-//            switch($addressItem['mode']) {
-//            case self::ADDRESS_BILLING:
-                /** @var $address Mage_Sales_Model_Quote_Address */
-                $address = Mage::getModel("sales/quote_address");
-//                break;
-//            case self::ADDRESS_SHIPPING:
-//                /** @var $address Mage_Sales_Model_Quote_Address */
-//                $address = Mage::getModel("sales/quote_address");
-//                break;
-//            }
+            /** @var $address Mage_Sales_Model_Quote_Address */
+            $address = Mage::getModel("sales/quote_address");
             $addressMode = $addressItem['mode'];
             unset($addressItem['mode']);
 
@@ -147,39 +139,11 @@ class Mage_Checkout_Model_Cart_Customer_Api extends Mage_Checkout_Model_Api_Reso
             }
 
             switch($addressMode) {
-            case self::ADDRESS_BILLING:
-                $address->setEmail($quote->getCustomer()->getEmail());
-
-                if (!$quote->isVirtual()) {
-                    $usingCase = isset($addressItem['use_for_shipping']) ? (int)$addressItem['use_for_shipping'] : 0;
-                    switch($usingCase) {
-                    case 0:
-                        $shippingAddress = $quote->getShippingAddress();
-                        $shippingAddress->setSameAsBilling(0);
-                        break;
-                    case 1:
-                        $billingAddress = clone $address;
-                        $billingAddress->unsAddressId()->unsAddressType();
-
-                        $shippingAddress = $quote->getShippingAddress();
-                        $shippingMethod = $shippingAddress->getShippingMethod();
-                        $shippingAddress->addData($billingAddress->getData())
-                            ->setSameAsBilling(1)
-                            ->setShippingMethod($shippingMethod)
-                            ->setCollectShippingRates(true);
-                        break;
-                    }
-                }
-                $quote->setBillingAddress($address);
-                break;
-
-            case self::ADDRESS_SHIPPING:
-                $address->setCollectShippingRates(true)
-                        ->setSameAsBilling(0);
-                $quote->setShippingAddress($address);
-                break;
-            }
-
+	            case self::ADDRESS_SHIPPING:
+	                $address->setCollectShippingRates(true);
+	                $quote->setShippingAddress($address);
+	                break;
+	        }
         }
         
         try {

@@ -52,7 +52,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Orders extends Mage_Adminhtml_Block
             ->addFieldToSelect('grand_total')
             ->addFieldToSelect('order_currency_code')
             ->addFieldToSelect('store_id')
-            ->addFieldToSelect('billing_name')
             ->addFieldToSelect('shipping_name')
             ->addFieldToFilter('customer_id', Mage::registry('current_customer')->getId())
             ->setIsCustomerMode(true);
@@ -73,20 +72,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Orders extends Mage_Adminhtml_Block
             'header'    => Mage::helper('customer')->__('Purchase On'),
             'index'     => 'created_at',
             'type'      => 'datetime',
-        ));
-
-        /*$this->addColumn('shipping_firstname', array(
-            'header'    => Mage::helper('customer')->__('Shipped to First Name'),
-            'index'     => 'shipping_firstname',
-        ));
-
-        $this->addColumn('shipping_lastname', array(
-            'header'    => Mage::helper('customer')->__('Shipped to Last Name'),
-            'index'     => 'shipping_lastname',
-        ));*/
-        $this->addColumn('billing_name', array(
-            'header'    => Mage::helper('customer')->__('Bill to Name'),
-            'index'     => 'billing_name',
         ));
 
         $this->addColumn('shipping_name', array(

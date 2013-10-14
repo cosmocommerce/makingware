@@ -414,7 +414,6 @@ class Mage_Checkout_Model_Cart extends Varien_Object
      */
     public function save()
     {
-        $this->getQuote()->getBillingAddress();
         $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
         $this->getQuote()->collectTotals();
         $this->getQuote()->save();

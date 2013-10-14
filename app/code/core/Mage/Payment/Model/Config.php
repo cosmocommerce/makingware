@@ -96,15 +96,15 @@ class Mage_Payment_Model_Config
     }
 
     /**
-     * Retrieve array of credit card types
+     * Retrieve array of payment types
      *
      * @return array
      */
-    public function getCcTypes()
+    public function getCodTypes()
     {
-        $_types = Mage::getConfig()->getNode('global/payment/cc/types')->asArray();
+        $_types = Mage::getConfig()->getNode('global/payment/cod/types')->asArray();
 
-        uasort($_types, array('Mage_Payment_Model_Config', 'compareCcTypes'));
+        uasort($_types, array('Mage_Payment_Model_Config', 'compareCodTypes'));
 
         $types = array();
         foreach ($_types as $data) {
@@ -148,13 +148,13 @@ class Mage_Payment_Model_Config
     }
 
     /**
-     * Statis Method for compare sort order of CC Types
+     * Statis Method for compare sort order of payment types
      *
      * @param array $a
      * @param array $b
      * @return int
      */
-    static function compareCcTypes($a, $b)
+    static function compareCodTypes($a, $b)
     {
         if (!isset($a['order'])) {
             $a['order'] = 0;

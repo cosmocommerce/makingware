@@ -34,6 +34,7 @@
 
 class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
 {
+	protected $_notAllowOnlinePayment = array('free', 'cod','bankremittance','exchangepayment');
 
     public function __construct()
     {
@@ -86,5 +87,15 @@ class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
     public function getBackUrl()
     {
         return $this->getUrl('customer/account/');
+    }
+
+    public function canOnlinePayment($order)
+    {
+    	return !in_array($order->getPayment()->getMethodInstance()->getCode(), $this->_notAllowOnlinePayment);
+    }
+
+    public function getCancelUrl($order)
+    {
+        return $this->getUrl('sales/order/cancel', array('order_id' => $order->getId()));
     }
 }

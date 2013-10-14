@@ -93,12 +93,20 @@
         <option value="0"><?php echo Mage::helper('catalog')->__('Fixed') ?></option>
         <option value="1"><?php echo Mage::helper('catalog')->__('Percentage') ?></option>
     </select>
+</div> 
+<div class="attribute-values-container left attribute-color-type">
+   <span style="margin-left: 10px;"> <?php echo Mage::helper('catalog')->__('Alias:') ?><input style="width:70px;" class="attr-color-text"/></span>
+   <span style="margin-left: 10px;"><?php echo Mage::helper('catalog')->__('Picture:') ?><input class="attr-color-pic" type="file" size="15px;" /></span>
+   <img src="<?php echo $this->getImageUrl()?>" class="color-pic-show" style="width:23px;height:23px;vertical-align:bottom;margin-left:5px;">
+   <span class="delete-attr-color-pic"><input type="checkbox" class="attr-color-pic-check" value="1">&nbsp;<?php echo Mage::helper('catalog')->__('Delete') ?></span>
+   
 </div>
 <?php if ($this->getShowUseDefaultPrice()):?>
 <div class="attribute-values-container">
     &nbsp;<input id="__id___default" type="checkbox" <?php if ($this->isReadonly()):?> disabled="disabled" <?php endif;?> class="attribute-use-default-value"> <label for="__id___default" class="normal"><?php echo Mage::helper('catalog')->__('Use Default Value') ?></label>
 </div>
 <?php endif;?>
+
 </div>
 </div>
 <div class="template no-display" id="<?php echo $this->getHtmlId() ?>_simple_pricing">
@@ -110,8 +118,9 @@
             &nbsp;<select class="attribute-price-type">
                 <option value="0"><?php echo Mage::helper('catalog')->__('Fixed') ?></option>
                 <option value="1"><?php echo Mage::helper('catalog')->__('Percentage') ?></option>
-            </select>
-        </div>
+            </select> 
+        </div>   
+       
 </div>
 <div class="template no-display" id="<?php echo $this->getHtmlId() ?>_simple_pricing_view">
     &nbsp;<?php echo Mage::helper('catalog')->__('Price') ?> <strong>'{{value}}'</strong>

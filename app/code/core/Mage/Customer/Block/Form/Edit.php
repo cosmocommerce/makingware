@@ -33,5 +33,8 @@
  */
 class Mage_Customer_Block_Form_Edit extends Mage_Customer_Block_Account_Dashboard
 {
-
+	public function isRegisterRequireLoginAttribute($code)
+	{
+		return $this->helper('customer')->isRegisterRequireLoginAttribute($code);
+	}
 }

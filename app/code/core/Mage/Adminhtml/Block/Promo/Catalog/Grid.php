@@ -91,8 +91,8 @@ class Mage_Adminhtml_Block_Promo_Catalog_Grid extends Mage_Adminhtml_Block_Widge
             'index'     => 'is_active',
             'type'      => 'options',
             'options'   => array(
-                1 => 'Active',
-                0 => 'Inactive',
+                1 => Mage::helper('catalogrule')->__('Active'),
+                0 => Mage::helper('catalogrule')->__('Inactive'),
             ),
         ));
 

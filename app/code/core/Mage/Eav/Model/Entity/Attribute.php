@@ -176,6 +176,8 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
             case 'gallery':
             case 'media_image':
             case 'multiselect':
+            case 'color':
+            case 'size':
                 return 'varchar';
 
             case 'image':
@@ -217,6 +219,8 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
             case 'gallery':
             case 'media_image':
             case 'multiselect':
+            case 'color':
+            case 'size':
                 return '';
 
             case 'text':

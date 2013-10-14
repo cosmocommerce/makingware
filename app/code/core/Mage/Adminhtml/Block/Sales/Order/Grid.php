@@ -63,7 +63,6 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
 
     protected function _prepareColumns()
     {
-
         $this->addColumn('real_order_id', array(
             'header'=> Mage::helper('sales')->__('Order #'),
             'width' => '80px',
@@ -86,11 +85,6 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
             'index' => 'created_at',
             'type' => 'datetime',
             'width' => '100px',
-        ));
-
-        $this->addColumn('billing_name', array(
-            'header' => Mage::helper('sales')->__('Bill to Name'),
-            'index' => 'billing_name',
         ));
 
         $this->addColumn('shipping_name', array(
@@ -174,26 +168,32 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
                  'url'  => $this->getUrl('*/sales_order/massUnhold'),
             ));
         }
-
-        $this->getMassactionBlock()->addItem('pdfinvoices_order', array(
-             'label'=> Mage::helper('sales')->__('Print Invoices'),
-             'url'  => $this->getUrl('*/sales_order/pdfinvoices'),
+        
+        $this->getMassactionBlock()->addItem('print_order', array(
+        	'label'=> Mage::helper('sales')->__('Print Orders'),
+        	'url'  => $this->getUrl('*/sales_order/massPrintOrders'),
         ));
 
-        $this->getMassactionBlock()->addItem('pdfshipments_order', array(
+        //$this->getMassactionBlock()->addItem('pdfinvoices_order', array(
+        //     'label'=> Mage::helper('sales')->__('Print Invoices'),
+        //     'url'  => $this->getUrl('*/sales_order/pdfinvoices'),
+        //));
+
+        $this->getMassactionBlock()->addItem('shipments_order', array(
              'label'=> Mage::helper('sales')->__('Print Packingslips'),
-             'url'  => $this->getUrl('*/sales_order/pdfshipments'),
+             #'url'  => $this->getUrl('*/sales_order/pdfshipments'),
+        	'url'  => $this->getUrl('*/sales_order/massPrintShipments'),
         ));
 
-        $this->getMassactionBlock()->addItem('pdfcreditmemos_order', array(
-             'label'=> Mage::helper('sales')->__('Print Credit Memos'),
-             'url'  => $this->getUrl('*/sales_order/pdfcreditmemos'),
-        ));
+        //$this->getMassactionBlock()->addItem('pdfcreditmemos_order', array(
+        //     'label'=> Mage::helper('sales')->__('Print Credit Memos'),
+        //     'url'  => $this->getUrl('*/sales_order/pdfcreditmemos'),
+        //));
 
-        $this->getMassactionBlock()->addItem('pdfdocs_order', array(
-             'label'=> Mage::helper('sales')->__('Print All'),
-             'url'  => $this->getUrl('*/sales_order/pdfdocs'),
-        ));
+        //$this->getMassactionBlock()->addItem('pdfdocs_order', array(
+        //     'label'=> Mage::helper('sales')->__('Print All'),
+        //     'url'  => $this->getUrl('*/sales_order/pdfdocs'),
+        //));
 
         return $this;
     }

@@ -83,6 +83,20 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
         Mage::register('current_order', $order);
         return $order;
     }
+    
+    protected function _initOrderIds()
+    {
+    	$orderIds = array();
+    	$ids = $this->getRequest()->getPost('order_ids');
+    	empty($ids) && $ids = array();
+    	foreach ($ids as $id) {
+    		$id = trim($id);
+    		if (!empty($id)) {
+    			$orderIds[] = $id;
+    		}
+    	}
+    	return $orderIds;
+    }
 
     /**
      * Orders grid
@@ -434,9 +448,7 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
      * Change status for selected orders
      */
     public function massStatusAction()
-    {
-
-    }
+    {}
 
     /**
      * Print documents for selected orders
@@ -595,6 +607,107 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
             }
         }
         $this->_redirect('*/*/');
+    }
+    
+    /**
+     * Print Order
+     */
+    public function printOrderAction()
+    {
+    	if ($order = $this->_initOrder()) {
+	        $print = Mage::getModel('sales/order_html_print');
+	        $print->setItem(
+	        	Mage::getModel('sales/order_html_order')
+	        		->setTemplate('order.html')
+	        		->setVariables(array(
+	        			'order' => $order
+	        		))
+	        );
+	        return $this->_prepareDownloadResponse('order-' . $order->getRealOrderId() . '.html', $print->render());
+	        #$pdf = Mage::getModel('sales/order_pdf_order')->getPdf(array($order));
+	        #return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+	    }
+	    $this->_redirect('*/*/');
+    }
+    
+    public function massPrintOrdersAction()
+    {
+    	$orderIds = $this->_initOrderIds();
+    	if (empty($orderIds)) {
+    		$this->_getSession()->addError($this->__('There are no printable documents related to selected orders'));
+    	}else {
+    		$print = Mage::getModel('sales/order_html_print');
+    		
+    		foreach ($orderIds as $orderId) {
+    			$order = Mage::getModel('sales/order')->load($orderId);
+    			if ($order->getId()) {
+    				$print->setItem(
+    					Mage::getModel('sales/order_html_order')
+    						->setTemplate('order.html')
+    						->setVariables(array(
+    							'order' => $order
+    						))
+    				);
+    			}
+    		}
+    		return $this->_prepareDownloadResponse('order-' . Mage::getSingleton('core/date')->date() . '.html', $print->render());
+    	}
+    	//$orderIds = $this->getRequest()->getPost('order_ids');
+        //$flag = false;
+        //if (!empty($orderIds)) {
+        //    foreach ($orderIds as $orderId) {
+        //        $order = Mage::getModel('sales/order')->load($orderId);
+        //        $flag = true;
+        //        $order->setOrder($order);
+        //        if (!isset($pdf)){
+        //        	$pdf = Mage::getModel('sales/order_pdf_order')->getPdf(array($order));
+        //        }else {
+        //       		$pages = Mage::getModel('sales/order_pdf_order')->getPdf(array($order));
+        //        	$pdf->pages = array_merge ($pdf->pages, $pages->pages);
+        //        }
+        //    }
+        //    if ($flag) {
+        //        return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+        //    }else {
+        //        $this->_getSession()->addError($this->__('There are no printable documents related to selected orders'));
+        //        $this->_redirect('*/*/');
+        //    }
+        //}
+        $this->_redirect('*/*/');
+    }
+    
+    public function massPrintShipmentsAction()
+    {
+    	$orderIds = $this->_initOrderIds();
+    	if (empty($orderIds)) {
+    		$this->_getSession()->addError($this->__('There are no printable documents related to selected orders'));
+    	}else {
+    		$print = Mage::getModel('sales/order_html_print');
+    	
+    		foreach ($orderIds as $orderId) {
+    			$order = Mage::getModel('sales/order')->load($orderId);
+    			if ($order->getId()) {
+    				$comment = '';
+    				foreach ($order->getShipmentsCollection() as $shipment) {
+    					foreach ($shipment->getCommentsCollection() as $comment) {
+    						$comment .= $comment->getComment();
+    					}
+    				}
+    				
+    				$print->setItem(
+    					Mage::getModel('sales/order_html_shipment')
+    						->setTemplate('shipment.html')
+    						->setVariables(array(
+    							'order' 	=> $order,
+    							'shipments' => $order->getShipmentsCollection()->getSize(),
+    							'comment'	=> $comment
+    						))
+    				);
+    			}
+    		}
+    		return $this->_prepareDownloadResponse('shipment-' . Mage::getSingleton('core/date')->date() . '.html', $print->render());
+    	}
+    	$this->_redirect('*/*/');
     }
 
     /**

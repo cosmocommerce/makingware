@@ -33,10 +33,11 @@
             <depends><module>Mage_Sales</module></depends>
             <children>
                 <order translate="title" module="sales">
-                    <title>Orders</title>
+                    <title>Order Management</title>
                     <action>adminhtml/sales_order</action>
-                    <sort_order>10</sort_order>
+                    <sort_order>0</sort_order>
                 </order>
+                <!--  
                 <invoice translate="title" module="sales">
                     <title>Invoices</title>
                     <action>adminhtml/sales_invoice</action>
@@ -62,22 +63,14 @@
                     <action>adminhtml/sales_recurring_profile</action>
                     <sort_order>60</sort_order>
                 </recurring_profile>
-                <billing_agreement translate="title" module="sales">
-                    <title>Billing Agreements</title>
-                    <action>adminhtml/sales_billing_agreement</action>
+                <shipping_agreement translate="title" module="sales">
+                    <title>Shipping Agreements</title>
+                    <action>adminhtml/sales_shipping_agreement</action>
                     <sort_order>70</sort_order>
-                </billing_agreement>
+                </shipping_agreement>
+                -->
             </children>
          </sales>
-         <system>
-            <children>
-                <order_statuses translate="title" module="sales">
-                    <title>Order Statuses</title>
-                    <action>adminhtml/sales_order_status</action>
-                    <sort_order>105</sort_order>
-                </order_statuses>
-            </children>
-         </system>
     </menu>
     <acl>
         <resources>
@@ -136,8 +129,8 @@
                                 <title>Recurring Profiles</title>
                                 <sort_order>60</sort_order>
                             </recurring_profile>
-                            <billing_agreement translate="title">
-                                <title>Billing Agreements</title>
+                            <shipping_agreement translate="title">
+                                <title>Shipping Agreements</title>
                                     <children>
                                         <actions translate="title">
                                             <title>Actions</title>
@@ -151,14 +144,14 @@
                                                     <sort_order>10</sort_order>
                                                 </manage>
                                                 <use translate="title">
-                                                    <title>Place Order Using Billing Agreements</title>
+                                                    <title>Place Order Using Shipping Agreements</title>
                                                     <sort_order>15</sort_order>
                                                 </use>
                                             </children>
                                         </actions>
                                     </children>
                                 <sort_order>70</sort_order>
-                            </billing_agreement>
+                            </shipping_agreement>
                         </children>
                     </sales>
                     <system>

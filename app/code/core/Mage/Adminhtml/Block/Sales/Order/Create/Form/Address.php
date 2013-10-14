@@ -106,12 +106,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
             ->setEntity($addressModel);
 
         $this->_addAttributesToForm($addressForm->getAttributes(), $fieldset);
-
-        $regionElement = $this->_form->getElement('region_id');
-        if ($regionElement) {
-            $regionElement->setNoDisplay(true);
-        }
-
         $this->_form->setValues($this->getFormValues());
 
         if (!$this->_form->getElement('country_id')->getValue()) {
@@ -130,6 +124,12 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
     protected function _addAdditionalFormElementData(Varien_Data_Form_Element_Abstract $element)
     {
         if ($element->getId() == 'region_id') {
+            $element->setNoDisplay(true);
+        }
+    	if ($element->getId() == 'city_id') {
+            $element->setNoDisplay(true);
+        }
+    	if ($element->getId() == 'area_id') {
             $element->setNoDisplay(true);
         }
         return $this;

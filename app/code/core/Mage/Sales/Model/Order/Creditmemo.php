@@ -113,16 +113,6 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
     }
 
     /**
-     * Retrieve billing address
-     *
-     * @return Mage_Sales_Model_Order_Address
-     */
-    public function getBillingAddress()
-    {
-        return $this->getOrder()->getBillingAddress();
-    }
-
-    /**
      * Retrieve shipping address
      *
      * @return Mage_Sales_Model_Order_Address
@@ -265,16 +255,8 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
         $order->setBaseSubtotalRefunded($order->getBaseSubtotalRefunded()+$this->getBaseSubtotal());
         $order->setSubtotalRefunded($order->getSubtotalRefunded()+$this->getSubtotal());
 
-        $order->setBaseTaxRefunded($order->getBaseTaxRefunded()+$this->getBaseTaxAmount());
-        $order->setTaxRefunded($order->getTaxRefunded()+$this->getTaxAmount());
-        $order->setBaseHiddenTaxRefunded($order->getBaseHiddenTaxRefunded()+$this->getBaseHiddenTaxAmount());
-        $order->setHiddenTaxRefunded($order->getHiddenTaxRefunded()+$this->getHiddenTaxAmount());
-
         $order->setBaseShippingRefunded($order->getBaseShippingRefunded()+$this->getBaseShippingAmount());
         $order->setShippingRefunded($order->getShippingRefunded()+$this->getShippingAmount());
-
-        $order->setBaseShippingTaxRefunded($order->getBaseShippingTaxRefunded()+$this->getBaseShippingTaxAmount());
-        $order->setShippingTaxRefunded($order->getShippingTaxRefunded()+$this->getShippingTaxAmount());
 
         $order->setAdjustmentPositive($order->getAdjustmentPositive()+$this->getAdjustmentPositive());
         $order->setBaseAdjustmentPositive($order->getBaseAdjustmentPositive()+$this->getBaseAdjustmentPositive());
@@ -333,9 +315,6 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
 
         $this->getOrder()->setBaseSubtotalRefunded($this->getOrder()->getBaseSubtotalRefunded()-$this->getBaseSubtotal());
         $this->getOrder()->setSubtotalRefunded($this->getOrder()->getSubtotalRefunded()-$this->getSubtotal());
-
-        $this->getOrder()->setBaseTaxRefunded($this->getOrder()->getBaseTaxRefunded()-$this->getBaseTaxAmount());
-        $this->getOrder()->setTaxRefunded($this->getOrder()->getTaxRefunded()-$this->getTaxAmount());
 
         $this->getOrder()->setBaseShippingRefunded($this->getOrder()->getBaseShippingRefunded()-$this->getBaseShippingAmount());
         $this->getOrder()->setShippingRefunded($this->getOrder()->getShippingRefunded()-$this->getShippingAmount());
@@ -519,7 +498,14 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
     public function getCommentsCollection($reload=false)
     {
         if (is_null($this->_comments) || $reload) {
-            $this->_comments = Mage::getResourceModel('sales/order_creditmemo_comment_collection')
+        	$collection = Mage::getResourceModel('sales/order_creditmemo_comment_collection');
+        	$collection->getSelect()
+        	->joinLeft(
+        		array('admin_user' => $collection->getTable('admin/user')),
+                'main_table.user_id = admin_user.user_id',
+                array('username', 'name', 'email')
+            );
+            $this->_comments = $collection
                 ->setCreditmemoFilter($this->getId())
                 ->setCreatedAtOrder();
             /**
@@ -582,7 +568,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($order->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $order->getBillingAddress()->getName();
+            $customerName = $order->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_EMAIL_TEMPLATE, $storeId);
             $customerName = $order->getCustomerName();
@@ -618,7 +604,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
                 'order'        => $order,
                 'creditmemo'   => $this,
                 'comment'      => $comment,
-                'billing'      => $order->getBillingAddress(),
+                'shipping'      => $order->getShippingAddress(),
                 'payment_html' => $paymentBlockHtml
             )
         );
@@ -653,7 +639,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
         // Retrieve corresponding email template id and customer name
         if ($order->getCustomerIsGuest()) {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_GUEST_TEMPLATE, $storeId);
-            $customerName = $order->getBillingAddress()->getName();
+            $customerName = $order->getShippingAddress()->getName();
         } else {
             $templateId = Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_TEMPLATE, $storeId);
             $customerName = $order->getCustomerName();
@@ -689,7 +675,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
                 'order'      => $order,
                 'creditmemo' => $this,
                 'comment'    => $comment,
-                'billing'    => $order->getBillingAddress()
+                'shipping'    => $order->getShippingAddress()
             )
         );
         $mailer->send();
@@ -746,7 +732,11 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Sales_Model_Abstract
 
         if (!$this->getOrderId() && $this->getOrder()) {
             $this->setOrderId($this->getOrder()->getId());
-            $this->setBillingAddressId($this->getOrder()->getBillingAddress()->getId());
+            $this->setShippingAddressId($this->getOrder()->getShippingAddress()->getId());
+        }
+        
+    	if (is_null($this->getUserId()) && Mage::getSingleton('admin/session')->getUser()) {
+        	$this->setUserId(Mage::getSingleton('admin/session')->getUser()->getId());
         }
 
         return $this;

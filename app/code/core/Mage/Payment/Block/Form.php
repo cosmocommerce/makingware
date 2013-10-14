@@ -66,12 +66,12 @@ class Mage_Payment_Block_Form extends Mage_Core_Block_Template
     }
 
     /**
-     * Check whether current payment method can create billing agreement
+     * Check whether current payment method can create shipping agreement
      *
      * @return bool
      */
-    public function canCreateBillingAgreement()
+    public function canCreateShippingAgreement()
     {
-        return $this->getMethod()->canCreateBillingAgreement();
+        return $this->getMethod()->canCreateShippingAgreement();
     }
 }

@@ -89,6 +89,10 @@ class Mage_Sales_Model_Order_Shipment_Comment extends Mage_Sales_Model_Abstract
         if (!$this->getParentId() && $this->getShipment()) {
             $this->setParentId($this->getShipment()->getId());
         }
+        
+    	if (is_null($this->getUserId()) && Mage::getSingleton('admin/session')->getUser()) {
+        	$this->setUserId(Mage::getSingleton('admin/session')->getUser()->getId());
+        }
 
         return $this;
     }

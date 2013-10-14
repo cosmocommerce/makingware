@@ -98,11 +98,11 @@
     <default>
         <system>
             <adminnotification>
-                <feed_url>notifications.magentocommerce.com/community/notifications.rss</feed_url>
-                <popup_url>widgets.magentocommerce.com/notificationPopup</popup_url>
-                <severity_icons_url>widgets.magentocommerce.com/%s/%s.gif</severity_icons_url>
+                <feed_url>notifications.makingware.com/community/notifications.rss</feed_url>
+                <popup_url>widgets.makingware.com/notificationPopup</popup_url>
+                <severity_icons_url>widgets.makingware.com/%s/%s.gif</severity_icons_url>
                 <use_https>0</use_https>
-                <frequency>1</frequency>
+                <frequency>30</frequency>
                 <last_update>0</last_update>
             </adminnotification>
         </system>

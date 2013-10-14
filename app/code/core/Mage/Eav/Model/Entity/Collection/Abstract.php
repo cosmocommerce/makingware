@@ -256,8 +256,7 @@ abstract class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Col
      *
      * If $attribute is an array will add OR condition with following format:
      * array(
-     *     array('attribute'=>'firstname', 'like'=>'test%'),
-     *     array('attribute'=>'lastname', 'like'=>'test%'),
+     *     array('attribute'=>'name', 'like'=>'test%'),
      * )
      *
      * @see self::_getConditionSql for $condition
@@ -514,9 +513,7 @@ abstract class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Col
      * Add attribute from joined entity to select
      *
      * Examples:
-     * ('billing_firstname', 'customer_address/firstname', 'default_billing')
-     * ('billing_lastname', 'customer_address/lastname', 'default_billing')
-     * ('shipping_lastname', 'customer_address/lastname', 'default_billing')
+     * ('shipping_name', 'customer_address/name', 'default_shipping')
      * ('shipping_postalcode', 'customer_address/postalcode', 'default_shipping')
      * ('shipping_city', $cityAttribute, 'default_shipping')
      *

@@ -119,4 +119,19 @@ class Mage_Shipping_Model_Config extends Varien_Object
         self::$_carriers[$code] = $carrier;
         return self::$_carriers[$code];
     }
+
+    public function getShippingBestTime()
+    {
+        $_shippingTime = Mage::getConfig()->getNode('global/carriers/flatrate/times')->asArray();
+
+       // uasort($_types, array('Mage_Payment_Model_Config', 'compareCodTypes'));
+
+        $shippingTime = array();
+        foreach ($_shippingTime as $data) {
+            if (isset($data['code']) && isset($data['name'])) {
+                $shippingTime[$data['code']] = $data['name'];
+            }
+        }
+        return $shippingTime;
+    }
 }

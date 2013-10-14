@@ -34,7 +34,7 @@
     <?php else: ?>
     <div class="box-right">
     <?php endif; ?>
-        <!--Billing Address-->
+        <!--Shipping Address-->
         <div class="entry-edit">
             <div class="entry-edit-head">
                 <h4 class="icon-head head-payment-method"><?php echo Mage::helper('sales')->__('Payment Information') ?></h4>
@@ -59,18 +59,7 @@
             <fieldset>
                 <strong><?php echo $_order->getShippingDescription() ?></strong>
                 <?php echo $this->helper('sales')->__('Total Shipping Charges'); ?>:
-
-                <?php if ($this->helper('tax')->displaySalesPriceInclTax($this->getSource()->getStoreId())): ?>
-                    <?php $_excl = $this->displayShippingPriceInclTax($_order); ?>
-                <?php else: ?>
-                    <?php $_excl = $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
-                <?php endif; ?>
-                <?php $_incl = $this->displayShippingPriceInclTax($_order); ?>
-
-                <?php echo $_excl; ?>
-                <?php if ($this->helper('tax')->displaySalesBothPrices($this->getSource()->getStoreId()) && $_incl != $_excl): ?>
-                    (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
-                <?php endif; ?>
+                <?php echo $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
             </fieldset>
         </div>
     </div>

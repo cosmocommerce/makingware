@@ -239,7 +239,7 @@ RegionUpdater.prototype = {
                         this.regionSelectEl.appendChild(option);
                     }
 
-                    if (regionId==def || region.name.toLowerCase()==def || region.code.toLowerCase()==def) {
+                    if (regionId==def || region.name.toLowerCase()==def/* || region.code.toLowerCase()==def*/) {
                         this.regionSelectEl.value = regionId;
                     }
                 }

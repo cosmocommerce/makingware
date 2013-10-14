@@ -78,7 +78,6 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
     {
         $quoteAddress = Mage::getModel('sales/quote_address')
             ->setStoreId($address->getStoreId())
-            ->setAddressType($address->getAddressType())
             ->setCustomerId($address->getCustomerId())
             ->setCustomerAddressId($address->getCustomerAddressId());
 
@@ -135,7 +134,6 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
         $invoice->setOrder($order)
             ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
-            ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId());
 
         Mage::helper('core')->copyFieldset('sales_convert_order', 'to_invoice', $order, $invoice);
@@ -170,7 +168,6 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
         $shipment->setOrder($order)
             ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
-            ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId());
 
         Mage::helper('core')->copyFieldset('sales_convert_order', 'to_shipment', $order, $shipment);
@@ -205,7 +202,6 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
         $creditmemo->setOrder($order)
             ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
-            ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId());
 
         Mage::helper('core')->copyFieldset('sales_convert_order', 'to_cm', $order, $creditmemo);

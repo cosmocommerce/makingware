@@ -47,10 +47,10 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_W
             ->addNameToSelect()
             ->addAttributeToSelect('email')
             ->addAttributeToSelect('created_at')
-            ->joinAttribute('billing_postcode', 'customer_address/postcode', 'default_billing')
-            ->joinAttribute('billing_city', 'customer_address/city', 'default_billing')
-            ->joinAttribute('billing_telephone', 'customer_address/telephone', 'default_billing')
-            ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing');
+            ->joinAttribute('shipping_postcode', 'customer_address/postcode', 'default_shipping')
+            ->joinAttribute('shipping_city', 'customer_address/city', 'default_shipping')
+            ->joinAttribute('shipping_telephone', 'customer_address/telephone', 'default_shipping')
+            ->joinAttribute('shipping_country_id', 'customer_address/country_id', 'default_shipping');
 
         $this->setCollection($collection);
 
@@ -79,16 +79,16 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_W
         $this->addColumn('telephone', array(
             'header'    => Mage::helper('customer')->__('Telephone'),
             'align'     =>'center',
-            'index'     =>'billing_telephone'
+            'index'     =>'shipping_telephone'
         ));
-        $this->addColumn('billing_postcode', array(
+        $this->addColumn('shipping_postcode', array(
             'header'    => Mage::helper('customer')->__('ZIP/Post Code'),
-            'index'     =>'billing_postcode',
+            'index'     =>'shipping_postcode',
         ));
-        $this->addColumn('billing_country_id', array(
+        $this->addColumn('shipping_country_id', array(
             'header'    => Mage::helper('customer')->__('Country'),
             'type'      => 'country',
-            'index'     => 'billing_country_id',
+            'index'     => 'shipping_country_id',
         ));
         $this->addColumn('customer_since', array(
             'header'    => Mage::helper('customer')->__('Customer Since'),

@@ -33,16 +33,18 @@
                 <controller>wizard</controller>
                 <action>begin</action>
             </begin>
-            <locale translate="code">
-                <code>Localization</code>
-                <controller>wizard</controller>
-                <action>locale</action>
-            </locale>
             <config translate="code">
                 <code>Configuration</code>
                 <controller>wizard</controller>
                 <action>config</action>
             </config>
+            <!--
+			<demo translate="code">
+				<code>Install the demo data</code>
+				<controller>wizard</controller>
+				<action>demo</action>
+			</demo>
+			-->
             <administrator translate="code">
                 <code>Create Admin Account</code>
                 <controller>wizard</controller>

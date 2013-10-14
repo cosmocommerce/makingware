@@ -25,7 +25,7 @@
  */
 
 /**
- * Admin tax rule content block
+ * Admin rule content block
  *
  * @category   Mage
  * @package    Mage_Adminhtml

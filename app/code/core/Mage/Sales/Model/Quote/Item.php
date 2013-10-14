@@ -271,7 +271,6 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
             ->setSku($this->getProduct()->getSku())
             ->setName($product->getName())
             ->setWeight($this->getProduct()->getWeight())
-            ->setTaxClassId($product->getTaxClassId())
             ->setBaseCost($product->getCost())
             ->setIsRecurring($product->getIsRecurring())
         ;
@@ -578,6 +577,50 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
             return $this->_optionsByCode[$code];
         }
         return null;
+    }
+
+    public function getThumbnailUrl($width = 75, $height = 75)
+    {
+    	$product = $this->getChildProduct();
+        $image=$product->getData('thumbnail');
+
+        if(empty($image) || $image=='no_selection'){
+             return (string)Mage::helper('catalog/image')->init($this->getProduct(), 'thumbnail')->resize($width, $height);
+        }
+        
+        return (string)Mage::helper('catalog/image')->init($product, 'thumbnail')->resize($width, $height);
+    }
+
+    public function getChildProduct()
+    {
+        if ($option = $this->getOptionByCode('simple_product')) {
+            return $option->getProduct();
+        }
+
+        return $this;
+    }
+
+    public function hasColorAttr($current_product)
+    {
+    	if($current_product->isConfigurable())
+    	{
+			$attributes=$this->getAllowAttributes($current_product);
+
+    		foreach($attributes as $attribute)
+    		{
+				if($attribute->getProductAttribute()->getFrontendInput()=="color")
+				{
+					return true;
+				}
+    		}
+    	}
+
+    	return false;
+    }
+
+    public function getAllowAttributes($current_product)
+    {
+		return $current_product->getTypeInstance(true)->getConfigurableAttributes($current_product);
     }
 
     /**

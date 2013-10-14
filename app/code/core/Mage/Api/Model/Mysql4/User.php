@@ -228,7 +228,7 @@ class Mage_Api_Model_Mysql4_User extends Mage_Core_Model_Mysql4_Abstract
                     'sort_order'    => 0,
                     'role_type'     => 'U',
                     'user_id'       => $user->getId(),
-                    'role_name'     => $user->getFirstname()
+                    'role_name'     => $user->getName()
                 );
                 $this->_getWriteAdapter()->insert($this->getTable('api/role'), $data);
             }
@@ -276,7 +276,7 @@ class Mage_Api_Model_Mysql4_User extends Mage_Core_Model_Mysql4_Abstract
             'sort_order'=> 0,
             'role_type' => 'U',
             'user_id'   => $user->getUserId(),
-            'role_name' => $user->getFirstname()
+            'role_name' => $user->getName()
         ));
 
         return $this;

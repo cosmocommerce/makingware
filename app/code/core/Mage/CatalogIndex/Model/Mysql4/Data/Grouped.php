@@ -49,7 +49,7 @@ class Mage_CatalogIndex_Model_Mysql4_Data_Grouped extends Mage_CatalogIndex_Mode
 
         $select = $this->_getReadAdapter()->select()
             ->from($this->getTable('catalogindex/price'), array(
-                'customer_group_id', 'value', 'tax_class_id'))
+                'customer_group_id', 'value'))
             ->where('entity_id IN(?)', $products)
             ->where('attribute_id IN(?)', $priceAttributes)
             ->where('website_id=?', $store->getWebsiteId());
@@ -58,8 +58,6 @@ class Mage_CatalogIndex_Model_Mysql4_Data_Grouped extends Mage_CatalogIndex_Mode
         $groups = Mage::getSingleton('catalogindex/retreiver')->getCustomerGroups();
         foreach ($groups as $group) {
             $resultMinimal      = null;
-            $resultTaxClassId   = 0;
-            $taxClassId         = 0;
             $customerGroup      = $group->getId();
 
             $typedProducts = Mage::getSingleton('catalogindex/retreiver')
@@ -70,7 +68,6 @@ class Mage_CatalogIndex_Model_Mysql4_Data_Grouped extends Mage_CatalogIndex_Mode
                     $finalPrice = $retreiver->getFinalPrice($id, $store, $group);
                     if ((null === $resultMinimal) || ($finalPrice < $resultMinimal)) {
                         $resultMinimal    = $finalPrice;
-                        $resultTaxClassId = $retreiver->getTaxClassId($id, $store);
                     }
 
                     $tiers = $retreiver->getTierPrices($id, $store);
@@ -80,7 +77,6 @@ class Mage_CatalogIndex_Model_Mysql4_Data_Grouped extends Mage_CatalogIndex_Mode
                         }
                         if ((null === $resultMinimal) || ($tier['value'] < $resultMinimal)) {
                             $resultMinimal    = $tier['value'];
-                            $resultTaxClassId = $retreiver->getTaxClassId($tier['entity_id'], $store);
                         }
                     }
                 }
@@ -93,17 +89,13 @@ class Mage_CatalogIndex_Model_Mysql4_Data_Grouped extends Mage_CatalogIndex_Mode
 
                 if ((null === $resultMinimal) || ($one['value'] < $resultMinimal)) {
                     $resultMinimal = $one['value'];
-                    $taxClassId    = $one['tax_class_id'];
-                } else {
-                    $taxClassId = $resultTaxClassId;
                 }
             }
 
             if (!is_null($resultMinimal)){
                 $result[] = array(
                     'customer_group_id' => $customerGroup,
-                    'minimal_value'     => $resultMinimal,
-                    'tax_class_id'      => $taxClassId
+                    'minimal_value'     => $resultMinimal
                 );
             }
         }

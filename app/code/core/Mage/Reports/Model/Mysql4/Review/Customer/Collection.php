@@ -38,37 +38,22 @@ class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Review_M
     {
         $customer = Mage::getResourceSingleton('customer/customer');
         //TODO: add full name logic
-        $firstnameAttr = $customer->getAttribute('firstname');
-        $firstnameAttrId = $firstnameAttr->getAttributeId();
-        $firstnameTable = $firstnameAttr->getBackend()->getTable();
+        $nameAttr = $customer->getAttribute('name');
+        $nameAttrId = $nameAttr->getAttributeId();
+        $nameTable = $nameAttr->getBackend()->getTable();
 
-        if ($firstnameAttr->getBackend()->isStatic()) {
-            $firstnameField = 'firstname';
+        if ($nameAttr->getBackend()->isStatic()) {
+            $nameField = 'name';
             $attrCondition = '';
         } else {
-            $firstnameField = 'value';
-            $attrCondition = ' AND _table_customer_firstname.attribute_id = '.$firstnameAttrId;
+            $nameField = 'value';
+            $attrCondition = ' AND _table_customer_name.attribute_id = '.$nameAttrId;
         }
 
-        $this->getSelect()->joinInner(array('_table_customer_firstname' => $firstnameTable),
-            '_table_customer_firstname.entity_id=detail.customer_id'.$attrCondition, array());
-
-        $lastnameAttr = $customer->getAttribute('lastname');
-        $lastnameAttrId = $lastnameAttr->getAttributeId();
-        $lastnameTable = $lastnameAttr->getBackend()->getTable();
-
-        if ($lastnameAttr->getBackend()->isStatic()) {
-            $lastnameField = 'lastname';
-            $attrCondition = '';
-        } else {
-            $lastnameField = 'value';
-            $attrCondition = ' AND _table_customer_lastname.attribute_id = '.$lastnameAttrId;
-        }
-
-        $this->getSelect()->joinInner(array('_table_customer_lastname' => $lastnameTable),
-            '_table_customer_lastname.entity_id=detail.customer_id'.$attrCondition, array())
+        $this->getSelect()->joinInner(array('_table_customer_name' => $nameTable),
+            '_table_customer_name.entity_id=detail.customer_id'.$attrCondition, array())  
             ->columns(array(
-                        'customer_name' => "CONCAT(_table_customer_firstname.{$firstnameField}, ' ', _table_customer_lastname.{$lastnameField})",
+                        'customer_name' => "_table_customer_name.{$nameField}",
                         'review_cnt' => "COUNT(main_table.review_id)"))
             ->group('detail.customer_id');
 

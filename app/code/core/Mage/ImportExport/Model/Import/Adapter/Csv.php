@@ -85,7 +85,7 @@ class Mage_ImportExport_Model_Import_Adapter_Csv extends Mage_ImportExport_Model
      */
     public function next()
     {
-        $this->_currentRow = fgetcsv($this->_fileHandler, null, $this->_delimiter, $this->_enclosure);
+        $this->_currentRow = $this->readRow();
         $this->_currentKey = $this->_currentRow ? $this->_currentKey + 1 : null;
     }
 
@@ -98,8 +98,8 @@ class Mage_ImportExport_Model_Import_Adapter_Csv extends Mage_ImportExport_Model
     {
         // rewind resource, reset column names, read first row as current
         rewind($this->_fileHandler);
-        $this->_colNames = fgetcsv($this->_fileHandler, null, $this->_delimiter, $this->_enclosure);
-        $this->_currentRow = fgetcsv($this->_fileHandler, null, $this->_delimiter, $this->_enclosure);
+        $this->_colNames = $this->readRow();
+        $this->_currentRow = $this->readRow();
 
         if ($this->_currentRow) {
             $this->_currentKey = 0;
@@ -122,7 +122,7 @@ class Mage_ImportExport_Model_Import_Adapter_Csv extends Mage_ImportExport_Model
                 if ($position < $this->_currentKey) {
                     $this->rewind();
                 }
-                while ($this->_currentRow = fgetcsv($this->_fileHandler, null, $this->_delimiter, $this->_enclosure)) {
+                while ($this->_currentRow = $this->readRow()) {
                     if (++ $this->_currentKey == $position) {
                         return;
                     }
@@ -130,5 +130,27 @@ class Mage_ImportExport_Model_Import_Adapter_Csv extends Mage_ImportExport_Model
             }
             throw new OutOfBoundsException(Mage::helper('importexport')->__('Invalid seek position'));
         }
+    }
+    
+    public function readRow()
+    {
+    	static $_iconv = null;
+    	if (is_null($_iconv)) {
+    		$_iconv = false;
+    		if ($language = Mage::app()->getRequest()->getHeader('Accept-Language')) {
+    			$language = explode(';', $language);
+    			if (isset($language[0]) && false !== strpos(strtolower($language[0]), 'zh')) {
+    				$_iconv = true;
+    			}
+    		}
+    	}
+    	
+    	$rowData = fgetcsv($this->_fileHandler, null, $this->_delimiter, $this->_enclosure);
+    	if ($_iconv) {
+    		foreach ($rowData as $key => $value) {
+    			$rowData[$key] = iconv('GBK', 'UTF-8//IGNORE', $value);
+    		} 
+    	}
+    	return $rowData;
     }
 }

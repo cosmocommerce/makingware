@@ -30,8 +30,7 @@
             <td style="width:50%;">
                 <h3>
                   <?php if($this->getUser()->getUserId()): ?>
-                  <?php $_userName = $this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname() ?>
-                  <?php echo $this->__("Edit User '%s'", $_userName) ?>
+                  <?php echo $this->__("Edit User '%s'", $this->getUser()->getName()) ?>
                   <?php else: ?>
                   <?php echo $this->__('Add New User') ?>
                   <?php endif; ?>

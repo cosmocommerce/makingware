@@ -78,12 +78,15 @@
                         <th><?php echo $_store->getName() ?></th>
                     <?php endforeach; ?>
                         <th><?php echo Mage::helper('catalog')->__('Position') ?></th>
+                        <th class="nobr a-center" style="display: none;" id="color_value"><?php echo Mage::helper('catalog')->__('Color Value') ?></th>
+                        <th class="nobr a-center" style="display: none;" id="upload_image"><?php echo Mage::helper('catalog')->__('Image') ?></th>
                         <th class="nobr a-center"><?php echo Mage::helper('catalog')->__('Is Default') ?></th>
                         <th>
                             <?php if (!$this->getReadOnly()):?>
                                 <?php echo $this->getAddNewButtonHtml() ?>
                             <?php endif;?>
                         </th>
+                         <th style="display: none;" id="upload_image_button"> <button style="" onclick="upload_image()" class="scalable add" type="button" id="upload_color_image_button"><span><?php echo Mage::helper('catalog')->__('Upload Images') ?></span></button></th>
                     </tr>
                     <tr class="no-display template" id="row-template">
                         <?php foreach ($this->getStores() as $_store): ?>
@@ -103,6 +106,18 @@
         <input type="hidden" id="option-count-check" value="" />
     </div>
 </div>
+<div id="temporary_upload_file" style="display:block;">
+<iframe id="upload_target" name="upload_target" style="width:0;height:0;border:0px solid #fff;"></iframe>
+</div>
+<style type="text/css">
+#upload_image {
+	width: 350px;
+}
+td.upload-image input {
+	width: auto;
+	vertical-align: top;
+}
+</style>
 <script type="text/javascript">
 //<![CDATA[
 var optionDefaultInputType = 'radio';
@@ -130,6 +145,23 @@ var attributeOption = {
     itemCount : 0,
     totalItems : 0,
     add : function(data) {
+    	if($('frontend_input').value=='color' && $F('is_global')==1){
+    	this.templateText= '<tr class="option-row">'+
+            <?php foreach ($this->getStores() as $_store): ?>
+            '<td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+            <?php endforeach; ?>
+            '<td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+			'<td><input class="color {hash:true}" type="text" name="option[colorvalue][{{id}}]" value="{{color_value}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+			'<td class="upload-image"><input type="hidden" name="option[oldimagetmp][{{id}}]" value="{{image_url}}"><input type="hidden" name="option[imagetmp][{{id}}]" ><input class="upload-color-image" type="file" name="option[image][{{id}}]" value="{{image_url}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><img style="display:none;margin-left:5px;vertical-align:bottom;" name="option[smallimage][{{id}}]" src="<?php echo $this->getImageUrl()?>{{image_url}}" width="25px" height="25px"/><input type="hidden" name="option[deleteimage][{{id}}]"><input style="display:none;margin-left:5px;vertical-align:middle;" class="delete-image-button" type="button" onclick="deleteImage(this,this.name);" value="<?php echo Mage::helper('catalog')->__('Delete Image') ?>" name="option[deletebutton][{{id}}]"><\/td>'+
+            '<td class="a-center"><input class="input-radio" type="{{intype}}" name="default[]" value="{{id}}" {{checked}} <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+            '<td class="a-left">'+
+                '<input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="" />'+
+                <?php if (!$this->getReadOnly()):?>
+                    '<?php echo $this->getDeleteButtonHtml() ?>'+
+                <?php endif;?>
+            '<\/td>'+
+        '<\/tr>';
+        }
         this.template = new Template(this.templateText, this.templateSyntax);
         if(!data.id){
             data = {};
@@ -143,6 +175,7 @@ var attributeOption = {
         this.itemCount++;
         this.totalItems++;
         this.updateItemsCountField();
+        jscolor.init();
     },
     remove : function(event){
         var element = $(Event.findElement(event, 'tr')); // !!! Button already
@@ -205,8 +238,142 @@ Validation.addAllThese([
     ['required-options-count', '<?php echo Mage::helper('catalog')->__('Options is required') ?>', function(v) {
         return !Validation.get('IsEmpty').test(v);
 }]]);
+
+function upload_image()
+{
+    var value='<?php echo $this->getUrl('*/catalog_product_attribute/uploadimage');?>';
+    document.getElementById("edit_form").action=value;
+    document.getElementById('edit_form').target = 'upload_target';
+    $('edit_form').submit();
+
+    document.getElementById("edit_form").action='<?php echo $this->getUrl('*/catalog_product_attribute/save');?>';
+    document.getElementById('edit_form').target='';
+
+    iframe=$('upload_target');
+    if (iframe.attachEvent)
+    {
+		iframe.attachEvent("onload", function(){
+			var result =eval('('+document.frames['upload_target'].document.body.innerHTML+')');
+            var name="option[smallimage]";
+			var imgtmp="option[imagetmp]";
+            var deleteButton="option[deletebutton]";
+            var uploadFile="option[image]";
+            var deleteImage="option[deleteimage]";
+
+				for(var key in result)
+				{
+					var imgname=name+"["+key+"]";
+					var imgtmpname=imgtmp+"["+key+"]";
+                    var deleteButtonName=deleteButton+"["+key+"]";
+                    var uploadFileName=uploadFile+"["+key+"]";
+                    var deleteImageName=deleteImage+"["+key+"]";
+
+					if(result[key].url)
+					{
+                     	imgname='[name="' + imgname.replace(/([\[\]])/g, '\\$1') + '"]';
+                        deleteButtonName='[name="' + deleteButtonName.replace(/([\[\]])/g, '\\$1') + '"]';
+                        uploadFileName='[name="' + uploadFileName.replace(/([\[\]])/g, '\\$1') + '"]';
+                        deleteImageName='[name="' + deleteImageName.replace(/([\[\]])/g, '\\$1') + '"]';
+
+                     	$$(imgname)[0].src=result[key].url;
+                     	$$(imgname)[0].show();
+                        $$(deleteButtonName)[0].show();
+                        $$( uploadFileName)[0].writeAttribute("disabled:disabled");
+                        $$(deleteImageName)[0].value=0;
+					}
+
+					if(result[key].file)
+					{
+						imgtmpname='[name="' + imgtmpname.replace(/([\[\]])/g, '\\$1') + '"]';
+						$$(imgtmpname)[0].value=result[key].file;
+					}
+
+				}
+
+		});
+	}
+	else
+	{
+		$('upload_target').onload=function(){
+			if($('upload_target').contentDocument.body.innerHTML)
+			{
+				var result = eval('('+$('upload_target').contentDocument.body.innerHTML+')');
+				var name="option[smallimage]";
+				var imgtmp="option[imagetmp]";
+                var deleteButton="option[deletebutton]";
+                var uploadFile="option[image]";
+                var deleteImage="option[deleteimage]";
+
+				for(var key in result)
+				{
+					var imgname=name+"["+key+"]";
+					var imgtmpname=imgtmp+"["+key+"]";
+                    var deleteButtonName=deleteButton+"["+key+"]";
+                    var uploadFileName=uploadFile+"["+key+"]";
+                    var deleteImageName=deleteImage+"["+key+"]";
+
+
+					if(result[key].url)
+					{
+						imgname='[name="' + imgname.replace(/([\[\]])/g, '\\$1') + '"]';
+                        deleteButtonName='[name="' + deleteButtonName.replace(/([\[\]])/g, '\\$1') + '"]';
+                        uploadFileName='[name="' + uploadFileName.replace(/([\[\]])/g, '\\$1') + '"]';
+                        deleteImageName='[name="' + deleteImageName.replace(/([\[\]])/g, '\\$1') + '"]';
+                     	$$(imgname)[0].src=result[key].url;
+                     	$$(imgname)[0].show();
+                        $$(deleteButtonName)[0].show();
+                        $$( uploadFileName)[0].writeAttribute("disabled",true);
+                        $$(deleteImageName)[0].value=0;
+					}
+
+					if(result[key].file)
+					{
+						imgtmpname='[name="' + imgtmpname.replace(/([\[\]])/g, '\\$1') + '"]';
+						$$(imgtmpname)[0].value=result[key].file;
+					}
+
+				}
+			}
+	    }
+	}
+
+}
+
+function deleteImage(obj,objName)
+{
+	var delImg = '[name="' + objName.replace(/deletebutton/, 'deleteimage').replace(/([\[\]])/g, '\\$1') + '"]';
+	$$(delImg)[0].value=1;
+	delImg = '[name="' + objName.replace(/deletebutton/, 'smallimage').replace(/([\[\]])/g, '\\$1') + '"]';
+	$$(delImg)[0].hide();
+    var uploadFile = '[name="' + objName.replace(/deletebutton/, 'image').replace(/([\[\]])/g, '\\$1') + '"]';
+    $$(uploadFile)[0].writeAttribute("disabled",false);
+    obj.hide();
+
+}
+
 <?php foreach ($this->getOptionValues() as $_value): ?>
     attributeOption.add(<?php echo $_value->toJson() ?>);
 <?php endforeach; ?>
+document.observe("dom:loaded", function() {
+	$$('.upload-image').each(function(pair) {
+        console.dir(pair);
+
+		if(pair.select('img')[0].src!="<?php echo $this->getImageUrl();?>")
+		{
+	     	pair.select('img')[0].show();
+            pair.select('.delete-image-button')[0].show();
+            pair.select('.upload-color-image')[0].writeAttribute('disabled',true);
+
+		}
+		else
+		{
+			pair.select('img')[0].hide();
+            pair.select('.delete-image-button')[0].hide();
+            pair.select('.upload-color-image')[0].writeAttribute('disabled',false);
+		}
+	});
+    console.dir(pair.select('img')[0]);
+
+});
 //]]>
 </script>

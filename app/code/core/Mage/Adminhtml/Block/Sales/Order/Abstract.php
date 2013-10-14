@@ -90,23 +90,4 @@ class Mage_Adminhtml_Block_Sales_Order_Abstract extends Mage_Adminhtml_Block_Wid
     {
         return array();
     }
-
-
-    /**
-     * Retrieve subtotal price include tax html formated content
-     *
-     * @param Varien_Object $item
-     * @return string
-     */
-    public function displayShippingPriceInclTax($order)
-    {
-        $shipping = $order->getShippingInclTax();
-        if ($shipping) {
-            $baseShipping = $order->getBaseShippingInclTax();
-        } else {
-            $shipping       = $order->getShippingAmount()+$order->getShippingTaxAmount();
-            $baseShipping   = $order->getBaseShippingAmount()+$order->getBaseShippingTaxAmount();
-        }
-        return $this->displayPrices($baseShipping, $shipping, false, ' ');
-    }
 }

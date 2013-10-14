@@ -34,12 +34,6 @@
 class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_Resource
 {
     /**
-     * Customer address types
-     */
-    const ADDRESS_BILLING    = Mage_Sales_Model_Quote_Address::TYPE_BILLING;
-    const ADDRESS_SHIPPING   = Mage_Sales_Model_Quote_Address::TYPE_SHIPPING;
-
-    /**
      * Customer checkout types
      */
      const MODE_CUSTOMER = Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER;
@@ -114,7 +108,7 @@ class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_
     protected function _prepareGuestQuote(Mage_Sales_Model_Quote $quote)
     {
         $quote->setCustomerId(null)
-            ->setCustomerEmail($quote->getBillingAddress()->getEmail())
+            ->setCustomerEmail($quote->getShippingAddress()->getEmail())
             ->setCustomerIsGuest(true)
             ->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
         return $this;
@@ -128,23 +122,16 @@ class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_
      */
     protected function _prepareNewCustomerQuote(Mage_Sales_Model_Quote $quote)
     {
-        $billing    = $quote->getBillingAddress();
         $shipping   = $quote->isVirtual() ? null : $quote->getShippingAddress();
 
         //$customer = Mage::getModel('customer/customer');
         $customer = $quote->getCustomer();
-        /* @var $customer Mage_Customer_Model_Customer */
-        $customerBilling = $billing->exportCustomerAddress();
-        $customer->addAddress($customerBilling);
-        $billing->setCustomerAddress($customerBilling);
-        $customerBilling->setIsDefaultBilling(true);
-        if ($shipping && !$shipping->getSameAsBilling()) {
+
+        if ($shipping) {
             $customerShipping = $shipping->exportCustomerAddress();
             $customer->addAddress($customerShipping);
             $shipping->setCustomerAddress($customerShipping);
             $customerShipping->setIsDefaultShipping(true);
-        } else {
-            $customerBilling->setIsDefaultShipping(true);
         }
 
         Mage::helper('core')->copyFieldset('checkout_onepage_quote', 'to_customer', $quote, $customer);
@@ -164,29 +151,17 @@ class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_
      */
     protected function _prepareCustomerQuote(Mage_Sales_Model_Quote $quote)
     {
-        $billing    = $quote->getBillingAddress();
         $shipping   = $quote->isVirtual() ? null : $quote->getShippingAddress();
-
         $customer = $quote->getCustomer();
-        if (!$billing->getCustomerId() || $billing->getSaveInAddressBook()) {
-            $customerBilling = $billing->exportCustomerAddress();
-            $customer->addAddress($customerBilling);
-            $billing->setCustomerAddress($customerBilling);
-        }
-        if ($shipping && ((!$shipping->getCustomerId() && !$shipping->getSameAsBilling())
-            || (!$shipping->getSameAsBilling() && $shipping->getSaveInAddressBook()))) {
+
+        if ($shipping && ((!$shipping->getCustomerId() || $shipping->getSaveInAddressBook()))) {
             $customerShipping = $shipping->exportCustomerAddress();
             $customer->addAddress($customerShipping);
             $shipping->setCustomerAddress($customerShipping);
         }
 
-        if (isset($customerBilling) && !$customer->getDefaultBilling()) {
-            $customerBilling->setIsDefaultBilling(true);
-        }
         if ($shipping && isset($customerShipping) && !$customer->getDefaultShipping()) {
             $customerShipping->setIsDefaultShipping(true);
-        } else if (isset($customerBilling) && !$customer->getDefaultShipping()) {
-            $customerBilling->setIsDefaultShipping(true);
         }
         $quote->setCustomer($customer);
 

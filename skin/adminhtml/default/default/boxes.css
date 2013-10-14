@@ -549,7 +549,7 @@ div.main-col-inner { float:left; /* Fixes some inner clears in the liquid main-c
 /* HEADER & FOOTER
 *******************************************************************************/
 
-.logo                                   { float:left; margin:5px 20px 5px 27px; height:43px; }
+.logo                                   { float:left; margin:10px 20px 5px 27px; }
 .header-top                             { border-bottom:1px solid #5F767F; }
 
 /* Header right */
@@ -680,16 +680,26 @@ div.autocomplete ul li { padding:.5em .7em; min-height:32px; cursor:pointer; tex
 /* LOGIN
 *******************************************************************************/
 #page-login                             { background:#f8f8f8; text-align:center; }
-.login-container                        { width:581px; margin:170px auto; padding-left:32px; background:url(images/login_logo.gif) no-repeat; }
-.login-form                             { padding:27px 57px 35px 57px; background:url(images/login_box_bg.jpg) no-repeat; text-align:left; }
+.login-container                        { width:585px; margin:170px auto;  }
+.login-box{background:url(images/login_box_bg2.gif) no-repeat 0 bottom; padding-bottom:40px}
+.login-form                             { padding:42px 40px 0;  text-align:left; background:url(images/login_box_bg2.png) no-repeat 0 top; 
+
+}
+
 .login-form .input-left                 { float:left; }
 .login-form .input-right                { float:right; }
-.login-form .input-box input.input-text { width:224px; }
-.login-form h2                          { font-size:1.7em; font-weight:normal; }
+.login-form .input-box input.input-text { width:240px; padding-left:5px; height:25px; line-height:25px; background:#FFF url(images/login_input_bg.jpg) repeat-x 0 0; border:1px solid #cacaca; font: bold 14px Tahoma, Geneva, sans-serif; color:#868686 }
+.login-form h2                          { font-size:14px; width:273px; height:43px; text-indent:-9999px;  }
 .login-form label                       { font-weight:bold; }
 .login-form .form-buttons               { margin:12px 0 0 0; clear:both; text-align:right; }
-.login-box .bottom                      { width:581px; height:5px; background:url(images/login_box_bottom.jpg) no-repeat; overflow:hidden; }
-.login-container .legal                 { margin:0; background:url(images/login_box_legal_bg.gif) no-repeat; padding:8px 8px 5px 8px; font-size:.95em; }
+.login-form .form-buttons a{color:#c7000a; font-family:Arial, Helvetica, sans-serif; text-decoration:none}
+.login-form .form-buttons a:hover{text-decoration:underline}
+.login-form .form-button{background:url(images/login_bottom_bg.gif) no-repeat; width:72px; height:27px; border:none; padding:0; line-height:27px; color:#665858}
+.login-box{position:relative}
+.alertmessages {}
+.alertmessages .messages li.error-msg{ }
+.login-box .bottom                      {  }
+.login-container .legal                 { margin:0; padding:8px 8px 5px 8px; font-size:11px; color:#999; }
 .login-form .validation-advice          { margin:3px 0 0 0; }
 .login-form .forgot-link                { margin:0 17px 0 0; text-align:right; }
 
@@ -1299,9 +1309,16 @@ ul.super-product-attributes { padding-left:15px; }
     padding-left:20px;
     color:#ebebff;
     background:url(images/fam_help.gif) no-repeat 0 50%;
-    }
+}
 #page-help-link:link, #page-help-link:visited { text-decoration:none; }
 #page-help-link:hover { color:white; }
+
+.page-refresh-link {
+	line-height:26px;
+    padding-left:20px;
+    color:#ebebff;
+    background:url(images/fam_refresh.gif) no-repeat 0 50%;
+}
 
 /* Magento Connect Package Extensions */
 .table-editable { border:solid 1px #ccc; background:#fafafa; padding:5px; margin-bottom:5px; }

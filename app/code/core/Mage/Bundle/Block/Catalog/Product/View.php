@@ -52,8 +52,7 @@ class Mage_Bundle_Block_Catalog_Product_View extends Mage_Catalog_Block_Product_
             foreach ($prices as $price) {
                 $price['price_qty'] = $price['price_qty']*1;
                 $price['savePercent'] = ceil(100 - $price['price'] );
-                $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'])));
-                $price['formated_price_incl_tax'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice(Mage::helper('tax')->getPrice($product, $price['website_price'], true)));
+                $price['formated_price'] = Mage::app()->getStore()->formatPrice(Mage::app()->getStore()->convertPrice($price['website_price']));
                 $res[] = $price;
             }
         }

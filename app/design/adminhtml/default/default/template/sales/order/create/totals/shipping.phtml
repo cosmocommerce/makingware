@@ -23,44 +23,13 @@
  * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-/**
- * @var $this Mage_Tax_Block_Checkout_Shipping
- * @see Mage_Tax_Block_Checkout_Shipping
- */
+
 ?>
-<?php if ($this->displayBoth()):?>
-<tr>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
-        <?php echo $this->getExcludeTaxLabel() ?>
-    </td>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right">
-        <?php echo $this->formatPrice($this->getShippingExcludeTax()) ?>
-    </td>
-</tr>
-<tr>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
-        <?php echo $this->getIncludeTaxLabel() ?>
-    </td>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right">
-        <?php echo $this->formatPrice($this->getShippingIncludeTax()) ?>
-    </td>
-</tr>
-<?php elseif($this->displayIncludeTax()) : ?>
 <tr>
     <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
         <?php echo $this->getTotal()->getTitle() ?>
     </td>
     <td style="<?php echo $this->getStyle() ?>" class="a-right">
-        <?php echo $this->formatPrice($this->getShippingIncludeTax()) ?>
+        <?php echo $this->formatPrice($this->getTotal()->getValue()) ?>
     </td>
 </tr>
-<?php else:?>
-<tr>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
-        <?php echo $this->getTotal()->getTitle() ?>
-    </td>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right">
-        <?php echo $this->formatPrice($this->getShippingExcludeTax()) ?>
-    </td>
-</tr>
-<?php endif;?>

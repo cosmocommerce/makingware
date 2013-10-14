@@ -31,8 +31,8 @@
         <reference name="notifications">
             <block type="adminhtml/notification_toolbar" name="notification_toolbar" as="notification_toolbar" acl="system/adminnotification/show_toolbar" template="notification/toolbar.phtml" />
         </reference>
-        <reference name="notifications">
+        <!--<reference name="notifications">
             <block type="adminhtml/notification_window" name="notification_window" as="notification_window" acl="system/adminnotification/show_toolbar" template="notification/window.phtml" />
-        </reference>
+        </reference>-->
     </default>
 </layout>

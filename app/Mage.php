@@ -141,6 +141,11 @@ final class Mage
         return trim("{$i['major']}.{$i['minor']}.{$i['revision']}" . ($i['patch'] != '' ? ".{$i['patch']}" : "") . "-{$i['stability']}{$i['number']}", '.-');
     }
 
+    public static function getCNVersion()
+    {
+    	return '1.6.5';
+    }
+    
     /**
      * Gets the detailed Magento version information
      * @link http://www.magentocommerce.com/blog/new-community-edition-release-process/

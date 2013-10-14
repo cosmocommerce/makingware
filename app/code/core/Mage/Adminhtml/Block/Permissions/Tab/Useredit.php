@@ -45,23 +45,12 @@ class Mage_Adminhtml_Block_Permissions_Tab_Useredit extends Mage_Adminhtml_Block
             )
         );
 
-        $fieldset->addField('firstname', 'text',
+        $fieldset->addField('name', 'text',
             array(
-                'name'  => 'firstname',
-                'label' => Mage::helper('adminhtml')->__('First Name'),
-                'id'    => 'firstname',
-                'title' => Mage::helper('adminhtml')->__('First Name'),
-                'class' => 'required-entry',
-                'required' => true,
-            )
-        );
-
-        $fieldset->addField('lastname', 'text',
-            array(
-                'name'  => 'lastname',
-                'label' => Mage::helper('adminhtml')->__('Last Name'),
-                'id'    => 'lastname',
-                'title' => Mage::helper('adminhtml')->__('Last Name'),
+                'name'  => 'name',
+                'label' => Mage::helper('adminhtml')->__('Name'),
+                'id'    => 'name',
+                'title' => Mage::helper('adminhtml')->__('Name'),
                 'class' => 'required-entry',
                 'required' => true,
             )

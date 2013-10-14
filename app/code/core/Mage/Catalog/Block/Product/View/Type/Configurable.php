@@ -103,7 +103,6 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
         $attributes = array();
         $options    = array();
         $store      = $this->getCurrentStore();
-        $taxHelper  = Mage::helper('tax');
         $currentProduct = $this->getProduct();
 
         $preconfiguredFlag = $currentProduct->hasPreconfiguredValues();
@@ -190,28 +189,6 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
             }
         }
 
-        $taxCalculation = Mage::getSingleton('tax/calculation');
-        if (!$taxCalculation->getCustomer() && Mage::registry('current_customer')) {
-            $taxCalculation->setCustomer(Mage::registry('current_customer'));
-        }
-
-        $_request = $taxCalculation->getRateRequest(false, false, false);
-        $_request->setProductClassId($currentProduct->getTaxClassId());
-        $defaultTax = $taxCalculation->getRate($_request);
-
-        $_request = $taxCalculation->getRateRequest();
-        $_request->setProductClassId($currentProduct->getTaxClassId());
-        $currentTax = $taxCalculation->getRate($_request);
-
-        $taxConfig = array(
-            'includeTax'        => $taxHelper->priceIncludesTax(),
-            'showIncludeTax'    => $taxHelper->displayPriceIncludingTax(),
-            'showBothPrices'    => $taxHelper->displayBothPrices(),
-            'defaultTax'        => $defaultTax,
-            'currentTax'        => $currentTax,
-            'inclTaxTitle'      => Mage::helper('catalog')->__('Incl. Tax')
-        );
-
         $config = array(
             'attributes'        => $attributes,
             'template'          => str_replace('%s', '#{price}', $store->getCurrentCurrency()->getOutputFormat()),
@@ -219,8 +196,7 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
             'basePrice'         => $this->_registerJsPrice($this->_convertPrice($currentProduct->getFinalPrice())),
             'oldPrice'          => $this->_registerJsPrice($this->_convertPrice($currentProduct->getPrice())),
             'productId'         => $currentProduct->getId(),
-            'chooseText'        => Mage::helper('catalog')->__('Choose an Option...'),
-            'taxConfig'         => $taxConfig
+            'chooseText'        => Mage::helper('catalog')->__('Choose an Option...')
         );
 
         if ($preconfiguredFlag && !empty($defaultValues)) {
@@ -295,6 +271,184 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
 
 
         return $price;
+    }
+
+    public function getColorJson()
+    {
+		 $config = array(
+            'attributes'        => $this->getColorAttributes(),
+            'basePrice'         => $this->_registerJsPrice($this->_convertPrice($this->getProduct()->getFinalPrice())),
+            'oldPrice'         => $this->_registerJsPrice($this->_convertPrice($this->getProduct()->getPrice())),
+            'productId'         => $this->getProduct()->getId(),
+            'colors'            =>$this->getAllColors(),
+            'sizes'          =>$this->getAllSizes()
+        );
+        
+        return Mage::helper('core')->jsonEncode($config);
+    }
+
+    public function getColorAttributes()
+    {
+        $currentProduct = $this->getProduct();
+		$allProducts=array();
+
+		foreach ($this->getAllProducts() as $product)
+		{
+			$allProducts[$product->getId()]['stock']=$product->isSaleable();
+            $allProducts[$product->getId()]['image']['image']=$product->getImage();
+		    $allProducts[$product->getId()]['image']['small_image']=$product->getSmallImage();
+			$allProducts[$product->getId()]['image']['thumbnail']=$product->getThumbnail();
+
+            foreach ($this->getAllowAttributes() as $attribute)
+            {
+			   $productAttribute = $attribute->getProductAttribute();
+			   $attributeValue = $product->getData($productAttribute->getAttributeCode());
+
+			   $prices = $attribute->getPrices();
+
+				if (is_array($prices))
+				{
+					foreach ($prices as $value)
+					{   
+						if($attributeValue==$value['value_index'])
+						{
+							if($productAttribute->getFrontendInput()=='color')
+							{
+								$allProducts[$product->getId()]['color']['option_id']=$value['value_index'];
+							    $allProducts[$product->getId()]['color']['option_value']=$value['label'];
+                                $currentProduct->setConfigurablePrice($this->_preparePrice($value['pricing_value'], $value['is_percent']));
+                                Mage::dispatchEvent(
+                                    'catalog_product_type_configurable_price',
+                                    array('product' => $currentProduct)
+                                );
+                                $configurablePrice = $currentProduct->getConfigurablePrice();
+                                $allProducts[$product->getId()]['color']['price']=$configurablePrice;
+                                $allProducts[$product->getId()]['color']['oldPrice']= $this->_preparePrice($value['pricing_value'], $value['is_percent']);
+							}
+							else if($productAttribute->getFrontendInput()=='size')
+							{
+                            	$allProducts[$product->getId()]['size']['option_id']=$value['value_index'];
+							    $allProducts[$product->getId()]['size']['option_value']=$value['label'];
+                                $currentProduct->setConfigurablePrice($this->_preparePrice($value['pricing_value'], $value['is_percent']));
+                                Mage::dispatchEvent(
+                                    'catalog_product_type_configurable_price',
+                                    array('product' => $currentProduct)
+                                );
+                                $configurablePrice = $currentProduct->getConfigurablePrice();
+                                $allProducts[$product->getId()]['size']['price']=$configurablePrice;
+                                $allProducts[$product->getId()]['size']['oldPrice']= $this->_preparePrice($value['pricing_value'], $value['is_percent']);
+							}
+						}
+					}
+				}
+            }
+            
+            $productPrice=$allProducts[$product->getId()]['color']['price']+$allProducts[$product->getId()]['size']['price']+$currentProduct->getFinalPrice();   
+            $productOldPrice=$allProducts[$product->getId()]['color']['oldPrice']+$allProducts[$product->getId()]['size']['oldPrice']+$currentProduct->getPrice();    
+            $allProducts[$product->getId()]['price']=$this->_registerJsPrice($this->_convertPrice($productPrice));
+            $allProducts[$product->getId()]['oldPrice']=$this->_registerJsPrice($this->_convertPrice($productOldPrice));   
+		}
+
+		return $allProducts;
+    }
+
+    public function getAllColors()
+    {
+		$allColors=array();
+
+		foreach ($this->getAllProducts() as $product)
+		{
+            foreach ($this->getAllowAttributes() as $attribute)
+            {
+			   $productAttribute = $attribute->getProductAttribute();
+			   $attributeValue = $product->getData($productAttribute->getAttributeCode());
+			   $prices = $attribute->getPrices();
+
+				if (is_array($prices)){
+					foreach ($prices as $value){
+						if($attributeValue==$value['value_index']){
+							if($productAttribute->getFrontendInput()=='color'){   
+								if(!empty($value['color_value'])){
+									$allColors[$value['value_index']]['colorValue']=$value['color_value'];
+								}
+                                
+                                if(!empty($value['color_pic'])){
+                                     $allColors[$value['value_index']]['imageUrl']=$value['color_pic'];   
+                                    
+                                }else{
+                                   $allColors[$value['value_index']]['imageUrl']=$value['image_url']?$value['image_url']:'';
+                                }
+                                
+                                if(!empty($value['color_text'])){
+                                    $allColors[$value['value_index']]['colorLabel']=$value['color_text'];
+                                }else{
+                                    $allColors[$value['value_index']]['colorLabel']=$value['label'];  
+                                }
+
+							}
+						}
+					}
+				}
+            }
+		}
+       // print_r($allColors);die;
+		return $allColors;
+    }
+
+    public function getAllsizes()
+    {
+		$allSizes=array();
+
+		foreach ($this->getAllProducts() as $product)
+		{
+            foreach ($this->getAllowAttributes() as $attribute)
+            {
+			   $productAttribute = $attribute->getProductAttribute();
+			   $attributeValue = $product->getData($productAttribute->getAttributeCode());
+			   $prices = $attribute->getPrices();
+
+				if (is_array($prices))
+				{
+					foreach ($prices as $value)
+					{
+						if($attributeValue==$value['value_index'])
+						{
+							if($productAttribute->getFrontendInput()=='size')
+							{
+								$allSizes[$value['value_index']]['sizeValue']=$value['label'];
+							}
+						}
+					}
+				}
+            }
+		}
+
+		return $allSizes;
+    }
+
+    public function getAllProducts()
+    {
+        if (!$this->hasAllProducts()) {
+            $products = array();
+            $allProducts = $this->getProduct()->getTypeInstance(true)
+                ->getUsedProducts(null, $this->getProduct());
+            foreach ($allProducts as $product) {
+                    $products[] = $product;
+            }
+            $this->setAllProducts($products);
+        }
+
+        return $this->getData('all_products');
+    }
+
+    public function getImageUrl()
+    {
+		return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product';
+    }
+
+    public function getPostUrl ()
+    {
+        return Mage::getUrl('catalog/product/getProductMedia', array('_secure' => true));
     }
 
 //    protected function _registerAdditionalJsPrice($price, $isPercent=false)

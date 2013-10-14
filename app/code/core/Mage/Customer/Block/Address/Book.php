@@ -64,11 +64,6 @@ class Mage_Customer_Block_Address_Book extends Mage_Core_Block_Template
         return $this->getUrl('customer/address/edit', array('_secure'=>true, 'id'=>$address->getId()));
     }
 
-    public function getPrimaryBillingAddress()
-    {
-        return $this->getCustomer()->getPrimaryBillingAddress();
-    }
-
     public function getPrimaryShippingAddress()
     {
         return $this->getCustomer()->getPrimaryShippingAddress();
@@ -76,7 +71,7 @@ class Mage_Customer_Block_Address_Book extends Mage_Core_Block_Template
 
     public function hasPrimaryAddress()
     {
-        return $this->getPrimaryBillingAddress() || $this->getPrimaryShippingAddress();
+        return $this->getPrimaryShippingAddress() ? true : false;
     }
 
     public function getAdditionalAddresses()

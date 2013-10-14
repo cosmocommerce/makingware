@@ -58,11 +58,11 @@ class Mage_Adminhtml_Helper_Data extends Mage_Core_Helper_Abstract
                     $frontModule = $frontModule[0];
                 }
             }
-            $url = 'http://www.magentocommerce.com/gethelp/';
-            $url.= Mage::app()->getLocale()->getLocaleCode().'/';
-            $url.= $frontModule.'/';
-            $url.= $request->getControllerName().'/';
-            $url.= $request->getActionName().'/';
+            $url = 'http://www.makingware.com/forum/';
+            //$url.= Mage::app()->getLocale()->getLocaleCode().'/';
+            //$url.= $frontModule.'/';
+            //$url.= $request->getControllerName().'/';
+            //$url.= $request->getActionName().'/';
 
             $this->_pageHelpUrl = $url;
         }
@@ -117,5 +117,31 @@ class Mage_Adminhtml_Helper_Data extends Mage_Core_Helper_Abstract
     public function decodeFilter(&$value)
     {
         $value = rawurldecode($value);
+    }
+
+    public function getTransport ()
+    {
+       $config = array(
+        	'port' => Mage::getStoreConfig('system/smtp/port')
+        );
+
+        $auth = Mage::getStoreConfig('system/smtp/auth');
+
+        if ($auth != 'none') {
+            $config['auth'] = $auth;
+            $config['username'] = Mage::getStoreConfig('system/smtp/username');
+            $config['password'] = Mage::getStoreConfig('system/smtp/password');
+        }
+
+        $ssl = Mage::getStoreConfig('system/smtp/ssl');
+
+        if ($ssl > 0) {
+            $config['ssl'] = ($ssl == 1 ? 'tls' : 'ssl');
+        }
+
+        $host = Mage::getStoreConfig('system/smtp/host');
+        $transport = new Zend_Mail_Transport_Smtp($host, $config);
+
+        return $transport;
     }
 }

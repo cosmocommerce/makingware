@@ -48,9 +48,9 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     protected function _initUniqueFields()
     {
         $this->_uniqueFields = array(array(
-            'field' => array('attribute_code','entity_type_id'),
-            'title' => Mage::helper('eav')->__('Attribute with the same code')
-        ));
+                                         'field' => array('attribute_code', 'entity_type_id'),
+                                         'title' => Mage::helper('eav')->__('Attribute with the same code')
+                                     ));
         return $this;
     }
 
@@ -58,7 +58,7 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     {
         if (!isset(self::$_entityAttributes[$entityTypeId])) {
             $select = $this->_getReadAdapter()->select()->from($this->getMainTable())
-                ->where('entity_type_id=?', $entityTypeId);
+                    ->where('entity_type_id=?', $entityTypeId);
             $data = $this->_getReadAdapter()->fetchAll($select);
             foreach ($data as $row) {
                 self::$_entityAttributes[$entityTypeId][$row['attribute_code']] = $row;
@@ -78,7 +78,7 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function loadByCode(Mage_Core_Model_Abstract $object, $entityTypeId, $code)
     {
         $select = $this->_getLoadSelect('attribute_code', $code, $object)
-            ->where('entity_type_id=?', $entityTypeId);
+                ->where('entity_type_id=?', $entityTypeId);
         $data = $this->_getReadAdapter()->fetchRow($select);
 
         if ($data) {
@@ -97,12 +97,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
      */
     private function _getMaxSortOrder(Mage_Core_Model_Abstract $object)
     {
-        if( intval($object->getAttributeGroupId()) > 0 ) {
+        if (intval($object->getAttributeGroupId()) > 0) {
             $read = $this->_getReadAdapter();
             $select = $read->select()
-                ->from($this->getTable('entity_attribute'), new Zend_Db_Expr("MAX(`sort_order`)"))
-                ->where("{$this->getTable('entity_attribute')}.attribute_set_id = ?", $object->getAttributeSetId())
-                ->where("{$this->getTable('entity_attribute')}.attribute_group_id = ?", $object->getAttributeGroupId());
+                    ->from($this->getTable('entity_attribute'), new Zend_Db_Expr("MAX(`sort_order`)"))
+                    ->where("{$this->getTable('entity_attribute')}.attribute_set_id = ?", $object->getAttributeSetId())
+                    ->where("{$this->getTable('entity_attribute')}.attribute_group_id = ?", $object->getAttributeGroupId());
             $maxOrder = $read->fetchOne($select);
             return $maxOrder;
         }
@@ -119,21 +119,21 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function deleteEntity(Mage_Core_Model_Abstract $object)
     {
         $write = $this->_getWriteAdapter();
-        $condition = $write->quoteInto($this->getTable('entity_attribute').'.entity_attribute_id = ?', $object->getEntityAttributeId());
+        $condition = $write->quoteInto($this->getTable('entity_attribute') . '.entity_attribute_id = ?', $object->getEntityAttributeId());
         /**
          * Delete attribute values
          */
         $select = $write->select()
-            ->from($this->getTable('entity_attribute'))
-            ->where($condition);
+                ->from($this->getTable('entity_attribute'))
+                ->where($condition);
         $data = $write->fetchRow($select);
         if (!empty($data)) {
             /**
              * @todo !!!! need fix retrieving attribute entity, this realization is temprary
              */
             $attribute = Mage::getModel('eav/entity_attribute')
-                ->load($data['attribute_id'])
-                ->setEntity(Mage::getSingleton('catalog/product')->getResource());
+                    ->load($data['attribute_id'])
+                    ->setEntity(Mage::getSingleton('catalog/product')->getResource());
 
             if ($this->isUsedBySuperProducts($attribute, $data['attribute_set_id'])) {
                 Mage::throwException(Mage::helper('eav')->__("Attribute '%s' used in configurable products.", $attribute->getAttributeCode()));
@@ -141,11 +141,11 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
 
             if ($backendTable = $attribute->getBackend()->getTable()) {
                 $clearCondition = array(
-                    $write->quoteInto('entity_type_id=?',$attribute->getEntityTypeId()),
-                    $write->quoteInto('attribute_id=?',$attribute->getId()),
+                    $write->quoteInto('entity_type_id=?', $attribute->getEntityTypeId()),
+                    $write->quoteInto('attribute_id=?', $attribute->getId()),
                     $write->quoteInto('entity_id IN (
-                        SELECT entity_id FROM '.$attribute->getEntity()->getEntityTable().' WHERE attribute_set_id=?)',
-                        $data['attribute_set_id'])
+                        SELECT entity_id FROM ' . $attribute->getEntity()->getEntityTable() . ' WHERE attribute_set_id=?)',
+                                      $data['attribute_set_id'])
                 );
                 $write->delete($backendTable, $clearCondition);
             }
@@ -165,7 +165,7 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     {
         $frontendLabel = $object->getFrontendLabel();
         if (is_array($frontendLabel)) {
-            if (!isset($frontendLabel[0]) || is_null($frontendLabel[0]) || $frontendLabel[0]=='') {
+            if (!isset($frontendLabel[0]) || is_null($frontendLabel[0]) || $frontendLabel[0] == '') {
                 Mage::throwException(Mage::helper('eav')->__('Frontend label is not defined.'));
             }
             $object->setFrontendLabel($frontendLabel[0]);
@@ -176,8 +176,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
          * @todo need use default source model of entity type !!!
          */
         if (!$object->getId()) {
-            if ($object->getFrontendInput()=='select') {
+            if ($object->getFrontendInput() == 'select') {
                 $object->setSourceModel('eav/entity_attribute_source_table');
+            }
+
+            if ($object->getFrontendInput() == 'color') {
+                $object->setSourceModel('eav/entity_attribute_source_color');
             }
         }
 
@@ -193,9 +197,9 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
         $this->_saveStoreLabels($object)
-            ->_saveAdditionalAttributeData($object)
-            ->saveInSetIncluding($object)
-            ->_saveOption($object);
+                ->_saveAdditionalAttributeData($object)
+                ->saveInSetIncluding($object)
+                ->_saveOption($object);
         return parent::_afterSave($object);
     }
 
@@ -220,9 +224,9 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 $this->_getWriteAdapter()->insert(
                     $this->getTable('eav/attribute_label'),
                     array(
-                        'attribute_id' => $object->getId(),
-                        'store_id' => $storeId,
-                        'value' => $label
+                         'attribute_id' => $object->getId(),
+                         'store_id' => $storeId,
+                         'value' => $label
                     )
                 );
             }
@@ -247,8 +251,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 }
             }
             $select = $this->_getWriteAdapter()->select()
-                ->from($this->getTable($additionalTable), array('attribute_id'))
-                ->where('attribute_id = ?', $object->getId());
+                    ->from($this->getTable($additionalTable), array('attribute_id'))
+                    ->where('attribute_id = ?', $object->getId());
             if ($this->_getWriteAdapter()->fetchOne($select)) {
                 $this->_getWriteAdapter()->update(
                     $this->getTable($additionalTable),
@@ -271,8 +275,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function saveInSetIncluding(Mage_Core_Model_Abstract $object)
     {
         $attrId = $object->getId();
-        $setId  = (int) $object->getAttributeSetId();
-        $groupId= (int) $object->getAttributeGroupId();
+        $setId = (int)$object->getAttributeSetId();
+        $groupId = (int)$object->getAttributeGroupId();
 
         if ($setId && $groupId && $object->getEntityTypeId()) {
             $write = $this->_getWriteAdapter();
@@ -284,7 +288,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 'attribute_set_id' => $setId,
                 'attribute_group_id' => $groupId,
                 'attribute_id' => $attrId,
-                'sort_order' => (($object->getSortOrder()) ? $object->getSortOrder() : $this->_getMaxSortOrder($object) + 1),
+                'sort_order' => (($object->getSortOrder()) ? $object->getSortOrder()
+                        : $this->_getMaxSortOrder($object) + 1),
             );
 
             $condition = "$table.attribute_id = '$attrId'
@@ -305,93 +310,271 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     protected function _saveOption(Mage_Core_Model_Abstract $object)
     {
         $option = $object->getOption();
-        if (is_array($option)) {
-            $write = $this->_getWriteAdapter();
-            $optionTable        = $this->getTable('attribute_option');
-            $optionValueTable   = $this->getTable('attribute_option_value');
-            $stores = Mage::getModel('core/store')
-                ->getResourceCollection()
-                ->setLoadDefault(true)
-                ->load();
 
-            if (isset($option['value'])) {
-                $attributeDefaultValue = array();
-                if (!is_array($object->getDefault())) {
-                    $object->setDefault(array());
-                }
+        if ($object->getFrontendInput() == "color") {
+            if (is_array($option)) {
+                $optionCollection = Mage::getResourceModel('eav/entity_attribute_color_collection')
+                        ->setAttributeFilter($object->getId())
+                        ->setPositionOrder('desc', true)
+                        ->load();
+                $write = $this->_getWriteAdapter();
+                $optionTable = $this->getTable('attribute_image_option');
+                $optionValueTable = $this->getTable('attribute_image_option_value');
+                $stores = Mage::getModel('core/store')
+                        ->getResourceCollection()
+                        ->setLoadDefault(true)
+                        ->load();
 
-                foreach ($option['value'] as $optionId => $values) {
-                    $intOptionId = (int) $optionId;
-                    if (!empty($option['delete'][$optionId])) {
-                        if ($intOptionId) {
-                            $condition = $write->quoteInto('option_id=?', $intOptionId);
-                            $write->delete($optionTable, $condition);
+                if (isset($option['value'])) {
+                    $attributeDefaultValue = array();
+                    if (!is_array($object->getDefault())) {
+                        $object->setDefault(array());
+                    }
+
+                    $fileArray = Mage::getSingleton('core/session')->getUploadImageInfo();
+
+                    foreach ($option['value'] as $optionId => $values) {
+
+                        $intOptionId = (int)$optionId;
+                        if (!empty($option['delete'][$optionId])) {
+                            if ($intOptionId) {
+                                $condition = $write->quoteInto('option_id=?', $intOptionId);
+                                $write->delete($optionTable, $condition);
+
+                                if (file_exists(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId])) {
+                                    unlink(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId]);
+                                }
+
+                                $write->delete($optionValueTable, $write->quoteInto('option_id=?', $intOptionId));
+                                $colorTable = Mage::getSingleton('core/resource')->getTableName('eav_attribute_image_option_product_pic');
+                                $select = $write->select()
+                                        ->from($colorTable, array('pic_id', 'color_pic'))
+                                        ->where($write->quoteInto('option_id=?', $intOptionId));
+                                $picInfo = $write->fetchAll($select);
+
+                                if (!empty($picInfo)) {
+                                    foreach ($picInfo as $pValue) {
+                                        if (file_exists(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $pValue['color_pic'])) {
+                                            unlink(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $pValue['color_pic']);
+                                        }
+
+                                        $write->delete($colorTable, $write->quoteInto('pic_id=?', $pValue['pic_id']));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                $tmpFile = $option['imagetmp'][$optionId];
+                                $tmpFile = substr($tmpFile, 0, strlen($tmpFile) - 4);
+                                if (file_exists(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath($tmpFile))) {
+                                    unlink(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath($tmpFile));
+                                }
+                            }
+
+                            continue;
                         }
 
-                        continue;
-                    }
-
-                    if (!$intOptionId) {
-                        $data = array(
-                           'attribute_id'  => $object->getId(),
-                           'sort_order'    => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
-                        );
-                        $write->insert($optionTable, $data);
-                        $intOptionId = $write->lastInsertId();
-                    }
-                    else {
-                        $data = array(
-                           'sort_order'    => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
-                        );
-                        $write->update($optionTable, $data, $write->quoteInto('option_id=?', $intOptionId));
-                    }
-
-                    if (in_array($optionId, $object->getDefault())) {
-                        if ($object->getFrontendInput() == 'multiselect') {
-                            $attributeDefaultValue[] = $intOptionId;
-                        } else if ($object->getFrontendInput() == 'select') {
-                            $attributeDefaultValue = array($intOptionId);
-                        }
-                    }
-
-
-                    // Default value
-                    if (!isset($values[0])) {
-                        Mage::throwException(Mage::helper('eav')->__('Default option value is not defined.'));
-                    }
-
-                    $write->delete($optionValueTable, $write->quoteInto('option_id=?', $intOptionId));
-                    foreach ($stores as $store) {
-                        if (isset($values[$store->getId()]) && (!empty($values[$store->getId()]) || $values[$store->getId()] == "0")) {
+                        if (!$intOptionId) {
                             $data = array(
-                                'option_id' => $intOptionId,
-                                'store_id'  => $store->getId(),
-                                'value'     => $values[$store->getId()],
+                                'attribute_id' => $object->getId(),
+                                'sort_order' => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+
                             );
-                            $write->insert($optionValueTable, $data);
+                            $write->insert($optionTable, $data);
+                            $intOptionId = $write->lastInsertId();
+                        }
+                        else {
+                            $data = array(
+                                'sort_order' => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+                            );
+                            $write->update($optionTable, $data, $write->quoteInto('option_id=?', $intOptionId));
+                        }
+
+                        if (in_array($optionId, $object->getDefault())) {
+                            if ($object->getFrontendInput() == 'multiselect') {
+                                $attributeDefaultValue[] = $intOptionId;
+                            } else if ($object->getFrontendInput() == 'select') {
+                                $attributeDefaultValue = array($intOptionId);
+                            } else if ($object->getFrontendInput() == 'color') {
+                                $attributeDefaultValue = array($intOptionId);
+                            }
+
+                        }
+
+                        // Default value
+                        if (!isset($values[0])) {
+                            Mage::throwException(Mage::helper('eav')->__('Default option value is not defined'));
+                        }
+
+                        $write->delete($optionValueTable, $write->quoteInto('option_id=?', $intOptionId));
+
+                        foreach ($stores as $store) {
+                            if (isset($values[$store->getId()]) && (!empty($values[$store->getId()]) || $values[$store->getId()] == "0")) {
+
+                                if (!empty($option['imagetmp'][$optionId])) {
+                                    if (!empty($option['oldimagetmp'][$optionId])) {
+                                        if (file_exists(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId])) {
+                                            unlink(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId]);
+                                        }
+                                    }
+
+                                    $mediaModel = Mage::getModel('catalog/product_attribute_backend_media');
+                                    $newFile = $mediaModel->_moveImageFromTmp($option['imagetmp'][$optionId]);
+                                    $option['oldimagetmp'][$optionId] = $newFile;
+                                }
+
+                                if (!empty($option['deleteimage'][$optionId])) {
+                                    if (file_exists(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId])) {
+                                        unlink(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath() . $option['oldimagetmp'][$optionId]);
+                                        $option['oldimagetmp'][$optionId] = '';
+                                    }
+
+                                }
+
+                                foreach ($fileArray as $fValue) {
+                                    foreach ($fValue as $k => $v) {
+                                        if ($k == $optionId) {
+                                            if (trim($v['file']) != trim($option['imagetmp'][$optionId])) {
+                                                $v['file'] = substr($v['file'], 1);
+
+                                                if (file_exists(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath() . $v['file'])) {
+                                                    unlink(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath() . $v['file']);
+                                                }
+
+                                                $tmpUrlFile = substr($v['file'], 0, strlen($v['file']) - 4);
+
+
+                                                if (file_exists(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath() . $tmpUrlFile)) {
+                                                    unlink(Mage::getSingleton('catalog/product_media_config')->getTmpMediaPath() . $tmpUrlFile);
+                                                }
+                                            }
+
+                                        }
+                                    }
+
+
+                                }
+
+                                $data = array(
+                                    'option_id' => $intOptionId,
+                                    'store_id' => $store->getId(),
+                                    'value' => $values[$store->getId()],
+                                    'color_value' => isset($option['colorvalue'][$optionId])
+                                            ? $option['colorvalue'][$optionId] : '',
+                                    'image_url' => isset($option['oldimagetmp'][$optionId])
+                                            ? $option['oldimagetmp'][$optionId] : '',
+
+                                );
+
+                                $write->insert($optionValueTable, $data);
+                            }
+                        }
+
+
+                    }
+
+                    $write->update($this->getMainTable(), array(
+                                                               'default_value' => implode(',', $attributeDefaultValue)
+                                                          ), $write->quoteInto($this->getIdFieldName() . '=?', $object->getId()));
+
+                }
+            }
+
+            Mage::getSingleton('core/session')->setUploadImageInfo(null);
+        }
+        else
+        {
+            if (is_array($option)) {
+                $write = $this->_getWriteAdapter();
+                $optionTable = $this->getTable('attribute_option');
+                $optionValueTable = $this->getTable('attribute_option_value');
+                $stores = Mage::getModel('core/store')
+                        ->getResourceCollection()
+                        ->setLoadDefault(true)
+                        ->load();
+
+                if (isset($option['value'])) {
+                    $attributeDefaultValue = array();
+                    if (!is_array($object->getDefault())) {
+                        $object->setDefault(array());
+                    }
+
+                    foreach ($option['value'] as $optionId => $values) {
+                        $intOptionId = (int)$optionId;
+                        if (!empty($option['delete'][$optionId])) {
+                            if ($intOptionId) {
+                                $condition = $write->quoteInto('option_id=?', $intOptionId);
+                                $write->delete($optionTable, $condition);
+                            }
+
+                            continue;
+                        }
+
+                        if (!$intOptionId) {
+                            $data = array(
+                                'attribute_id' => $object->getId(),
+                                'sort_order' => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+                            );
+                            $write->insert($optionTable, $data);
+                            $intOptionId = $write->lastInsertId();
+                        }
+                        else {
+                            $data = array(
+                                'sort_order' => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+                            );
+                            $write->update($optionTable, $data, $write->quoteInto('option_id=?', $intOptionId));
+                        }
+
+                        if (in_array($optionId, $object->getDefault())) {
+                            if ($object->getFrontendInput() == 'multiselect') {
+                                $attributeDefaultValue[] = $intOptionId;
+                            } else if ($object->getFrontendInput() == 'select') {
+                                $attributeDefaultValue = array($intOptionId);
+                            } else if ($object->getFrontendInput() == 'size') {
+                                $attributeDefaultValue = array($intOptionId);
+                            }
+                        }
+
+
+                        // Default value
+                        if (!isset($values[0])) {
+                            Mage::throwException(Mage::helper('eav')->__('Default option value is not defined.'));
+                        }
+
+                        $write->delete($optionValueTable, $write->quoteInto('option_id=?', $intOptionId));
+                        foreach ($stores as $store) {
+                            if (isset($values[$store->getId()]) && (!empty($values[$store->getId()]) || $values[$store->getId()] == "0")) {
+                                $data = array(
+                                    'option_id' => $intOptionId,
+                                    'store_id' => $store->getId(),
+                                    'value' => $values[$store->getId()],
+                                );
+                                $write->insert($optionValueTable, $data);
+                            }
                         }
                     }
-                }
 
-                $write->update($this->getMainTable(), array(
-                    'default_value' => implode(',', $attributeDefaultValue)
-                ), $write->quoteInto($this->getIdFieldName() . '=?', $object->getId()));
+                    $write->update($this->getMainTable(), array(
+                                                               'default_value' => implode(',', $attributeDefaultValue)
+                                                          ), $write->quoteInto($this->getIdFieldName() . '=?', $object->getId()));
+                }
             }
         }
+
         return $this;
     }
 
-    public function isUsedBySuperProducts(Mage_Core_Model_Abstract $object, $attributeSet=null)
+    public function isUsedBySuperProducts(Mage_Core_Model_Abstract $object, $attributeSet = null)
     {
         $read = $this->_getReadAdapter();
         $attrTable = $this->getTable('catalog/product_super_attribute');
         $productTable = $this->getTable('catalog/product');
         $select = $read->select()
-            ->from(array('_main_table' => $attrTable), 'COUNT(*)')
-            ->join(array('_entity'=> $productTable), '_main_table.product_id = _entity.entity_id')
-            ->where("_main_table.attribute_id = ?", $object->getAttributeId())
-            ->group('_main_table.attribute_id')
-            ->limit(1);
+                ->from(array('_main_table' => $attrTable), 'COUNT(*)')
+                ->join(array('_entity' => $productTable), '_main_table.product_id = _entity.entity_id')
+                ->where("_main_table.attribute_id = ?", $object->getAttributeId())
+                ->group('_main_table.attribute_id')
+                ->limit(1);
 
         if (!is_null($attributeSet)) {
             $select->where('_entity.attribute_set_id = ?', $attributeSet);
@@ -410,10 +593,10 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function getIdByCode($entityType, $code)
     {
         $select = $this->_getReadAdapter()->select()
-            ->from(array('a'=>$this->getTable('eav/attribute')), array('a.attribute_id'))
-            ->join(array('t'=>$this->getTable('eav/entity_type')), 'a.entity_type_id = t.entity_type_id', array())
-            ->where('t.entity_type_code = ?', $entityType)
-            ->where('a.attribute_code = ?', $code);
+                ->from(array('a' => $this->getTable('eav/attribute')), array('a.attribute_id'))
+                ->join(array('t' => $this->getTable('eav/entity_type')), 'a.entity_type_id = t.entity_type_id', array())
+                ->where('t.entity_type_code = ?', $entityType)
+                ->where('a.attribute_code = ?', $code);
 
         return $this->_getReadAdapter()->fetchOne($select);
     }
@@ -422,8 +605,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     {
         $select = $this->_getReadAdapter()->select();
         $select
-            ->from($this->getTable('eav/attribute'), 'attribute_code')
-            ->where('frontend_input = ?', $type);
+                ->from($this->getTable('eav/attribute'), 'attribute_code')
+                ->where('frontend_input = ?', $type);
 
         $result = $this->_getReadAdapter()->fetchCol($select);
 
@@ -444,23 +627,23 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function getFlatUpdateSelect(Mage_Eav_Model_Entity_Attribute_Abstract $attribute, $store)
     {
         $joinConditionTemplate = "`e`.`entity_id`=`%s`.`entity_id`"
-            ." AND `%s`.`entity_type_id` = ".$attribute->getEntityTypeId()
-            ." AND `%s`.`attribute_id` = ".$attribute->getId()
-            ." AND `%s`.`store_id` = %d";
+                                 . " AND `%s`.`entity_type_id` = " . $attribute->getEntityTypeId()
+                                 . " AND `%s`.`attribute_id` = " . $attribute->getId()
+                                 . " AND `%s`.`store_id` = %d";
         $joinCondition = sprintf($joinConditionTemplate, 't1', 't1', 't1', 't1', Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($attribute->getFlatAddChildData()) {
             $joinCondition .= " AND `e`.`child_id`=`t1`.`entity_id`";
         }
         $select = $this->_getReadAdapter()->select()
-            ->joinLeft(
-                array('t1' => $attribute->getBackend()->getTable()),
-                $joinCondition,
-                array()
-                )
-            ->joinLeft(
-                array('t2' => $attribute->getBackend()->getTable()),
-                    sprintf($joinConditionTemplate, 't2', 't2', 't2', 't2', $store),
-                array($attribute->getAttributeCode() => "IF(t2.value_id>0, t2.value, t1.value)"));
+                ->joinLeft(
+            array('t1' => $attribute->getBackend()->getTable()),
+            $joinCondition,
+            array()
+        )
+                ->joinLeft(
+            array('t2' => $attribute->getBackend()->getTable()),
+            sprintf($joinConditionTemplate, 't2', 't2', 't2', 't2', $store),
+            array($attribute->getAttributeCode() => "IF(t2.value_id>0, t2.value, t1.value)"));
         if ($attribute->getFlatAddChildData()) {
             $select->where("e.is_child=?", 0);
         }
@@ -473,7 +656,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
      * @param string $table
      * @return array
      */
-    public function describeTable($table) {
+    public function describeTable($table)
+    {
         return $this->_getReadAdapter()->describeTable($table);
     }
 
@@ -504,8 +688,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
         }
         if ($additionalTable) {
             $select = $this->_getReadAdapter()->select()
-                ->from($this->getTable($additionalTable))
-                ->where('attribute_id = ?', $object->getId());
+                    ->from($this->getTable($additionalTable))
+                    ->where('attribute_id = ?', $object->getId());
             if ($result = $this->_getReadAdapter()->fetchRow($select)) {
                 $object->addData($result);
             }
@@ -523,8 +707,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     {
         $values = array();
         $select = $this->_getReadAdapter()->select()
-            ->from($this->getTable('eav/attribute_label'))
-            ->where('attribute_id = ?', $attributeId);
+                ->from($this->getTable('eav/attribute_label'))
+                ->where('attribute_id = ?', $attributeId);
         foreach ($this->_getReadAdapter()->fetchAll($select) as $row) {
             $values[$row['store_id']] = $row['value'];
         }
@@ -540,8 +724,8 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
     public function getValidAttributeIds($attributeIds)
     {
         $select = $this->_getReadAdapter()->select()
-            ->from($this->getMainTable(), array('attribute_id'))
-            ->where('attribute_id in (?)', $attributeIds);
+                ->from($this->getMainTable(), array('attribute_id'))
+                ->where('attribute_id in (?)', $attributeIds);
         return $this->_getReadAdapter()->fetchCol($select);
     }
 }

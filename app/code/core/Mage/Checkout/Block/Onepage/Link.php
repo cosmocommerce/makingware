@@ -31,8 +31,16 @@
  * @package    Mage_Checkout
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Mage_Checkout_Block_Onepage_Link extends Mage_Core_Block_Template
+class Mage_Checkout_Block_Onepage_Link extends Mage_Checkout_Block_Onepage_Abstract
 {
+	protected function _construct()
+	{
+		parent::_construct();
+		if (!$this->getTemplate()) {
+			$this->setTemplate('checkout/onepage/link.phtml');
+		}
+	}
+	
     public function getCheckoutUrl()
     {
         return $this->getUrl('checkout/onepage', array('_secure'=>true));
@@ -46,5 +54,40 @@ class Mage_Checkout_Block_Onepage_Link extends Mage_Core_Block_Template
     public function isPossibleOnepageCheckout()
     {
         return $this->helper('checkout')->canOnepageCheckout();
+    }
+    
+	public function isLogin()
+    {
+        return Mage::getSingleton('customer/session')->isLoggedIn();
+    }
+    
+	public function isAllowedGuestCheckout()
+    {
+        return $this->getQuote()->isAllowedGuestCheckout();
+    }
+    
+	public function getReturnUrl()
+    {
+        return Mage::getUrl('checkout/onepage/guestCheckout');
+    }
+    
+    public function getPostUrl()
+    {
+        return Mage::getUrl('customer/account/loginPostCheckout', array('_secure' => true));
+    }
+    
+	public function getPostAction()
+    {
+        return Mage::getUrl('customer/account/loginPost', array('_secure' => true));
+    }
+    
+    public function getRegisterAction()
+    {
+        return Mage::getUrl('customer/account/create', array('_secure' => true));
+    }
+    
+    public function getCheckoutAction()
+    {
+        return Mage::getUrl('checkout/onepage/index/allowGuest/1', array('_secure' => true));
     }
 }

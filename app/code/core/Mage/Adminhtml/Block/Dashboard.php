@@ -42,6 +42,10 @@ class Mage_Adminhtml_Block_Dashboard extends Mage_Adminhtml_Block_Template
 
     protected function _prepareLayout()
     {
+    	$this->setChild('statisticsOrders',
+    		$this->getLayout()->createBlock('adminhtml/dashboard_orders_statistics')
+    	);
+    	
         $this->setChild('lastOrders',
                 $this->getLayout()->createBlock('adminhtml/dashboard_orders_grid')
         );

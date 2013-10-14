@@ -87,46 +87,28 @@ class Mage_Sales_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4_C
 
 
     /**
-     * Join table sales_flat_order_address to select for billing and shipping order addresses.
+     * Join table sales_flat_order_address to select for shipping and shipping order addresses.
      * Create corillation map
      *
      * @return Mage_Sales_Model_Mysql4_Collection_Abstract
      */
     protected function _addAddressFields()
     {
-        $billingAliasName = 'billing_o_a';
         $shippingAliasName = 'shipping_o_a';
         $joinTable = $this->getTable('sales/order_address');
 
         $this
-            ->addFilterToMap('billing_firstname', $billingAliasName . '.firstname')
-            ->addFilterToMap('billing_lastname', $billingAliasName . '.lastname')
-            ->addFilterToMap('billing_telephone', $billingAliasName . '.telephone')
-            ->addFilterToMap('billing_postcode', $billingAliasName . '.postcode')
-
-            ->addFilterToMap('shipping_firstname', $shippingAliasName . '.firstname')
-            ->addFilterToMap('shipping_lastname', $shippingAliasName . '.lastname')
+            ->addFilterToMap('shipping_name', $shippingAliasName . '.name')
             ->addFilterToMap('shipping_telephone', $shippingAliasName . '.telephone')
             ->addFilterToMap('shipping_postcode', $shippingAliasName . '.postcode');
 
         $this
             ->getSelect()
             ->joinLeft(
-                array($billingAliasName => $joinTable),
-                "(main_table.entity_id = $billingAliasName.parent_id AND $billingAliasName.address_type = 'billing')",
-                array(
-                    $billingAliasName . '.firstname',
-                    $billingAliasName . '.lastname',
-                    $billingAliasName . '.telephone',
-                    $billingAliasName . '.postcode'
-                )
-            )
-            ->joinLeft(
                 array($shippingAliasName => $joinTable),
-                "(main_table.entity_id = $shippingAliasName.parent_id AND $shippingAliasName.address_type = 'shipping')",
+                "(main_table.entity_id = $shippingAliasName.parent_id)",
                 array(
-                    $shippingAliasName . '.firstname',
-                    $shippingAliasName . '.lastname',
+                    $shippingAliasName . '.name',
                     $shippingAliasName . '.telephone',
                     $shippingAliasName . '.postcode'
                 )
@@ -185,16 +167,16 @@ class Mage_Sales_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Mysql4_C
     }
 
     /**
-     * Add filter by specified billing agreements
+     * Add filter by specified shipping agreements
      *
      * @param int|array $agreements
      * @return Mage_Sales_Model_Mysql4_Order_Collection
      */
-    public function addBillingAgreementsFilter($agreements)
+    public function addShippingAgreementsFilter($agreements)
     {
         $agreements = (is_array($agreements)) ? $agreements : array($agreements);
         $this->getSelect()->joinInner(
-            array('sbao' => $this->getTable('sales/billing_agreement_order')),
+            array('sbao' => $this->getTable('sales/shipping_agreement_order')),
             'main_table.entity_id = sbao.order_id',
             array()
         )->where('sbao.agreement_id IN(?)', $agreements);

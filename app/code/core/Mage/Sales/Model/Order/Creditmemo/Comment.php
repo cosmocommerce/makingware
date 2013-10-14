@@ -89,6 +89,10 @@ class Mage_Sales_Model_Order_Creditmemo_Comment extends Mage_Sales_Model_Abstrac
         if (!$this->getParentId() && $this->getCreditmemo()) {
             $this->setParentId($this->getCreditmemo()->getId());
         }
+        
+    	if (is_null($this->getUserId()) && Mage::getSingleton('admin/session')->getUser()) {
+        	$this->setUserId(Mage::getSingleton('admin/session')->getUser()->getId());
+        }
 
         return $this;
     }

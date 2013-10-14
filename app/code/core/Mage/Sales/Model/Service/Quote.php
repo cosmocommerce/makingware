@@ -145,14 +145,10 @@ class Mage_Sales_Model_Service_Quote
         $transaction->addObject($quote);
 
         $quote->reserveOrderId();
-        if ($isVirtual) {
-            $order = $this->_convertor->addressToOrder($quote->getBillingAddress());
-        } else {
-            $order = $this->_convertor->addressToOrder($quote->getShippingAddress());
-        }
-        $order->setBillingAddress($this->_convertor->addressToOrderAddress($quote->getBillingAddress()));
-        if (!$isVirtual) {
-            $order->setShippingAddress($this->_convertor->addressToOrderAddress($quote->getShippingAddress()));
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress->getId()) {
+        	$order = $this->_convertor->addressToOrder($shippingAddress);
+            $order->setShippingAddress($this->_convertor->addressToOrderAddress($shippingAddress));
         }
         $order->setPayment($this->_convertor->paymentToOrderPayment($quote->getPayment()));
 
@@ -283,13 +279,6 @@ class Mage_Sales_Model_Service_Quote
             if (!$this->getQuote()->isVirtual() && (!$method || !$rate)) {
                 Mage::throwException($helper->__('Please specify a shipping method.'));
             }
-        }
-
-        $addressValidation = $this->getQuote()->getBillingAddress()->validate();
-        if ($addressValidation !== true) {
-            Mage::throwException(
-                $helper->__('Please check billing address information. %s', implode(' ', $addressValidation))
-            );
         }
 
         if (!($this->getQuote()->getPayment()->getMethod())) {

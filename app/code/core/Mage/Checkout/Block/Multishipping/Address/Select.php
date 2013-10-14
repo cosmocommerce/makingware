@@ -25,7 +25,7 @@
  */
 
 /**
- * Multishipping checkout select billing address
+ * Multishipping checkout select shipping address
  *
  * @category   Mage
  * @package    Mage_Checkout
@@ -36,7 +36,7 @@ class Mage_Checkout_Block_Multishipping_Address_Select extends Mage_Checkout_Blo
     protected function _prepareLayout()
     {
         if ($headBlock = $this->getLayout()->getBlock('head')) {
-            $headBlock->setTitle(Mage::helper('checkout')->__('Change Billing Address') . ' - ' . $headBlock->getDefaultTitle());
+            $headBlock->setTitle(Mage::helper('checkout')->__('Change shipping Address') . ' - ' . $headBlock->getDefaultTitle());
         }
         return parent::_prepareLayout();
     }
@@ -56,11 +56,6 @@ class Mage_Checkout_Block_Multishipping_Address_Select extends Mage_Checkout_Blo
         return $collection;
     }
     
-    public function isAddressDefaultBilling($address)
-    {
-        return $address->getId() == $this->_getCheckout()->getCustomer()->getDefaultBilling();
-    }
-    
     public function isAddressDefaultShipping($address)
     {
         return $address->getId() == $this->_getCheckout()->getCustomer()->getDefaultShipping();
@@ -73,16 +68,16 @@ class Mage_Checkout_Block_Multishipping_Address_Select extends Mage_Checkout_Blo
     
     public function getSetAddressUrl($address)
     {
-        return $this->getUrl('*/*/setBilling', array('id'=>$address->getId()));
+        return $this->getUrl('*/*/setShipping', array('id'=>$address->getId()));
     }
     
     public function getAddNewUrl()
     {
-        return $this->getUrl('*/*/newBilling');
+        return $this->getUrl('*/*/newShipping');
     }
     
     public function getBackUrl()
     {
-        return $this->getUrl('*/multishipping/billing');
+        return $this->getUrl('*/multishipping/shipping');
     }
 }

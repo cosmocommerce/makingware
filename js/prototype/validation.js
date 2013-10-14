@@ -237,7 +237,8 @@ Object.extend(Validation, {
     },
     hideAdvice : function(elm, advice){
         if (advice != null) {
-            new Effect.Fade(advice, {duration : 1, afterFinishInternal : function() {advice.hide();}});
+            //new Effect.Fade(advice, {duration : 1, afterFinishInternal : function() {advice.hide();}});
+            advice.hide();
         }
     },
     updateCallback : function(elm, status) {

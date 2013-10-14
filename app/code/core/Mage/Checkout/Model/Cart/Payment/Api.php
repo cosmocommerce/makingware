@@ -55,7 +55,7 @@ class Mage_Checkout_Model_Cart_Payment_Api extends Mage_Checkout_Model_Api_Resou
             return false;
         }
 
-        if (!$method->canUseForCountry($quote->getBillingAddress()->getCountry())) {
+        if (!$method->canUseForCountry($quote->getShippingAddress()->getCountry())) {
             return false;
         }
 
@@ -135,21 +135,13 @@ class Mage_Checkout_Model_Cart_Payment_Api extends Mage_Checkout_Model_Api_Resou
     {
         $quote = $this->_getQuote($quoteId, $store);
 
-        // check if billing or shipping addresses are set
-        if (is_null($quote->getBillingAddress()->getId()) ) {
-            $this->_fault('billing_address_is_not_set');
-        }
+        // check if shipping addresses are set
         if (is_null($quote->getShippingAddress()->getId()) ) {
             $this->_fault('shipping_address_is_not_set');
         }
 
         $paymentData = $this->_preparePaymentData($paymentData);
-
-        if ($quote->isVirtual()) {
-            $quote->getBillingAddress()->setPaymentMethod(isset($paymentData['method']) ? $paymentData['method'] : null);
-        } else {
-            $quote->getShippingAddress()->setPaymentMethod(isset($paymentData['method']) ? $paymentData['method'] : null);
-        }
+        $quote->getShippingAddress()->setPaymentMethod(isset($paymentData['method']) ? $paymentData['method'] : null);
 
         if (!$quote->isVirtual() && $quote->getShippingAddress()) {
             $quote->getShippingAddress()->setCollectShippingRates(true);

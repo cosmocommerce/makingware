@@ -43,12 +43,6 @@ $attributes = array(
         'is_visible'        => 0,
         'sort_order'        => 0
     ),
-    'default_billing'   => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 1,
-        'is_visible'        => 0,
-        'sort_order'        => 0
-    ),
     'default_shipping'  => array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
@@ -97,29 +91,11 @@ $attributes = array(
         'sort_order'        => 30,
         'is_required'       => $addressHelper->getConfig('prefix_show', $store) == 'req' ? 1 : 0
     ),
-    'firstname'         => array(
+    'name'         => array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
         'is_visible'        => 1,
         'sort_order'        => 40,
-        'is_required'       => 1,
-        'validate_rules'    => array(
-            'max_text_length'   => 255,
-            'min_text_length'   => 1
-        ),
-    ),
-    'middlename'        => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 0,
-        'is_visible'        => $addressHelper->getConfig('middlename_show', $store) == '' ? 0 : 1,
-        'sort_order'        => 50,
-        'is_required'       => $addressHelper->getConfig('middlename_show', $store) == 'req' ? 1 : 0
-    ),
-    'lastname'          => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 1,
-        'is_visible'        => 1,
-        'sort_order'        => 60,
         'is_required'       => 1,
         'validate_rules'    => array(
             'max_text_length'   => 255,
@@ -154,17 +130,6 @@ $attributes = array(
             'input_validation'  => 'date'
         ),
         'input_filter'      => 'date',
-        'admin_checkout'    => 1
-    ),
-    'taxvat'            => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 0,
-        'is_visible'        => $addressHelper->getConfig('dob_show', $store) == '' ? 0 : 1,
-        'sort_order'        => 100,
-        'is_required'       => $addressHelper->getConfig('dob_show', $store) == 'req' ? 1 : 0,
-        'validate_rules'    => array(
-            'max_text_length'   => 255,
-        ),
         'admin_checkout'    => 1
     ),
     'gender'            => array(
@@ -211,29 +176,11 @@ $attributes = array(
         'sort_order'        => 10,
         'is_required'       => $addressHelper->getConfig('prefix_show', $store) == 'req' ? 1 : 0,
     ),
-    'firstname'         => array(
+    'name'         => array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
         'is_visible'        => 1,
         'sort_order'        => 20,
-        'is_required'       => 1,
-        'validate_rules'    => array(
-            'max_text_length'   => 255,
-            'min_text_length'   => 1
-        ),
-    ),
-    'middlename'        => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 0,
-        'is_visible'        => $addressHelper->getConfig('middlename_show', $store) == '' ? 0 : 1,
-        'sort_order'        => 30,
-        'is_required'       => $addressHelper->getConfig('middlename_show', $store) == 'req' ? 1 : 0,
-    ),
-    'lastname'          => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 1,
-        'is_visible'        => 1,
-        'sort_order'        => 40,
         'is_required'       => 1,
         'validate_rules'    => array(
             'max_text_length'   => 255,
@@ -262,19 +209,8 @@ $attributes = array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
         'is_visible'        => 1,
-        'sort_order'        => 70,
+        'sort_order'        => 109,
         'multiline_count'   => $addressHelper->getConfig('street_lines', $store),
-        'is_required'       => 1,
-        'validate_rules'    => array(
-            'max_text_length'   => 255,
-            'min_text_length'   => 1
-        ),
-    ),
-    'city'              => array(
-        'is_user_defined'   => 0,
-        'is_system'         => 1,
-        'is_visible'        => 1,
-        'sort_order'        => 80,
         'is_required'       => 1,
         'validate_rules'    => array(
             'max_text_length'   => 255,
@@ -285,14 +221,14 @@ $attributes = array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
         'is_visible'        => 1,
-        'sort_order'        => 90,
+        'sort_order'        => 80,
         'is_required'       => 1,
     ),
     'region'            => array(
         'is_user_defined'   => 0,
         'is_system'         => 1,
         'is_visible'        => 1,
-        'sort_order'        => 100,
+        'sort_order'        => 90,
         'is_required'       => 0,
     ),
     'region_id'         => array(
@@ -300,6 +236,38 @@ $attributes = array(
         'is_system'         => 1,
         'is_visible'        => 1,
         'sort_order'        => 100,
+        'is_required'       => 1,
+    ),
+    'city'              => array(
+        'is_user_defined'   => 0,
+        'is_system'         => 1,
+        'is_visible'        => 1,
+        'sort_order'        => 105,
+        'is_required'       => 0,
+        'validate_rules'    => array(
+            'max_text_length'   => 255,
+            'min_text_length'   => 1
+        ),
+    ),
+    'city_id'         => array(
+        'is_user_defined'   => 0,
+        'is_system'         => 1,
+        'is_visible'        => 1,
+        'sort_order'        => 106,
+        'is_required'       => 0,
+    ),
+    'area'            => array(
+        'is_user_defined'   => 0,
+        'is_system'         => 1,
+        'is_visible'        => 1,
+        'sort_order'        => 107,
+        'is_required'       => 0,
+    ),
+    'area_id'         => array(
+        'is_user_defined'   => 0,
+        'is_system'         => 1,
+        'is_visible'        => 1,
+        'sort_order'        => 108,
         'is_required'       => 0,
     ),
     'postcode'          => array(
@@ -307,7 +275,7 @@ $attributes = array(
         'is_system'         => 1,
         'is_visible'        => 1,
         'sort_order'        => 110,
-        'is_required'       => 1,
+        'is_required'       => 0,
         'validate_rules'    => array(
         ),
     ),
@@ -316,7 +284,7 @@ $attributes = array(
         'is_system'         => 1,
         'is_visible'        => 1,
         'sort_order'        => 120,
-        'is_required'       => 1,
+        'is_required'       => 0,
         'validate_rules'    => array(
             'max_text_length'   => 255,
             'min_text_length'   => 1

@@ -1014,7 +1014,7 @@ abstract class Mage_Core_Controller_Varien_Action
             ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true)
             ->setHeader('Content-type', $contentType, true)
             ->setHeader('Content-Length', is_null($contentLength) ? strlen($content) : $contentLength)
-            ->setHeader('Content-Disposition', 'attachment; filename="'.$fileName.'"')
+            ->setHeader('Content-Disposition', 'attachment; filename="'.$fileName.'"', true)
             ->setHeader('Last-Modified', date('r'));
 
         if (!is_null($content)) {

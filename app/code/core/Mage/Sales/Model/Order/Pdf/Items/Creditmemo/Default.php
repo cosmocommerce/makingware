@@ -89,25 +89,6 @@ class Mage_Sales_Model_Order_Pdf_Items_Creditmemo_Default extends Mage_Sales_Mod
             'width' => 30,
         );
 
-        $x += 30;
-        // draw Tax
-        $lines[0][] = array(
-            'text'  => $order->formatPriceTxt($item->getTaxAmount()),
-            'feed'  => $x,
-            'font'  => 'bold',
-            'align' => 'right',
-            'width' => 45,
-        );
-
-        $x += 45;
-        // draw Subtotal
-        $lines[0][] = array(
-            'text'  => $order->formatPriceTxt($item->getRowTotal() + $item->getTaxAmount() - $item->getDiscountAmount()),
-            'feed'  => $rightBound,
-            'font'  => 'bold',
-            'align' => 'right'
-        );
-
         // draw options
         $options = $this->getItemOptions();
         if ($options) {

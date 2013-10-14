@@ -65,7 +65,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Invoices
             ->addFieldToSelect('store_currency_code')
             ->addFieldToSelect('base_currency_code')
             ->addFieldToSelect('order_currency_code')
-            ->addFieldToSelect('billing_name')
+            ->addFieldToSelect('shipping_name')
             ->setOrderFilter($this->getOrder())
         ;
         $this->setCollection($collection);
@@ -80,9 +80,9 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Invoices
             'width'     => '120px',
         ));
 
-        $this->addColumn('billing_name', array(
+        $this->addColumn('shipping_name', array(
             'header' => Mage::helper('sales')->__('Bill to Name'),
-            'index' => 'billing_name',
+            'index' => 'shipping_name',
         ));
 
         $this->addColumn('created_at', array(

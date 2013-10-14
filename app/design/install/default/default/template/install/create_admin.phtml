@@ -41,12 +41,8 @@
     <ul>
         <li>
             <div class="input-box">
-                <label for="firstname"><?php echo $this->__('First Name') ?> <span class="required">*</span></label><br/>
-                <input type="text" name="admin[firstname]" id="firstname" value="<?php echo $this->getFormData()->getFirstname() ?>" title="<?php echo $this->__('First Name') ?>" class="required-entry input-text"/>
-            </div>
-            <div class="input-box">
-                <label for="lastname"><?php echo $this->__('Last Name') ?> <span class="required">*</span></label><br/>
-                <input type="text" name="admin[lastname]" id="lastname" value="<?php echo $this->getFormData()->getLastname() ?>" title="<?php echo $this->__('Last Name') ?>" class="required-entry input-text"/>
+                <label for="name"><?php echo $this->__('Name') ?> <span class="required">*</span></label><br/>
+                <input type="text" name="admin[name]" id="name" value="<?php echo $this->getFormData()->getName() ?>" title="<?php echo $this->__('Name') ?>" class="required-entry input-text"/>
             </div>
         </li>
         <li>
