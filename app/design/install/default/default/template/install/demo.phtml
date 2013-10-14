@@ -1,0 +1,115 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Install localization template
+ *
+ * @see Mage_Install_Block_Locale
+ */
+?>
+<div class="page-head">
+    <h3><?php echo $this->__('Install the demo data') ?></h3>
+</div>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<form action="<?php echo $this->getPostUrl() ?>" method="post" id="form-validate">
+<fieldset class="group-select">
+ <legend><?php echo $this->__('Install the demo data') ?></legend>
+    <h4 class="legend"><?php echo $this->__('Select Installation') ?></h4>
+    <ul>
+        <li>
+            <div class="input-box">
+				<?php echo $this->getDemoDataCheck() ?>
+                <label for="demo"><?php echo $this->__('Demo Data') ?></label><br/>
+            </div>
+        </li>
+        <li>
+            <div class="input-box"><?php echo $this->__('Note: install the demo data needs more time') ?></div>
+        </li>
+    </ul>
+</fieldset>
+
+<div id="progress-container" style="padding: 10px; border: 1px solid gray; background: #EAEAEA;height: 30px; display: none;">
+    <div style="padding:0; background-color:white; border:1px solid navy;">
+        <div id="progress" style="padding: 0; background-color: #FFCC66; border: 0; width: 0px; text-align: center; height: 16px;"></div>
+    </div>
+    <div id="status"><?php echo $this->__('Installing, please wait...') . '...'; ?></div>
+    <div id="percent" style="position: relative; top: -35px; text-align: center; font-weight: bold; font-size: 8pt;">0%</div>
+</div>
+
+<div class="button-set">
+    <button class="form-button" type="submit"><span><?php echo $this->__('Continue') ?></span></button>
+</div>
+</form>
+
+<script type="text/javascript">
+    window.progressFun = function(currentCount, totalCount){
+        if (!currentCount) {currentCount = 0;}
+        if (!totalCount) {totalCount = 0;}
+        var countPercentage = parseInt(currentCount / totalCount * 100);
+        if (!countPercentage) {countPercentage = 0}
+
+        $("progress").setStyle({width: Math.round($("percent").getWidth() / 100 * countPercentage) +'px'});
+        $("percent").innerHTML = countPercentage + '%';
+        $("progress-container").show();
+        return window;
+    };
+
+   $('form-validate').onsubmit = function() {
+       $$(".form-button")[0].writeAttribute({disabled: 'disabled'});
+       if (! $("demo").checked) {return true;}
+
+       window.progressFun();
+
+       $(this).request({
+            method: 'post',
+            parameters: $(this).serialize(true),
+            onSuccess: function(response){
+                var obj = eval('(' + response.responseText + ')');
+                if (obj.url){window.location.href = obj.url;}
+            }
+        });
+
+        var tmpFun = function(){
+            new Ajax.Request('<?php echo $this->getDemoLogUrl();?>', {
+                method: 'get',
+                onSuccess: function(response) {
+                    var obj = eval('(' + response.responseText + ')');
+                    var currentCount = parseInt(obj.currentCount);
+                    var totalCount = parseInt(obj.totalCount);
+                    window.progressFun(currentCount, totalCount);
+                    if (currentCount > 0 && totalCount > 0 && currentCount >= totalCount) {
+						clearInterval(handler);
+                        return window.location.href = '<?php echo $this->getNextUrl();?>';
+                    }
+                }
+            });
+        };
+        var handler = window.setInterval(tmpFun, 1000);
+
+        return false;
+    }
+</script>

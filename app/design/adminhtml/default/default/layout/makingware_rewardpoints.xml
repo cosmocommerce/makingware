@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+	<adminhtml_customer_edit>
+    	<reference name="left">
+    		<reference name="customer_edit_tabs">
+    			<reference name="customer_edit_tabs">
+    				<reference name="customer_edit_tab_view">
+    					<block type="rewardpoints/adminhtml_customer_edit_tab_view_points" name="points" template="makingware/rewardpoints/customer/tab/view/points.phtml" before="-" />
+    				</reference>
+    			</reference>
+    			<block type="rewardpoints/adminhtml_customer_edit_tab_points" name="customer_edit_tab_points" />
+    			<action method="addTab"><name>rewardpoints</name><block>customer_edit_tab_points</block></action>
+    		</reference>
+    	</reference>
+    </adminhtml_customer_edit>
+    
+    <adminhtml_promo_exchange_index>
+        <reference name="content">
+            <block type="rewardpoints/adminhtml_exchange" name="promo_exchange" />
+        </reference>
+    </adminhtml_promo_exchange_index>
+
+    <adminhtml_promo_exchange_edit>
+    	<reference name="head">
+            <action method="setCanLoadExtJs"><flag>1</flag></action>
+            <action method="addJs"><script>mage/adminhtml/wysiwyg/widget.js</script></action>
+            <action method="addItem"><type>js</type><name>prototype/window.js</name></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/default.css</name></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/magento.css</name></action>
+        </reference>
+        <reference name="content">
+            <block type="rewardpoints/adminhtml_exchange_edit" name="promo_exchange_edit" />
+        </reference>
+    </adminhtml_promo_exchange_edit>
+    
+    <!--<adminhtml_sales_order_view>
+        <reference name="left">
+        	<reference name="sales_order_tabs">
+        		<reference name="order_tab_info">
+        			<reference name="order_totals">
+        				<block type="rewardpoints/adminhtml_sales_order_totals" name="sales_order_totals.points" />
+    					<action method="insert"><block>sales_order_totals.points</block></action>
+        			</reference>
+            	</reference>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_view>-->
+</layout>

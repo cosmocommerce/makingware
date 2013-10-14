@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+	<auction_list_index translate="label">
+		<label>Auction Catalog List</label>
+		<!--<remove name="left"/>-->
+		<reference name="content">
+			<block type="auction/list" name="catalog_list" template="makingware/auction/list.phtml">
+				<block type="catalog/product_list_toolbar" name="product_list_toolbar" as="toolbar" template="catalog/product/list/toolbar.phtml">
+					<block type="page/html_pager" name="product_list_toolbar_pager"/>
+					<action method="addPagerLimit">
+						<mode>grid</mode>
+						<limit>20</limit>
+					</action>
+					<action method="addPagerLimit">
+						<mode>grid</mode>
+						<limit>24</limit>
+					</action>
+				</block>
+			</block>
+		</reference>
+	</auction_list_index>
+	
+	<auction_product_index>
+		<reference name="root">
+			<action method="setTemplate">
+				<template>page/1column.phtml</template>
+			</action>
+		</reference>
+		<reference name="head">
+			<action method="addCss"><stylesheet>css/cloud.zoom.css</stylesheet></action>
+			<action method="addItem"><type>skin_js</type><name>js/cloud.zoom.js</name></action>
+		</reference>
+		<reference name="content">
+			<block type="auction/product" name="catalog_product" template="makingware/auction/product.phtml">
+				<block type="catalog/product_view_media" name="product.info.media" as="media" template="catalog/product/view/media.phtml"/>
+				<block type="auction/product_record" name="product.info.record" as="record" template="makingware/auction/product/record.phtml" />
+				<block type="auction/product_price" name="product.info.price" as="price" template="makingware/auction/product/price.phtml" />
+			</block>
+		</reference>
+	</auction_product_index>
+	
+	<auction_checkout_index>
+		<remove name="left"/>
+		<remove name="right"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+		<reference name="content">
+        	<block type="core/template" name="checkout.cart.shopcar_guid" as="shopcar_guid" template="checkout/cart/shopcar_guid.phtml" />
+            <block type="checkout/onepage" name="checkout.onepage" template="checkout/onepage.phtml">
+            	<block type="checkout/onepage_shipping" name="checkout.onepage.shipping" as="shipping" template="checkout/onepage/shipping.phtml"/>
+            	<block type="checkout/onepage_method" name="checkout.onepage.method" as="method" template="checkout/onepage/method.phtml">
+            		<block type="checkout/onepage_method_shipping" name="checkout.onepage.method.shipping" as="shipping_method" template="checkout/onepage/method/shipping.phtml"/>
+                	<block type="checkout/onepage_method_payment" name="checkout.onepage.method.payment" as="payment_method" template="checkout/onepage/method/payment.phtml"/>
+                </block>
+                <block type="checkout/onepage_bill" name="checkout.onepage.bill" as="bill" template="checkout/onepage/bill.phtml"/>
+                <block type="core/text_list" name="before_totals" />
+
+				<block type="checkout/onepage_product" name="checkout.onepage.product" as="product" template="checkout/onepage/product.phtml">
+					<block type="core/text_list" name="checkout.onepage.product.item.header" as="product_item_header" />
+					<block type="core/text_list" name="checkout.onepage.product.item.content" as="product_item_content" />
+					<block type="core/text_list" name="checkout.onepage.product.item.footer" as="product_item_footer" />
+            	</block>
+            	
+                <block type="checkout/onepage_totals" name="checkout.onepage.totals" as="totals" template="checkout/onepage/totals.phtml" />
+                <block type="core/text_list" name="after_totals" />
+                <block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="checkout/onepage/agreements.phtml"/>
+            </block>
+        </reference>
+	</auction_checkout_index>
+	
+	<auction_checkout_success>
+		<update handle="checkout_onepage_success" />
+	</auction_checkout_success>
+</layout>

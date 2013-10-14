@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+	<sales_order_view>
+        <reference name="my.account.wrapper">
+        	<reference name="sales.order.info" as="info">
+        		<reference name="sales.order.view" as="order_view">
+        			<reference name="order_items">
+            			<block type="makingware_orderadjuster/sales_order_totals" name="order_totals" template="sales/order/totals.phtml" />
+            		</reference>
+            	</reference>
+            </reference>
+        </reference>
+    </sales_order_view>
+</layout>

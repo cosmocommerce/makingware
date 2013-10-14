@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+	<PRODUCT_TYPE_simple>
+		<reference name="product.info">
+			<reference name="product.info.simple.extra">
+				<block type="catalog/product_view" name="points" as="points" template="makingware/rewardpoints/catalog/points.phtml" />
+			</reference>
+		</reference>
+	</PRODUCT_TYPE_simple>
+	 <PRODUCT_TYPE_configurable>
+        <reference name="product.info">
+        	<reference name="product.info.configurable.extra">
+        		<block type="catalog/product_view" name="points" as="points" template="makingware/rewardpoints/catalog/points.phtml" />
+            </reference>
+        </reference>
+    </PRODUCT_TYPE_configurable>
+    <PRODUCT_TYPE_grouped>
+        <reference name="product.info">
+        	<reference name="product.info.grouped.extra">
+        		<block type="catalog/product_view" name="points" as="points" template="makingware/rewardpoints/catalog/points.phtml" />
+            </reference>
+        </reference>
+    </PRODUCT_TYPE_grouped>
+    <PRODUCT_TYPE_virtual>
+        <reference name="product.info">
+        	<reference name="product.info.virtual.extra">
+        		<block type="catalog/product_view" name="points" as="points" template="makingware/rewardpoints/catalog/points.phtml" />
+            </reference>
+        </reference>
+    </PRODUCT_TYPE_virtual>
+    
+    <checkout_onepage_success>
+    	<reference name="content">
+    		<reference name="checkout.success.item">
+    			<block type="rewardpoints/checkout_onepage_success" name="checkout.onepage.success.points" as="points" template="makingware/rewardpoints/checkout/onepage/success.phtml"/>
+    		</reference>
+    	</reference>
+    </checkout_onepage_success>
+    
+    <customer_account_index>
+    	<reference name="customer_account_dashboard_extend">
+    		<block type="rewardpoints/customer_account" name="customer_account_points" as="points" template="makingware/rewardpoints/customer/points.phtml"/>
+        </reference>
+    </customer_account_index>
+    
+    <sales_order_view>
+    	<reference name="order_totals_extend">
+    		<block type="rewardpoints/sales_order_totals" name="sales_order_points" as="points" template="makingware/rewardpoints/sales/order/totals.phtml"/>
+    	</reference>
+    </sales_order_view>
+    
+    <rewardpoints_exchange_index translate="label">
+    	<label>exchange index</label>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+            <reference name="head">
+                <action method="addCss"><stylesheet>css/exchange.css</stylesheet></action>
+            </reference>
+            <reference name="content">
+			    <block type="rewardpoints/exchange_list" name="exchange_list" template="makingware/rewardpoints/exchange/list.phtml">
+			    	<block type="rewardpoints/exchange_list_cart" name="checkout.cart" as="cart">
+		                <action method="setCartTemplate"><value>makingware/rewardpoints/exchange/checkout/cart.phtml</value></action>
+		                <action method="setEmptyTemplate"><value>makingware/rewardpoints/exchange/checkout/cart/noItems.phtml</value></action>
+		                <action method="chooseTemplate"/>
+		                <action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>makingware/rewardpoints/exchange/checkout/cart/item/default.phtml</template></action>
+		                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>makingware/rewardpoints/exchange/checkout/cart/item/default.phtml</template></action>
+		                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>makingware/rewardpoints/exchange/checkout/cart/item/default.phtml</template></action>
+		                <block type="core/template" name="checkout.cart.shopcar_guid" as="shopcar_guid" template="checkout/cart/shopcar_guid.phtml" />
+		                <!--<block type="page/html_wrapper" name="checkout.cart.form.before" as="form_before" translate="label">
+		                    <label>Shopping Cart Form Before</label>
+		                </block>
+		                <block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="checkout/cart/coupon.phtml"/>-->
+		                <block type="checkout/cart_crosssell" name="checkout.cart.crosssell" as="crosssell" template="checkout/cart/crosssell.phtml"/>
+		                <block type="checkout/cart_totals" name="checkout.cart.totals" as="totals" template="checkout/cart/totals.phtml"/>
+		            </block>
+			    </block>
+		    </reference>
+        </reference>
+	</rewardpoints_exchange_index>
+	
+	<rewardpoints_checkout_cart>
+		<update handle="checkout_cart_index"/>
+	</rewardpoints_checkout_cart>
+	
+	<rewardpoints_checkout_onepage_index>
+		<update handle="checkout_onepage_index"/>
+		<remove name="checkout.onepage.coupon"/>
+		<!--<remove name="checkout.onepage.bill"/>-->
+		<reference name="checkout.onepage">
+			<block type="checkout/onepage_product" name="checkout.onepage.product" as="product" template="makingware/rewardpoints/exchange/checkout/onepage/product.phtml"/>
+		</reference>
+	</rewardpoints_checkout_onepage_index>
+	
+	<rewardpoints_checkout_onepage_success>
+		<update handle="checkout_onepage_success"/>
+	</rewardpoints_checkout_onepage_success>
+</layout>

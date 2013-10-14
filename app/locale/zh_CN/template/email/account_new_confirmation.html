@@ -1,0 +1,37 @@
+<!--@subject {{var customer.name}}账户确认信息 @-->
+
+<style type="text/css">
+body,td { color:#2f2f2f; font:12px/1.5em Verdana, Arial, Helvetica, sans-serif; }
+</style>
+
+<div style="font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;">
+    <table cellspacing="0" cellpadding="0" border="0" width="98%" style="margin-top:10px; font:12px/1.5em Verdana, Arial, Helvetica, sans-serif; margin-bottom:10px;">
+        <tr>
+            <td align="center" valign="top">
+                <!-- [ header starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <a href="{{store url=""}}"><img src="{{skin url="images/logo_email.gif" _area='frontend'}}" alt="Makingware"  style="margin-bottom:10px;" border="0"/></a></td>
+                    </tr>
+                </table>
+
+                <!-- [ middle starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <p><strong>您好，{{var customer.name}}</strong>, <br/> 欢迎光临 <a href="{{store url=""}}" style="color:#1E7EC8;">{{config path="general/store_information/name"}}</a>。</p>
+
+                            <p>在您使用邮箱{{var customer.email}}登录我们的网店之前，必须先确认您的邮箱。 </p>
+
+                            <p>确认邮箱并即时登录，请使用<a href="{{store url="customer/account/confirm/" _query_id=$customer.id _query_key=$customer.confirmation _query_back_url=$back_url}}" style="color:#1E7EC8;">确认链接</a>。该链接只能使用一次。</p>
+
+                            <p>有关账户或购物的任何疑问，请发邮件至 <a href="mailto:{{config path="trans_email/ident_general/email"}}" style="color:#1E7EC8;">{{config path="trans_email/ident_general/email"}}</a> 或拨打电话 {{config path="general/store_information/phone"}}。</p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</div>

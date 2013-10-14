@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="viewproductalert"><name>viewproductalert</name><path>viewproductalert/index/index</path><label>My subscribed product alert</label></action>
+        </reference>
+    </customer_account>
+	<viewproductalert_index_index translate="label">
+		<label>Customer My Account Prodcutalert Items</label>
+		<update handle="customer_account"/>
+		<reference name="my.account.wrapper">
+			<block type="makingware_viewproductalert/products_list" name="viewproductalert_products_list" template="makingware/viewproductalert/products/list.phtml" />
+		</reference>
+		<reference name="root">
+			<action method="setHeaderTitle" translate="title" module="viewproductalert"><title>My subscribed product alert</title></action>
+		</reference>
+	</viewproductalert_index_index>
+</layout>

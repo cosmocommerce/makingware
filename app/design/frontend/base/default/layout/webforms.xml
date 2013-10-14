@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<default translate="label">
+		<label>WebForms</label>
+	</default>
+	<webforms_index_index>
+		<reference name="root">
+			<action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+		</reference>
+		<reference name="content">
+			<block type="webforms/webforms" name="webforms" template="webforms/default.phtml"/>
+		</reference>
+	</webforms_index_index>
+	<cms_page>
+		<reference name="head">
+	
+		</reference>
+	</cms_page>
+</layout>

@@ -1,0 +1,19 @@
+<?php echo $this->getChildHtml('product');?>
+<div class="order_totals">
+	<div class="discount-coupon">
+		<?php echo $this->getChildHtml('coupon');?>
+	</div>
+	<?php if (Mage::helper('core')->isModuleEnabled('Makingware_RewardPoints')):?>
+		<?php echo $this->getHelper('rewardpoints/checkout_onepage_totals')->toHtml();?>
+	<?php endif;?>
+	<span class="subtotal"> <?php echo $this->__('Product Amount');?>：<span id="subtotal"><?php echo sprintf('%.2f', $this->getSubTotal()); ?></span></span>
+	<span class="shipping">+ <?php echo $this->__('Freight');?>：<span id="shipping"><?php echo sprintf('%.2f', $this->getShipping()); ?></span></span>
+	<span class="discount">- <?php echo $this->__('Discount');?>：<span id="discount"><?php echo sprintf('%.2f', $this->getDiscount()); ?></span></span>
+
+	<div class="grand_total">
+		<strong><?php echo $this->__('Total Payable');?>：</strong>
+		<strong>
+			<span class="price"><span id="grand_total"><?php echo sprintf('%.2f', $this->getGrandTotal()); ?></span></span>
+		</strong>
+	</div>
+</div>

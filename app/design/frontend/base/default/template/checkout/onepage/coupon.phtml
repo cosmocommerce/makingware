@@ -1,0 +1,58 @@
+<form id="coupon-form">
+	<div class="coupon">
+		<strong><?php echo $this->__('Coupon');?>：</strong>
+		<input type="text" size="20" class="info_input" name="coupon_code" value="<?php echo $this->htmlEscape($this->getCouponCode());?>" />
+		<?php if(strlen($this->getCouponCode())): ?>
+		<input type="hidden" name="remove" value="1" />
+		<input class="inputbutton" title="<?php echo $this->__('Cancel Coupon');?>" type="submit" value="<?php echo $this->__('Cancel Coupon');?>" />
+		<?php else:?>
+		<input type="hidden" name="remove" value="0" />
+		<input class="inputbutton" title="<?php echo $this->__('Apply Coupon');?>" type="submit" value="<?php echo $this->__('Apply Coupon');?>" />
+		<?php endif;?>
+	</div>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+    var $couponForm = $('#coupon-form');
+    var couponToggle = function(){
+    	var $submitEl = $couponForm.find('input[type="submit"]');
+        var $removeEl = $couponForm.find('input[name="remove"]');
+        if ($submitEl.size() && $removeEl.size()) {
+            var value = $removeEl.val();
+            if (value == '1') {
+            	$removeEl.val(0);
+            	$submitEl.val("<?php echo $this->__('Apply Coupon');?>").attr('title', "<?php echo $this->__('Apply Coupon');?>");
+            }else if(value == '0') {
+            	$removeEl.val(1);
+            	$submitEl.val("<?php echo $this->__('Cancel Coupon');?>").attr('title', "<?php echo $this->__('Cancel Coupon');?>");
+            }
+        }
+    };
+
+    $couponForm.submit(function(){
+		 var $this = $(this);
+		 $.post('<?php echo $this->getUrl('*/*/applyCoupon'); ?>', $(this).serialize(), function(data) {
+			if(data){data = $.parseJSON(data);}else{data = {};}
+			if (data.error) {
+				if(data.error_messages){alert(data.error_messages);}
+				else if(data.message){alert(data.message);}
+				else{alert(data.error);}
+			}else {
+				// compute totals
+ 				if(data.section){
+ 	 				$.each(data.section, function(key, value){
+ 	 	 				if(value.name && value.html){
+ 	 	 	 				$("#"+key).html(value.html);
+ 						}else if(value.json){
+ 	 						var json = $.parseJSON(value.json);
+ 	 						$.each(json, function(k, v){$('#'+k).html(v);});
+ 						}
+ 					});
+ 	 				couponToggle();
+ 				}
+			}
+		});
+		return false;
+	});
+//]]>
+</script>

@@ -1,0 +1,14 @@
+<?php $this->getShippingBestTime();?>
+<?php $_code=$this->getMethodCode() ?>
+<fildset class="shipping-set shipping_form" id="shipping_form_<?php echo $_code ?>">
+       <label for="<?php echo $_code ?>"><?php echo $this->__('Shipping Time') ?> <span class="required">*</span></label>
+		<select id="<?php echo $_code ?>_shipping_best_time" name="shipping_best_time" class="required-entry validate-cod-type-select">
+			<option value=""><?php echo $this->__('--Please Select--')?></option>
+            <?php $_shippingBestTime = $this->getInfoData() ?>
+            <?php foreach ($this->getShippingBestTime() as $_code => $_name): ?>
+            <option value="<?php echo $this->__($_name)?>"<?php if($_name== $_shippingBestTime): ?> selected="selected"<?php endif ?>>
+            	<?php echo $this->__($_name)?>
+            </option>
+            <?php endforeach ?>
+        </select>
+</fildset>

@@ -1,0 +1,14 @@
+<?php $_code=$this->getMethodCode() ?>
+<fildset class="payment-set payment_form" id="payment_form_<?php echo $_code ?>">
+	<label for="<?php echo $_code ?>_type"><?php echo $this->__('Payment Types') ?> <span class="required">*</span></label>
+		<select id="<?php echo $_code ?>_type" name="payment[cod_type]" class="required-entry validate-cod-type-select">
+			<option value=""><?php echo $this->__('--Please Select--')?></option>
+            <?php $_codType = $this->getInfoData('cod_type') ?>
+            <?php foreach ($this->getCodAvailableTypes() as $_typeCode => $_typeName): ?>
+            <option value="<?php echo $_typeCode ?>"<?php if($_typeCode==$_codType): ?> selected="selected"<?php endif ?>>
+            	<?php echo $this->__($_typeName)?>
+            </option>
+            <?php endforeach ?>
+        </select>
+    <?php echo $this->getChildHtml() ?>
+</fildset>

@@ -1,0 +1,32 @@
+<?php $current_cat = $this->getCurrentCategory();?>
+<?php $current_cat = (is_object($current_cat) ? $current_cat->getName() : "");?>
+<div class="block catelogslist">
+<div class="block-title"><strong><span>商品分类</span></strong></div>
+<div class="block-content">
+
+<dl>
+	<?php $collection = $this->getStoreCategories();?>
+    <?php foreach ($collection as $_category):?>
+		<?php if ($_category->getName() == $current_cat) {?>
+        	<dt class="on"><a href="<?php echo $this->getCategoryUrl($_category)?>"><span><?php echo $_category->getName()?></span></a></dt>
+        <?php }else{ ?>
+        	<dt><a href="<?php echo $this->getCategoryUrl($_category)?>"><span> <?php echo $_category->getName()?></span></a></dt>
+        <?php }?>
+        <?php foreach($_category->getChildren() as $_childCategory):?>
+			<?php if ($_childCategory->getName() == $current_cat) {?>
+            	<dd class="frist on"><a href="<?php echo $this->getCategoryUrl($_childCategory)?>"><?php echo $_childCategory->getName()?></a><dd>
+            <?php }else{ ?>
+            	<dd class="frist"><a href="<?php echo $this->getCategoryUrl($_childCategory)?>"><?php echo $_childCategory->getName()?></a></dd>
+            <?php }?>
+            <?php foreach($_childCategory->getChildren() as $_cchildCategory):?>
+				<?php if ($_cchildCategory->getName() == $current_cat) {?>
+                	<dd class="last on"><a href="<?php echo $this->getCategoryUrl($_cchildCategory)?>"><?php echo $_cchildCategory->getName()?></a></dd>
+                <?php }else{ ?>
+                	<dd  class="last"><a href="<?php echo $this->getCategoryUrl($_cchildCategory)?>"><?php echo $_cchildCategory->getName()?></a></dd>
+                <?php }?>
+            <?php endforeach?>
+        <?php endforeach?>
+    <?php endforeach?>
+</dl>
+</div>
+</div>

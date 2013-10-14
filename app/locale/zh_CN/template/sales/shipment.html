@@ -1,0 +1,62 @@
+<style type="text/css">
+body,td {font-size:13px; font-family:Tahoma,Geneva,sans-serif,"微软雅黑"}
+</style>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>订单号：{{var order.increment_id}}</td>
+		<td align="right">客户：{{var order.getCustomerName()}}</td>
+	</tr>
+	<tr>
+		<td>日期：{{date var=$order.getCreatedAt()}}</td>
+		<td align="right">电话：{{config path="general/store_information/phone"}}</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-top:2px solid #000; margin-top:10px; padding-top:7px;">
+	<tr>
+		<th height="21" align="left">货号</th>
+		<th height="21" align="left">商品名称</th>
+		<th height="21" align="left">单价</th>
+		<th height="21" align="left">数量</th>
+		<th height="21">配送状态</th>
+	</tr>
+	{{if shipments}}
+		{{foreach order.getShipmentsCollection() as shipment}}
+			{{loop shipment.getAllItems() as item}}
+			<tr>
+				<td height="18" align="left">{{var item.getSku()}}</td>
+				<td height="18" align="left">{{var item.getName()}}</td>
+				<td height="18" align="left">{{price var=$item.getPrice()}}</td>
+				<td height="18" align="left">{{number var=$item.getQty()}}</td>
+				<td height="18" align="center"><span style="font-size:24px">☑</span></td>
+			</tr>
+			{{/loop}}
+		{{/foreach}}
+	{{else}}
+		{{foreach order.getAllVisibleItems() as item}}
+		<tr>
+			<td height="18" align="left">{{var item.getSku()}}</td>
+			<td height="18" align="left">{{var item.getName()}}</td>
+			<td height="18" align="left">{{price var=$item.getPrice()}}</td>
+			<td height="18" align="left">{{number var=$item.getQtyOrdered()}}</td>
+			<td height="18" align="center"><span style="font-size:24px">□</span></td>
+		</tr>
+		{{/foreach}}
+	{{/if}}
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-top:2px solid #000; margin-top:10px; padding-top:7px;">
+	<tr>
+		<td width="25%" height="21">赠品：&nbsp;</td>
+		<td width="25%" height="21">配送：{{var order.getPayment().getMethodInstance().getTitle()}}</td>
+		<td height="21">电话：{{var order.getShippingAddress().getTelephone()}}</td>
+	</tr>
+	<tr>
+		<td height="21">备注：{{var comment}}</td>
+		<td height="21">收货人：{{var order.getShippingAddress().getName()}}</td>
+		<td height="21">手机：{{var order.getShippingAddress().getMobile()}}</td>
+	</tr>
+	<tr>
+		<td height="21">&nbsp;</td>
+		<td height="21">邮 编：{{var order.getShippingAddress().getPostcode()}}</td>
+		<td height="21">地址：{{address var=$order.getShippingAddress()}}</td>
+	</tr>
+</table>

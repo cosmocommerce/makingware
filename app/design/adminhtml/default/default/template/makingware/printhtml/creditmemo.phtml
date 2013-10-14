@@ -1,0 +1,98 @@
+
+<?php
+ $creditmemoinfo=$this->getCreditmemo();
+?>
+<div>
+
+  <?php foreach ($creditmemoinfo as $creditmemos): ?>
+  <?php foreach ($creditmemos as $creditmemo): ?>
+  <?php $order = $creditmemo->getOrder();?>
+  <div style="margin-top:20px;">
+   <h1>Credit Memo # <?php echo $creditmemo->getIncrementId()?></h1>
+   <h1>Order # <?php echo $order->getRealOrderId()?></h1>
+   <p class="order-date">Order Date: <?php echo Mage::helper('core')->formatDate($order->getCreatedAtStoreDate(), 'medium', false)?></p>
+   <div class="col2-set">
+      <div class="col-1">
+         <h2>SOLD TO:</h2>
+         <address><?php echo $order->getBillingAddress()->format('html')?></address>
+	  </div>
+	  <div class="col-2">
+	     <h2>SHIP TO:</h2>
+		 <address><?php echo $order->getShippingAddress()->format('html')?></address>
+	  </div>
+   </div>
+   <div class="col2-set">
+      <div class="col-1">
+         <h2>Payment Method</h2>
+          <?php  echo Mage::helper('payment')->getInfoBlock($order->getPayment())->setIsSecureMode(true)->toHtml();?>
+      </div>
+      <div class="col-2">
+        <h2>Shipping Method:</h2>
+        <p><?php echo $order->getShippingDescription()?>(Total Shipping Charges <?php echo $order->formatPriceTxt($order->getShippingAmount())?>)</p>
+      </div>
+	</div>
+	<table class="data-table" id="my-orders-table">
+		<col />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<col width="1" />
+		<thead>
+			<tr>
+				<th>Product Name</th>
+				<th>SKU</th>
+				<th class="a-right">Total (ex)</th>
+				<th class="a-right">Discount</th>
+				<th class="a-center">Qty</th>
+				<th class="a-right">Total(inc)</th>
+			</tr>
+		</thead>
+		<?php $items=$creditmemo->getAllItems(); $total=0;?>
+		<?php foreach ($items as $item): ?>
+		<?php
+	        $subtotal=$order->formatPriceTxt($item->getRowTotal() - $item->getDiscountAmount());
+		    $total+=$item->getRowTotal() - $item->getDiscountAmount();
+	    ?>
+        <tbody>
+			<tr class="border" id="order-item-row-7">
+		        <td><h3 class="product-name"><?php echo $item->getName() ?></h3></td>
+		        <td><?php echo $item->getSku() ?></td>
+		        <td class="a-right">
+			    <span class="nobr">
+				    <?php echo ($item->getQty()*1)?>
+				</span>
+		        </td>
+		        <td class="a-right">
+					<span class="cart-price">
+						<span class="price"><?php echo $subtotal?></span>                    
+					</span>
+				    <br />
+				</td>
+  	         </tr>
+          </tbody>
+		  <?php endforeach; ?>
+		  <tfoot>
+	       <tr class="subtotal">
+				<td colspan="6" class="a-right">Subtotal</td>
+				<td class="last a-right"><span class="price"><?php echo $order->formatPriceTxt($total)?></span></td>
+			</tr>
+			<tr class="shipping">
+				<td colspan="6" class="a-right">Shipping & Handling:</td>
+				<td class="last a-right"><span class="price"><?php echo $order->formatPriceTxt($order->getShippingAmount())?></span></td>
+			</tr>
+			<tr class="grand_total">
+		        <td colspan="6" class="a-right"><strong>Grand Total</strong></td>
+				<td class="last a-right"><strong><span class="price"><?php echo $order->formatPriceTxt($order->getGrandTotal())?></span></strong></td>
+			</tr>
+		</tfoot>
+      </table>
+  </div>
+ <?php endforeach; ?>
+ <div style="margin-top:100px;"></div>
+  <?php endforeach; ?>
+</div>

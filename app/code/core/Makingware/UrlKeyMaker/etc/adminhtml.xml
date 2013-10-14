@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config>
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<system>
+						<children>
+							<config>
+								<children>
+									<makingware_urlkeymaker translate="title"
+										module="makingware_urlkeymaker">
+										<title>Makingware UrlKeyMaker</title>
+									</makingware_urlkeymaker>
+								</children>
+							</config>
+						</children>
+					</system>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

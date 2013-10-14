@@ -1,0 +1,48 @@
+<!--@subject 您好, {{var customer.name}}! @-->
+
+<style type="text/css">
+body,td { color:#2f2f2f; font:12px/1.5em Verdana, Arial, Helvetica, sans-serif; }
+</style>
+
+<div style="font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;">
+    <table cellspacing="0" cellpadding="0" border="0" width="98%" style="margin-top:10px; font:12px/1.5em Verdana, Arial, Helvetica, sans-serif; margin-bottom:10px;">
+        <tr>
+            <td align="center" valign="top">
+                <!-- [ header starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <a href="{{store url=""}}"><img src="{{skin url="images/logo_email.gif" _area='frontend'}}" alt="Makingware"  style="margin-bottom:10px;" border="0"/></a></td>
+                    </tr>
+                </table>
+
+                <!-- [ middle starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <p><strong>您好，{{var customer.name}}</strong>,<br/>
+                            欢迎光临 <a href="{{store url=""}}" style="color:#1E7EC8;">{{config path="general/store_information/name"}}</a>。登录请点击每页顶部的 <a href="{{store url="customer/account/"}}" style="color:#1E7EC8;">登录</a>或<a href="{{store url="customer/account/"}}" style="color:#1E7EC8;">我的帐号</a>，并输入电子邮件地址和密码。</p>
+
+                            <p>登录您的帐号后，您可以：</p>
+
+                            <ul>
+                                <li>购物时结帐更迅速</li>
+                                <li>查看订单状态</li>
+                                <li>查看历史订单</li>
+                                <li>修改账户信息</li>
+                                <li>修改密码</li>
+                                <li>保存多个地址(给亲戚朋友购物！)</li>
+                            </ul>
+
+                            <p>有关账户或购物的任何疑问，请发邮件至<a href="mailto:{{config path="trans_email/ident_general/email"}}" style="color:#1E7EC8;">{{config path="trans_email/ident_general/email"}}</a> 或拨打电话 {{config path="general/store_information/phone"}}。</p>
+                            <p>多谢惠顾！</p>
+
+
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,13 @@
+
+ <ul>
+   <?php if ($this->isNewProduct()):?>
+     <li>新品</li>
+   <?php endif;?>
+   <?php if ($this->isBestsellerProduct()):?>
+     <li>热卖</li>
+   <?php endif;?>
+   <?php if ($this->isSpecialProduct()):?>
+     <li>特价</li>
+   <?php endif;?>
+
+ </ul>

@@ -1,0 +1,53 @@
+<div class="mini-login">
+	<form action="<?php echo $this->getPostActionUrl() ?>" method="post" id="loginmini-form">
+		<div class="content">
+	      	<ul class="form_list">
+	      		<li class="fields">
+	                <label for="email" class="label-like"><?php echo $this->__('Account') ?>: </label>
+	                 <div class="input-box">
+	                    <input type="text" name="login[username]" id="email" class="input-text" title="<?php echo $this->__('Email Address');?>" validata="required:true" value="<?php if($this->getUsername()){echo $this->getUsername();}else{echo $this->getAllowLoginAttributeText();}?>" style="color:rgb(153, 153, 153);"/>
+	                     <span class="prompt-msg" message=""></span>
+	                  </div>
+	            </li>
+	            <li class="fields">
+	                 <label for="pass" class="label-like"><?php echo $this->__('Password') ?>: </label>
+	                 <div class="input-box">
+	                     <input type="password" name="login[password]" class="input-text" id="pass" title="<?php echo $this->__('Password') ?>" validata="required:true"/>
+	                      <span class="prompt-msg" message=""></span>
+	                 </div>
+	            </li>
+				<li class="fields"><button type="submit" class="button" title="<?php echo $this->__('Login') ?>" name="send" id="send2"><span><span><?php echo $this->__('Login') ?></span></span></button>  &nbsp;&nbsp;<a href="<?php echo $this->getForgotPasswordUrl() ?>"><?php echo $this->__('Forgot Your Password?') ?></a>&nbsp;&nbsp;<a href="<?php echo $this->getUrl('customer/account/create') ?>">新用户注册</a></li>
+				<?php if (Mage::helper('core')->isModuleEnabled('Makingware_ThirdLogin')):?>
+				<li class="fields"><?php echo $this->getHelper('thirdlogin/login')->toHtml();?></li>
+				<?php endif;?>
+	         </ul>
+	    </div>
+    </form>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+$(function() {
+	var loginAccountText = "<?php echo $this->getAllowLoginAttributeText();?>";
+	$("#loginmini-form input[name='login\[username\]']").focus(function(){
+		if ($(this).val() == loginAccountText){
+			$(this).val('').css('color', '#333');
+		}
+	}).blur(function(){
+		if ($(this).val() == '') {
+			$(this).val(loginAccountText).css('color', '#999');
+		}
+	});
+	
+	$form = makingware.form.getInstance('#loginmini-form', {
+    	error: {
+            required: '<?php echo Mage::helper('core')->__('Required Fields');?>',
+            minLength: '<?php echo Mage::helper('core')->__('At least %s characters');?>',
+            email: '<?php echo Mage::helper('core')->__('Invalid %s address');?>'
+        }
+	});
+	$('#loginmini-form').submit(function(){
+		return $form.isValidata($(this));
+	});
+});
+//]]>
+</script>

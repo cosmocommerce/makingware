@@ -1,0 +1,99 @@
+<style type="text/css">
+	#rewardpoints-edit .modify {padding:0 10px;}
+	#rewardpoints-edit .modify span {margin:0 6px;}
+</style>
+<div id="rewardpoints-edit" class="entry-edit">
+    <div class="entry-edit-head"><h4 class="icon-head head-customer-sales-statistics"><?php echo $this->__('RewardPoints Info') ?></h4></div>
+    <fieldset>
+        <table cellspacing="2">
+            <tr>
+                <td><strong><?php echo $this->__('Total Points');?>:</strong></td>
+                <td class="modify">
+                	<span class="total_points"><?php echo $this->getTotalPoints();?></span>
+                	<span class="editor"><?php echo $this->getTotalPointsHtml();?></span>
+                </td>
+            </tr>
+            <tr>
+                <td><strong><?php echo $this->__('Available Points');?>:</strong></td>
+                <td class="modify">
+                	<span class="available_points"><?php echo $this->getAvailablePoints();?></span>
+                	<span class="editor"><?php echo $this->getAvailablePointsHtml();?></span>
+                </td>
+            </tr>
+            <!--<tr>
+                <td><strong><?php #echo $this->__('Used Points');?>:</strong></td>
+                <td>
+                	<span class="used_points"><?php #echo $this->getUsedPoints();?></span>
+                </td>
+            </tr>-->
+        </table>
+    </fieldset>
+</div>
+<div class="clear"></div>
+<br/>
+<script type="text/javascript">
+	$("rewardpoints-edit").select('.modify').each(function($this){
+		$this.select('.editor').each(function($editor){
+			$editor.hide().insert('<?php echo $this->getButtomsHtml();?>');
+
+			if ($editor.previous('span[class!=""]')) {
+				$editor.previous('span[class!=""]').observe('click', function(event){
+					var $remarkEl = $editor.select('input[name="remark"]');
+					if ($remarkEl.size()) {
+						$remarkEl[0].setValue('');
+					}
+					this.next('.editor').show();
+				});
+		 	}
+
+			if ($editor.select('.cancel').size()) {
+				$editor.select('.cancel')[0].observe('click', function(event){
+					this.up('.editor').hide();
+				});
+			}
+
+			if ($editor.select('.save').size()) {
+				$editor.select('.save')[0].observe('click', function(event){
+					var $proccessEl = $editor.select('select[name!=""], input');
+					if ($proccessEl.size()) {
+						$selectEl = $proccessEl[0];
+						$inputEl = $proccessEl[1];
+						$remarkEl = $proccessEl[2];
+						if (!$remarkEl.getValue()) {alert("<?php echo $this->__('Remark required.');?>"); return false;}
+						if (!$selectEl.getValue()) {alert("<?php echo $this->__('Please select operator.');?>"); return false;}
+						if (!$inputEl.name.length) {alert("<?php echo $this->__('Element control error.');?>"); return false;}
+						if (!$inputEl.getValue()) {alert("<?php echo $this->__('Input required.');?>"); return false;}
+						if (!/^[0-9]\d*$/.test($inputEl.getValue())) {alert("<?php echo $this->__('Please enter an integer.');?>"); return false;}
+						new Ajax.Request("<?php echo $this->getModifyUrl();?>", {
+		        			method: 'post',
+		    		        parameters: 'action='+$selectEl.getValue()+'&name='+$inputEl.name+'&value='+$inputEl.getValue()+'&remark='+$remarkEl.getValue(),
+		    		        onSuccess: function(transport){
+			    		        var json = transport.responseText.evalJSON();
+		        		        if (json) {
+		        		        	if (json.error) {alert(json.error); return false;}
+			        		        if (json.data) {
+			        		        	$("rewardpoints-edit").select('td > span[class!=""]').each(function($el){
+				        		        	for (var i in json.data) {
+					        		        	if ($el.hasClassName(i)) {
+						        		        	$el.update(json.data[i]);
+						        		        }
+					        		        }
+				        		        });
+			        		        	$editor.hide();
+				        		    }
+		    			        }
+		    		        }
+		    		    });
+					}
+				});
+			}
+		});
+		
+ 		$this.observe('mouseover', function(event){
+ 	 		$this.setStyle({backgroundColor: '#278296'});
+ 	 	});
+ 		$this.observe('mouseout', function(event){
+ 			$this.setStyle({backgroundColor: 'transparent'});
+ 	 	});
+ 	});
+</script>

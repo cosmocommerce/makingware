@@ -1,0 +1,11 @@
+<ul class="newslist">
+<?php    
+	foreach($this->getchildren() as $_page)
+	{
+		$data = $_page->getData();		
+		echo '<li class="level1" ><em>'.date('Y-m-d', strtotime($data['update_time'])).'</em><a href="'.$this->getUrl($_page->getIdentifierPath()).'" title="'.$data['title'].'"><span>'.$data['title'].'</span></a></li>';
+	  
+	}
+	echo '</ul>';
+?>
+</ul>

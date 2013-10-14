@@ -1,0 +1,94 @@
+<div class="my-wishlist">
+<h1><?php echo $this->__('Product price alert') ?></h1>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    <?php if ($this->hasProductPriceAlertItems()): ?>
+            <table class="data-table" id="wishlist-table">
+                <thead>
+                    <tr>
+                        <th><?php echo $this->__('Product') ?></th>
+                        <th class="a-center"><?php echo $this->__('Price') ?></th>
+                        <th class="a-center"><span class="nobr"><?php echo $this->__('Added On') ?></span></th>
+                        <th class="a-center"><span class="nobr"><?php echo $this->__('Add to Cart') ?></span></th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($this->getProductPriceAlertItems() as $item): ?>
+				    <?php $product=$this-> getProductItems($item->getData('product_id')) ?>
+                    <tr>
+                        <td>
+                            <a class="product-image" href="<?php echo $this->getProductUrl($product) ?>" title=""><img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->htmlEscape($item->getName()) ?>" /></a>
+                            <p class="product-name"><a href=""><?php echo $this->htmlEscape($product->getName()) ?></a></p>
+                       
+                        </td>
+                        <td>
+                          <?php echo $this->getPriceHtml($product) ?>
+                        </td>
+                        <td>
+                             <span class="nobr"><?php echo $this->getFormatedDate($item->getData('add_date'))?></span>
+                        </td>
+                        <td class="a-center">
+                        <?php if($product->isSaleable()): ?>
+                            <input type="button" title="<?php echo $this->__('Add to Cart') ?>" onclick="setLocation('<?php echo $this->getAddToCartUrl($product) ?>')" class="button" value="<?php echo $this->__('Add to Cart') ?>"/>
+                        <?php else: ?>
+                            <p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                        <?php endif; ?>
+                        </td>
+                        <td>
+                            <a href="<?php echo $this->getProductPriceUnsubscribeUrl($item->getData('product_id')) ?>" title="<?php echo $this->__('Cancel price alert') ?>"  class="btn-remove2"><?php echo $this->__('Cancel price alert')?></a>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+                </tbody>
+            </table>
+    <?php else: ?>
+        <p><?php echo $this->__('You have no items in your product price alert list.') ?></p>
+    <?php endif ?>
+<br />
+
+ <h1><?php echo $this->__('Product stock alert') ?></h1>
+
+	<?php if ($this->hasProductStockAlertItems()): ?>
+            <table class="data-table" id="wishlist-table">
+                <thead>
+                    <tr>
+                        <th><?php echo $this->__('Product') ?></th>
+                        <th class="a-center"><?php echo $this->__('Price') ?></th>
+                        <th class="a-center"><span class="nobr"><?php echo $this->__('Added On') ?></span></th>
+                        <th class="a-center"><span class="nobr"><?php echo $this->__('Add to Cart') ?></span></th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($this->getProductStockAlertItems() as $item): ?>
+				<?php $product=$this-> getProductItems($item->getData('product_id')) ?>
+				<tr>
+					<td>
+						<a class="product-image" href="<?php echo $this->getProductUrl($product) ?>" title=""><img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->htmlEscape($item->getName()) ?>" /></a>
+						<p class="product-name"><a href=""><?php echo $this->htmlEscape($product->getName()) ?></a></p>
+				   
+					</td>
+					<td>
+					  <?php echo $this->getPriceHtml($product) ?>
+					</td>
+					<td>
+						 <span class="nobr"><?php echo $this->getFormatedDate($item->getData('add_date'))?></span>
+					</td>
+					<td class="a-center">
+					<?php if($product->isSaleable()): ?>
+						<input type="button" title="<?php echo $this->__('Add to Cart') ?>" onclick="setLocation('<?php echo $this->getAddToCartUrl($product) ?>')" class="button btn-cart" value="<?php echo $this->__('Add to Cart') ?>" />
+					<?php else: ?>
+						<p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+					<?php endif; ?>
+					</td>
+					<td>
+						<a href="<?php echo $this->getProductStockUnsubscribeUrl($item->getData('product_id')) ?>" title="<?php echo $this->__('Cancel stock alert') ?>"  class="btn-remove2"><?php echo $this->__('Cancel stock alert')?></a>
+					</td>
+                    </tr>
+				<?php endforeach ?>
+                </tbody>
+            </table>
+    <?php else: ?>
+        <p><?php echo $this->__('You have no items in your product stock alert list.') ?></p>
+    <?php endif ?>
+</div>

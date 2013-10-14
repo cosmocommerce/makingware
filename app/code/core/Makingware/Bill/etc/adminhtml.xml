@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+	<menu>
+		<sales>
+			<children>
+				<invoice translate="title" module="makingware_bill">
+					<title>Bill Management</title>
+					<action>makingware_bill</action>
+				</invoice>
+			</children>
+		</sales>
+	</menu>
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<system>
+						<children>
+							<config>
+								<children>
+									<makingware_bill translate="title" module="makingware_bill">
+										<title>Bill</title>
+									</makingware_bill>
+								</children>
+							</config>
+						</children>
+					</system>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

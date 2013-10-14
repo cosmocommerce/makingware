@@ -1,0 +1,14 @@
+<div class="topnews">
+	<div><a class="bfL bnt" href="<?php echo $this->getUrl($this->getPage()->getIdentifier());?>" title="<?php echo $this->getPage()->getTitle();?>"><?php echo $this->getPage()->getTitle();?></a></div>
+	<ul class="newstoplist bfL" style="clear:both;">
+		<?php foreach ($this->getChildren() as $page):?>
+		<li class="level1" >
+			<a href="<?php echo $this->getUrl($page->getIdentifierPath());?>" title="<?php echo $page->getTitle();?>"><span><?php echo $page->getTitle();?></span></a>
+		</li>
+		<?php endforeach;?>
+	</ul>
+	<script type="text/javascript">
+	//<![CDATA[
+	//]]>
+	</script> 
+</div>

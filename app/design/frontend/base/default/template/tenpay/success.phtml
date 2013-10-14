@@ -1,0 +1,10 @@
+
+<div class="cartpage-title clearfix">
+	<h1>付款成功</h1>
+	<p>
+	   你可以 <a href="#" onclick="window.location='<?php echo Mage::getUrl() ?>'" >继续购物</a>
+	   <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+	   或去 <a href="<?php echo Mage::getUrl('customer/account') ?>">用户中心</a>
+	   <?php endif; ?>
+	</p>
+</div>

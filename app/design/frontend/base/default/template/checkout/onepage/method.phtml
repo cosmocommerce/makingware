@@ -1,0 +1,139 @@
+<div class="payment onepage_items clearfix">
+	<h4><?php echo $this->__('Payment and Shipping Method');?> <span><a id="payment-shipping-method-edit" href="javascript:void(0)"><?php echo $this->__('Change');?></a></span> </h4>
+	<div class="clearbolck"></div>
+	<form id="payment-shipping-method-form">
+		<ul class="form_list">
+			<?php if ($this->getPaymentBlock()->isShow()):?>
+			<li class="fields">
+				<span class="label"><?php echo $this->__('Payment Method');?>：</span>
+				<div id="payment-method" class="input-box">
+					<?php echo $this->getPaymentBlock()->toHtml(); #echo $this->getChildHtml('payment_method');?>
+				</div>
+			</li>
+			<?php endif;?>
+			<?php if ($this->getShippingBlock()->isShow()):?>
+			<li class="fields"> <span class="label"><?php echo $this->__('Shipping Method');?>：</span>
+				<div id="shipping-method" class="input-box">
+					<?php echo $this->getShippingBlock()->toHtml(); #echo $this->getChildHtml('shipping_method');?>
+				</div>
+			</li>
+			<?php endif;?>
+			<li class="fields">
+				<input class="inputbutton" title="<?php echo $this->__('Payments and shipping method determine');?>" value="<?php echo $this->__('Payments and shipping method determine');?>" type="submit"/>
+			</li>
+		</ul>
+	</form>
+	<dl id="payment-shipping-method-text"></dl>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+     var $methodEdit = $('#payment-shipping-method-edit').hide();
+     var $methodText = $('#payment-shipping-method-text');
+     var $methodForm = $('#payment-shipping-method-form');
+
+     $methodEdit.click(function(){
+    	 $methodText.empty();
+    	 $methodEdit.hide();
+    	 $methodForm.show();
+     });
+
+     $methodForm.submit(function(){
+         var $this = $(this);
+         if($('#address-form').size() && !($.trim($("#address-text").html()))){
+             alertDialog("<?php echo $this->__('Please make sure the consignee information');?>");
+        	 return false;
+     	 }
+
+         var paymentFlag = false;
+         if (!$("#payment-method").size()) {
+        	 paymentFlag = true;
+         }
+         var shippingFlag = false;
+         if (!$("#shipping-method").size()) {
+             shippingFlag = true;
+         }
+
+         if (paymentFlag == false) {
+	         $this.find('input:checked').each(function(){
+	             if($(this).attr('name') == 'payment[method]'){
+	                 var el = $(this).parent().find('div').find(':input,:checkbox');
+	                 if(el.length && !el.val()){
+	                     paymentFlag = false;
+	                     return true;
+	                 }
+	                 paymentFlag = true;
+	                 return true;
+	             }
+	         });
+         }
+         if (shippingFlag == false) {
+	         var shipping_best_time_text=null;
+	         $this.find('input:checked').each(function(){
+	             if($(this).attr('name') == 'shipping_method'){
+	                 var el = $(this).parent().find('div').find(':input,:checkbox');
+	                 shipping_best_time_text=el.find('option[value="'+el.val()+'"]').text();
+	                 if(el.length && !el.val()){
+	                     shippingFlag = false;
+	                     return true;
+	                 }
+	                 shippingFlag = true;
+	                 return true;
+	             }
+	         });
+         }
+
+         if(paymentFlag == false){
+        	 alertDialog("<?php echo $this->__('Please select payment method.');?>");
+         }
+         if(shippingFlag == false){
+        	 alertDialog("<?php echo $this->__('Please select shipping method.');?>");
+         }
+
+         if(paymentFlag && shippingFlag) {
+        	 $.post("<?php echo $this->getUrl('*/*/savePaymentShippingMethod'); ?>", $this.serialize(), function(data) {
+        		 if(data){data = $.parseJSON(data);}else{data = {};}
+        		 if(data.error){
+        			 if(data.error_messages){alertDialog(data.error_messages);}
+ 					 else if(data.message){alertDialog(data.message);}
+ 					 else{alertDialog(data.error);}
+            	 }else {
+            		 $methodForm.hide();
+            		 $methodEdit.show();
+
+ 					 var html = '';
+ 					 $this.find("ul li").each(function(){
+ 	 					 var label = $(this).find('span[class="label"]').text();
+ 	 					 var text = $(this).find("input:checked").siblings('label').html();
+ 	 					 if(label && text){
+ 	 						html += '<dt>' + label + '</dt>';
+							html += '<dd>' + text + '</dd>';
+ 	 	 				 }
+ 					 });
+
+ 					 if(shipping_best_time_text){
+						html += '<dt>' + '送货日期：' + '</dt>';
+						 html += '<dd>' + shipping_best_time_text + '</dd>';
+ 					 }
+
+ 					 $methodText.html(html);
+
+ 					 // compute totals
+ 					 if(data.section){
+ 	 					 $.each(data.section, function(key, value){
+ 	 	 					 if(value.name && value.html && $("#"+key).size()){
+ 	 	 	 					 $("#"+key).html(value.html);
+ 							 }else if(value.json){
+ 	 							var json = $.parseJSON(value.json);
+ 	 							$.each(json, function(k, v){
+ 	 	 							if($("#"+k).size()) {$('#'+k).html(v);}
+ 	 	 						});
+ 							 }
+ 						 });
+ 					 }
+            	 }
+        	 });
+         }
+         return false;
+     });
+//]]>
+</script>

@@ -1,0 +1,9 @@
+
+<h6><?php echo $this->getMethod()->getTitle() ?></h6>
+<?php if($this->getMailingAddress()):?>
+<div class="info">
+	<?php foreach ($this->getMailingAddress() as $address):?>
+	<?php echo $address;?><br/>
+	<?php endforeach;?>
+</div>
+<?php endif;?>

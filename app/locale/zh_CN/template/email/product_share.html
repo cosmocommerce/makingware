@@ -1,0 +1,16 @@
+{* 解释模块
+
+该模板中有用的值：
+  - name            收件人姓名
+  - email           收件人邮箱
+  - product_name    商品名称
+  - product_url     商品网址
+  - product_image   商品小图片(75 px)地址
+  - message         发件人自定义留言
+  - sender_name     发件人姓名
+  - sender_email    发件人邮箱
+
+Use vars: {{var var_name}}
+*}<!--@subject 您好, {{var name}} @-->
+
+您好，{{var name}}<br /><br />请看看<a href="{{var product_url}}">{{var product_name}}</a><br /><br />留言：<br />{{var message}}<br /><br />

@@ -1,0 +1,164 @@
+<div class="onepage_items order_message clearfix">
+	<h4><?php echo $this->__('Invoice Information');?> 
+		<span><a id="bill-edit" href="javascript:void(0)"><?php echo $this->__('Change');?></a></span>
+	</h4>
+	<div class="clearbolck"></div>
+	<label><input id="bill-switch" type="checkbox" value="1"/> <?php echo $this->__('Invoice');?></label>
+	<div class="bill">
+		<form id="bill-form">
+			<ul class="form_list">
+				<li class="fields" style="height: auto;"> <span class="label"><?php echo $this->__('Invoice Type');?>：</span>
+					<label><input name="type" type="radio" value="0" checked="checked" /><?php echo $this->__('General Invoice');?></label>
+					<label><input name="type" type="radio" value="1" /><?php echo $this->__('VAT Invoice');?></label>
+				</li>
+				<li class="fields" style="height: auto;"> <span class="label"><?php echo $this->__('Invoices Payable');?>：</span>
+					<label><input name="title" type="radio" value="0" checked="checked" /><?php echo $this->__('Personal');?></label>
+					<label><input name="title" type="radio" value="1" /><?php echo $this->__('Units');?></label>
+				</li>
+				<li class="fields" style="display:none; height: auto;">
+					<div><?php echo $this->__('Units Name');?>：<input name="company" type="text" value="" /><span class="required">*</span></div>
+					<ul class="bill-tax" style="display:none">
+						<li><strong><?php echo $this->__('Qualification completed VAT invoice invoices');?>：</strong></li>
+						<li>
+							<label><?php echo $this->__('Taxpayer identification number');?>：
+								<input name="taxpayer_id" /><span class="required">*</span>
+							</label>
+						</li>
+						<li>
+							<label><?php echo $this->__('Registered Address');?>：
+								<input name="address" /><span class="required">*</span>
+							</label>
+						</li>
+						<li>
+							<label><?php echo $this->__('Registered Telephone');?>：
+								<input name="phone" /><span class="required">*</span>
+							</label>
+						</li>
+						<li>
+							<label><?php echo $this->__('Open an account with the bank');?>：
+								<input name="bank" /><span class="required">*</span>
+							</label>
+						</li>
+						<li>
+							<label><?php echo $this->__('Bank account');?>：
+								<input name="account" /><span class="required">*</span>
+							</label>
+						</li>
+					</ul>
+				</li>
+				<li class="fields" style="height: auto;"> <span class="label"><?php echo $this->__('Invoice Content');?>：</span>
+					<label>
+						<input name="content" type="radio" value="0" checked="checked" />
+						&nbsp;<?php echo $this->__('Detail');?>
+					</label>
+					<label>
+						<input name="content" type="radio" value="1" />
+						&nbsp;<?php echo $this->__('Office Supplies');?>
+					</label>
+					<label>
+						<input name="content" type="radio" value="2" />
+						&nbsp;<?php echo $this->__('Computer Accessories');?>
+					</label>
+					<label>
+						<input name="content" type="radio" value="3" />
+						&nbsp;<?php echo $this->__('Consumable');?>
+					</label>
+				</li>
+				<li class="fields" style="height: auto; padding-top: 10px">
+					<input type="hidden" name="bill" value="0" />
+					<input class="inputbutton" title="<?php echo $this->__('Invoice information to determine');?>" type="submit" value="<?php echo $this->__('Invoice information to determine');?>"/>
+				</li>
+			</ul>
+		</form>
+		<dl id="bill-text"></dl>
+	</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[   
+     var billEditTag = $('#bill-edit').hide();
+     var billTextTag = $('#bill-text');
+     var billFormTag = $('#bill-form');
+     var billSwitch = $('#bill-switch');
+
+     billSwitch.change(function(){
+         if($(this).attr('checked')){
+        	 billFormTag.show();
+        	 billTextTag.empty();
+         }else{
+        	 billFormTag.hide();
+         }
+     }).trigger('change');
+
+     billEditTag.click(function(){
+         $(this).hide();
+    	 billSwitch.attr('checked', 'checked').trigger('change');
+     });
+
+    billFormTag.find('input[name="title"]').change(function(){
+ 		if ($(this).val() == '0') {
+ 			billFormTag.find('input[name="company"]').parent().parent().hide();
+ 		}else {
+ 			billFormTag.find('input[name="company"]').parent().parent().show();
+ 			$('.bill-tax').hide();
+ 		}
+ 	});
+
+ 	billFormTag.find('input[name="type"]').change(function(){
+		if ($(this).val() == 1) {
+			billFormTag.find('input[name="title"][value="0"]').parent('label').hide();
+			billFormTag.find('input[name="title"][value="1"]').attr('checked', 'checked').trigger('change');
+			billFormTag.find('input[name="content"][value!="0"]').parent('label').hide();
+			billFormTag.find('input[name="content"][value="0"]').attr('checked', 'checked');
+			$('.bill-tax').show();
+		}else {
+			billFormTag.find('input[name="content"][value!="0"]').parent('label').show();
+			billFormTag.find('input[name="title"][value="0"]').parent('label').show();
+			$('.bill-tax').hide();
+		}
+	});
+     
+
+     billFormTag.submit(function(){
+         $this = $(this);
+         var flag = true;
+         $this.find('input:visible').each(function(){
+             var pompt = $(this).parent().find('.error');
+             if($(this).val()==""){
+                 var html = '<span class="error"><?php echo Mage::helper('core')->__('Required Fields');?></span>';
+                 if(pompt.length){pompt.html(html);}else{$(this).parent().append(html);}
+                 flag = false;
+             }else{
+            	 pompt.empty();
+             }
+         });
+
+         if(flag) {
+        	 var params = [];
+             $this.find('input:visible').each(function(){params.push($(this).serialize());});
+        	 $.post("<?php echo $this->getUrl('*/*/saveBill'); ?>", params.join('&'), function(data) {
+        		 if(data){data = $.parseJSON(data);}else{data = {};}
+        		 if(data.error){
+        			 if(data.error_messages){alert(data.error_messages);}
+ 					 else if(data.message){alert(data.message);}
+ 					 else{alert(data.error);}
+            	 }else {
+            		 billFormTag.hide();
+            		 billEditTag.show();
+
+ 					 var html = '';
+ 					 $this.find("ul li").each(function(){
+ 	 					 var label = $(this).find('span[class="label"]').text();
+ 	 					 var text = $(this).find("input:checked").parent('label').text();
+ 	 					 if(label && text){
+ 	 						html += '<dt>' + label + '</dt>';
+							html += '<dd>' + text + '</dd>';
+ 	 	 				 }
+ 					 });
+ 					 billTextTag.html(html);
+            	 }
+        	 });
+         }
+         return false;
+     });
+//]]>
+</script>

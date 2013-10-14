@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <adminhtml_promo_auction_index>
+        <reference name="content">
+            <block type="auction/adminhtml_product" name="promo_auction_product" />
+        </reference>
+    </adminhtml_promo_auction_index>
+
+    <adminhtml_promo_auction_edit>
+    	<reference name="head">
+            <action method="setCanLoadExtJs"><flag>1</flag></action>
+            <action method="addJs"><script>mage/adminhtml/wysiwyg/widget.js</script></action>
+            <action method="addItem"><type>js</type><name>prototype/window.js</name></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/default.css</name></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/magento.css</name></action>
+        </reference>
+        <reference name="content">
+            <block type="auction/adminhtml_product_edit" name="promo_auction_product_edit" />
+        </reference>
+    </adminhtml_promo_auction_edit>
+    
+    <!--
+    <adminhtml_sales_order_view>
+        <reference name="left">
+        	<reference name="sales_order_tabs">
+        		<reference name="order_tab_info">
+        			<reference name="order_totals">
+        				<block type="rewardpoints/adminhtml_sales_order_totals" name="sales_order_totals.points" />
+    					<action method="insert"><block>sales_order_totals.points</block></action>
+        			</reference>
+            	</reference>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_view>
+    -->
+</layout>

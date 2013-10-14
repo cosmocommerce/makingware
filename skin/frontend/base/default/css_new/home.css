@@ -1,0 +1,74 @@
+/*首页样式*/
+#main .container{padding:8px 0}
+.slider_banner{padding-bottom: 8px}
+#showbanner{margin-bottom: 8px}
+#showbanner .JQ-content-box{height:390px; position: relative; overflow: hidden;}
+#showbanner .JQ-slide-content{position: absolute; width: 960px;}
+#showbanner .JQ-slide-content li{height:390px; width: 960px}
+#showbanner .JQ-slide-content li img{vertical-align:middle;}
+#showbanner .JQ-slide-nav{position: absolute; right: 5px; bottom: 5px;}
+#showbanner .JQ-slide-nav li{float: left; text-align: center; width:25px; height: 25px; line-height: 25px; margin-left: 3px; border: 2px solid #f60; background: #222; color: #FFF; cursor: pointer}
+#showbanner .JQ-slide-nav li.on{background: #f60}
+
+
+.index_row1{margin-bottom: 8px}
+.ltbox{float: left;; width: 760px;}
+.catelog_list{  border: 1px solid #e4e4e4; margin-bottom:2px}
+.catelog_title{background: #a04271 url("../images/catelog_tit_bg.gif") repeat-x; color: #FFF; padding: 5px 15px; font:bold 14px "微软雅黑"}
+.catelog_list dl .item {border-bottom: 1px solid #F6F6F6; padding: 7px 15px}
+.catelog_list dl .item.hover{background: #F2F9FD}
+.catelog_list dl .item .titles{background:url("../images/bnt.png") no-repeat  -193px 0; float: left; width: 63px; text-align:center; margin-right: 25px; color: #FFF}
+.catelog_list dl .item ol{float: left}
+.catelog_list dl .item ol li{display: inline-block;  *display: inline; zoom:1; padding: 0 7px;}
+
+.hot_good{ padding:0 19px; height: 110px;  position: relative; border: 1px solid #ddd}
+.hot_good .wrap{width: 720px; overflow: hidden; height: 110px; position: relative;}
+.hot_good ul{width: 3000px; position: absolute;}
+.hot_good ul li{float: left; margin-right: 3px; width: 238px; height: 110px;}
+.hot_good .bnt{width: 19px; position: absolute; left:0 ; top:0;height: 110px; background: #d3d3d3 url(../images/bnt.png) no-repeat -260px 50px; display: block; text-indent: -999px;}
+.hot_good .bnt:hover{background-color: #bdbbd0; }
+.hot_good .bnt.next{left: auto; right: 0; background-position: -295px 50px}
+.rtbox{float: right; width: 220px}
+.index_news{border: 1px solid #ddd; margin-bottom: 8px; padding-bottom: 8px; background: url(../images/index_news_bg.gif) repeat-x 0 0}
+.box_titles{ padding: 5px 15px;}
+.index_news li{padding:0 15px 0 25px; line-height: 25px; background: url(../images/bnt.png) 15px  -176px;}
+.tuangou a{display:block; width: 218px; height: 138px; overflow: hidden; border: 1px solid #ddd}
+
+.row_title{height: 35px; line-height: 35px; background: #e6f0ff; border-top: 2px solid #2f66b6}
+.row_title h4{float: left; font: bold 16px/35px "微软雅黑"; color: #2f66b6; width: 200px; margin-bottom: -2px; position: relative; padding: 0 15px}
+.row_title .right_con{float:right;}
+.right_con ul li{ float: left}
+.right_con ul li a{ display:block; float:left; background: #454545; padding: 0 8px; color: #FFF;  font: 12px/21px "微软雅黑"; height:21px; margin-top: 14px}
+.right_con ul li.on a{background:#a04271}
+.right_con ul li a:hover{background: #de0264;text-decoration: none}
+
+.index_products .item{float: left; text-align: center; margin: 10px 12px 10px 10px; width: 168px;  overflow: hidden;}
+.index_products.item.last{margin-right: 0}
+.index_products .item .pic{margin:0 12px 5px}
+.index_products dl .pic a {border: none}
+.index_products .item a{color:#666}
+.index_products .item .price{color:red}
+
+.row2 .row_conten{background: url(../images/row2_bg.jpg) no-repeat; height: 330px;}
+.row2 .index_good{float: left}
+.row2 .index_good .item{ height: 260px;width: 165px; overflow: hidden; padding: 20px 17px 0 16px; margin: 0; float: left}
+.row2 .index_good .item img{width: 165px}
+.row2  .index_good .item.last{margin-right: 0}
+
+.cons3{ padding: 8px 0}
+.cons3 .l{float: left; margin-right: 8px}
+.cons3 .c{float: left; border: 1px solid #eee; height: 248px; width: 530px; overflow: hidden;; position: relative;}
+.cons3 .r{float: right;}
+
+#hotsales {}
+#hotsales .JQ-slide-content{position: relative; height: 290px;}
+#hotsales .JQ-slide-content .items{position: absolute; left: 0; top:0; z-index: 0; background: #FFF; height: 290px; width: 990px;}
+.w_ctr .JQ-slide{position: relative; z-index: 1;}
+.w_ctr .JQ-slide-content {width: 3000px; position: absolute;}
+.w_ctr .JQ-slide-content li{ width: 530px; height: 248px; cursor: pointer}
+.w_ctr .JQ-slide-nav{position: absolute; z-index: 2; bottom: 5px; right: 5px}
+.w_ctr .JQ-slide-nav li{float: left; height: 20px; width: 20px; background: #999; color: #FFF; line-height: 20px; text-align: center; font-weight: bold;}
+.w_ctr .JQ-slide-nav li.on{background: red}
+
+#adBig{}
+#adSmall{display: none}

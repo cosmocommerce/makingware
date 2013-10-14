@@ -1,0 +1,21 @@
+
+<?php foreach ($this->getTotals() as $_code => $_total): ?>
+    <?php if ($_total->getBlockName()): ?>
+        <?php echo $this->getChildHtml($_total->getBlockName(), false); ?>
+    <?php else:?>
+    <li class="<?php echo $_code?>">
+        <span <?php echo $this->getLabelProperties()?>>
+            <?php if ($_total->getStrong()):?>
+            <strong><?php echo $_total->getLabel()?></strong>
+            <?php else:?>
+            <?php echo $_total->getLabel()?>
+            <?php endif?>
+        </span>
+            <?php if ($_total->getStrong()):?>
+            <strong><?php echo $this->formatValue($_total) ?></strong>
+            <?php else:?>
+            <?php echo $this->formatValue($_total) ?>
+            <?php endif?>
+    </li>
+    <?php endif?>
+<?php endforeach?>

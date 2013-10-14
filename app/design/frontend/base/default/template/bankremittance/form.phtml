@@ -1,0 +1,11 @@
+<fieldset class="payment-set">
+	<?php $_code=$this->getMethodCode() ?>
+	<?php if($this->getMailingAddress()):?>
+	<div id="payment_form_<?php echo $_code ?>">
+	<?php foreach ($this->getMailingAddress() as $address):?>
+	<?php echo $address;?><br />
+	<?php endforeach;?>
+	</div>
+	<?php endif;?>
+</fieldset>
+

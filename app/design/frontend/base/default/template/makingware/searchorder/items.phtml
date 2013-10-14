@@ -1,0 +1,49 @@
+
+<?php  $_order = $this->getOrder() ?>
+<?php /** @var $_item Mage_Sales_Model_Order_Item */ ?>
+<table class="data-table1" id="my-orders-table" summary="<?php echo $this->__('Items Ordered') ?>">
+    <thead>
+        <tr>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th><?php echo $this->__('SKU') ?></th>
+            <th><?php echo $this->__('Price') ?></th>
+            <th><?php echo $this->__('Qty') ?></th>
+            <th><?php echo $this->__('Subtotal') ?></th>
+        </tr>
+    </thead>
+
+        <?php $_items = $_order->getItemsCollection(); ?>
+        <?php $_index = 0; ?>
+            <?php $_count = $_items->count(); ?>
+        <?php foreach ($_items as $_item): ?>
+        <?php if ($_item->getParentItem()) continue; ?>
+        <tbody>
+            <tr>
+                <td><?php echo $_item->getName(); ?></td>
+                <td><?php echo $_item->getSku(); ?></td>
+                <td><?php echo sprintf('%.2f', $_item->getPrice()); ?></td>
+                <td><?php echo sprintf('%d', $_item->getQtyOrdered()); ?></td>
+                <td><?php echo sprintf('%.2f', $_item->getRowTotal()); ?></td>
+            </tr>
+            <?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()): ?>
+            <tr class="border<?php echo ($_index++ > $_count ?' last':'') ?>" id="order-item-gift-message-<?php echo $_item->getId() ?>" style="display:none;">
+                <?php $_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_item); ?>
+                <td class="gift-message-row" colspan="5">
+                    <a href="#" title="<?php echo $this->__('Close') ?>" onclick="return giftMessageToogle('<?php echo $_item->getId() ?>');" class="btn-close"><?php echo $this->__('Close') ?></a>
+                    <dl class="gift-message">
+                        <dt><strong><?php echo $this->__('From:') ?></strong> <?php echo $this->htmlEscape($_giftMessage->getRecipient()) ?></dt>
+                        <dt><strong><?php echo $this->__('To:') ?></strong> <?php echo $this->htmlEscape($_giftMessage->getSender()) ?></dt>
+                        <dd><?php echo $this->helper('giftmessage/message')->getEscapedGiftMessage($_item) ?></dd>
+                    </dl>
+                </td>
+            </tr>
+            <?php endif ?>
+        </tbody>
+        <?php endforeach; ?>
+</table>
+</div>
+<div class="order_totaldiv clearfix">
+<ul class="order_totals">
+	<?php echo $this->getChildHtml('searchorder_totals') ?>
+</ul>
+</div>

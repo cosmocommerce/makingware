@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<default>
+		<reference name="before_body_end">
+			<block type="makingware_webanalyzer/main" name="makingware_webanalyzer" as="makingware_webanalyzer" />
+		</reference>
+	</default>
+</layout>

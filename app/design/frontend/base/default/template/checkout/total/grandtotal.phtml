@@ -1,0 +1,6 @@
+<dd class="totle">
+	<?php echo $this->__('Total');?> (<?php echo $this->__('Excluding freight');?>):
+	<strong>
+		<span><?php echo $this->helper('checkout')->formatPrice($this->getTotal()->getValue()); ?></span>
+	</strong>
+</dd>

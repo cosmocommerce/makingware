@@ -1,0 +1,64 @@
+<div id="errorblock" style="display:none; overflow:hidden;">
+	<b class="icon icon_msg4 icon_msg4_warn"></b>
+    <h4 class="layer_global_tit"></h4>
+    <div class="wrap_btn">
+    	<a class="btn_strong closeerror" href="javascript:void(0);" role="button">确定</a>
+    </div>
+</div>
+<div id="global_dialog" style="display:none; overflow:hidden;"></div>
+<script type="text/javascript">
+//<![CDATA[
+    (function($){
+        $(function(){
+            $("#global_dialog").dialog({
+            	autoOpen: false,
+            	draggable: false,
+            	modal: true
+            });
+
+            $("#errorblock").dialog({
+            	autoOpen: false, 
+            	modal: true, 
+            	width: 450, 
+            	dialogClass: 'erroralert', 
+            	title: '提醒'
+            }).find(".closeerror").click(function(){
+                $(this).parent().parent().dialog('close');
+            });
+
+            window.alertDialog = function(msg){
+            	$("#errorblock .layer_global_tit").html(msg);
+            	$("#errorblock").dialog('open');
+            };
+            
+            window.loginDialog = function(){
+            	var $dialog = $("#global_dialog").dialog('option', {width:450, height:260, title:'登陆'});
+            	var html = $dialog.data('login_data');
+            	if (html) {
+            		$dialog.html(html).dialog('open');
+                }else {
+	            	$dialog.load("<?php echo $this->getUrl('customer/account/loginmini');?>", function(html){
+	            		$dialog.data('login_data', html).dialog('open');
+	                });
+                }
+            };
+
+            window.checkoutLinkDialog = function(){
+                <?php if (Mage::getSingleton('customer/session')->isLoggedIn()):?>
+            	window.location='<?php echo $this->getUrl('checkout/onepage', array('_secure'=>true));?>';
+                <?php else:?>
+                var $dialog = $("#global_dialog").dialog('option', {width: 580, height: 280,title: '登陆'});
+            	var html = $dialog.data('checkout_link_data');
+            	if (html) {
+            		$dialog.html(html).dialog('open');
+                }else {
+	            	$dialog.load("<?php echo $this->getUrl('checkout/cart/link');?>", function(html){
+	            		$dialog.data('checkout_link_data', html).dialog('open');
+	                });
+                }
+                <?php endif;?>
+            };
+        });
+    })(jQuery);
+//]]>
+</script>

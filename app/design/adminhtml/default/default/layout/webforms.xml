@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<webforms_adminhtml_webforms_index>
+		<reference name="content">
+			<block type="webforms/adminhtml_webforms" name="webforms" />
+		</reference>
+	</webforms_adminhtml_webforms_index>
+	<webforms_adminhtml_results_index>
+		<reference name="content">
+			<block type="webforms/adminhtml_results" name="results" />
+		</reference>
+	</webforms_adminhtml_results_index>
+</layout>

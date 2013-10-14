@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Makingware_OrderAdjuster>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Makingware_OrderAdjuster>
+    </modules>
+</config>

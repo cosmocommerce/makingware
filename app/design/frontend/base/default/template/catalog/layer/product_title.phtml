@@ -1,0 +1,28 @@
+<?php
+    $_helper    = $this->helper('catalog/output');
+    $_category  = $this->getCurrentCategory();
+    $_imgHtml   = '';
+    if ($_imgUrl = $_category->getImageUrl()) {
+        $_imgHtml = '<div class="category-image"><img src="'.$_imgUrl.'" alt="'.$this->htmlEscape($_category->getName()).'" title="'.$this->htmlEscape($_category->getName()).'" /></div>';
+        $_imgHtml = $_helper->categoryAttribute($_category, $_imgHtml, 'image');
+    }
+?>
+
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<?php if($_imgUrl): ?>
+    <?php echo $_imgHtml ?>
+<?php endif; ?>
+
+<?php if($_description=$this->getCurrentCategory()->getDescription()): ?>
+	<div class="page-title category-title">
+    <?php if($this->IsRssCatalogEnable() && $this->IsTopCategory()): ?>
+        <a href="<?php echo $this->getRssLink() ?>" class="link-rss"><?php echo $this->__('Subscribe to RSS Feed') ?></a>
+    <?php endif; ?>
+    <h1><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></h1>
+	</div>
+    <div class="category-description std">
+        <?php echo $_helper->categoryAttribute($_category, $_description, 'description') ?>
+    </div>
+<?php endif; ?>

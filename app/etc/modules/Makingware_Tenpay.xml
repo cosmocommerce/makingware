@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+      <Makingware_Tenpay>
+        <active>true</active>
+        <codePool>core</codePool>
+        <depends>
+          <Mage_Payment/>
+        </depends>
+      </Makingware_Tenpay>
+    </modules>
+</config>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<layout>
+    <makingware_bill_index_edit>
+        <reference name="content">
+            <block type="makingware_bill/bill_edit" name="bill_edit"></block>
+        </reference>
+    </makingware_bill_index_edit>
+
+    <adminhtml_sales_order_view>
+        <reference name="left">
+            <reference name="sales_order_tabs">
+                <action method="addTab"><name>order_bills</name><block before="-">makingware_bill/adminhtml_sales_order_view_tab_bill</block></action>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_view>
+</layout>

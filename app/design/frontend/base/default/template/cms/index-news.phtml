@@ -1,0 +1,17 @@
+
+	<ul class="index_list">
+		<?php
+    $i = 0;
+	foreach($this->getChildrenByCreateAt(6) as $_page)
+	{
+        $i++;
+        if ($i < 5) {
+		    $data = $_page->getData();
+		    echo '<li><a href="'.$this->getUrl($_page->getIdentifierPath()).'" title="'.$data['title'].'"><span>'.$data['title'].'</span></a></li>';
+        }
+	}
+	echo '</ul>';
+?>
+	</ul>
+</script> 
+

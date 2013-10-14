@@ -1,0 +1,155 @@
+<?php
+/**
+ * Feel free to contact me via Facebook
+ * http://www.facebook.com/rebimol
+ *
+ *
+ * @author 		Vladimir Popov
+ * @copyright  	Copyright (c) 2011 Vladimir Popov
+ */
+if(Mage::registry('webform')->getIsActive() == VladimirPopov_WebForms_Model_Webforms::STATUS_DISABLED){
+	echo Mage::helper('webforms')->__('Web-form is not active.');
+} else {
+
+if(Mage::registry('show_form_name')){?>
+<div class="page-head">
+	<h3><?php echo Mage::registry('webform')->getName();?></h3>
+</div>
+<?php } ?>
+
+<?php if(Mage::registry('captcha_invalid')){ ?>
+<ul class="messages"><li class="error-msg"><ul><li><?php echo Mage::helper('webforms')->__('Verification code was not correct. Please try again.');?></li></ul></li></ul>
+<?php }?>
+
+<?php
+if(Mage::registry('show_success')){?>
+<div class="std">
+	<?php echo Mage::registry('webform')->getSuccessText()?>
+</div>
+<?php } else {
+?>
+
+<div class="std">
+	<?php echo Mage::registry('webform')->getDescription();?>
+</div>
+
+<form action="<?php echo Mage::helper('core/url')->getCurrentUrl()?>" method="post" name="webform_<?php echo Mage::registry('webform')->getId()?>" id="webform_<?php echo Mage::registry('webform')->getId()?>" enctype="multipart/form-data">
+
+	<input type="hidden" name="submitWebform_<?php echo Mage::registry('webform')->getId()?>" value="1"/>
+
+	<?php
+	foreach (Mage::registry('fields_to_fieldsets') as $fieldset){	
+	?>
+	
+	<fieldset class="group-select wide">
+		
+		<?php	if($fieldset['name']) { 	?>
+		<h2 class="legend"><?php echo $fieldset['name']?></h2>
+		<?php	}	?>
+		
+		<ul class="form-list">
+		<?php
+		$k=0;
+		$j=0;
+		$prev = false;
+		$fields_count =  count($fieldset['fields']);
+		foreach($fieldset['fields'] as $field)
+		{
+			
+			$size_class ="fields";
+			$field_class= "input-box";
+			if($field->getSize()=='wide'){
+				$size_class = "wide";
+				$field_class="";
+			}
+			
+		?>
+		<?php if ($j%2 ==0 || $field->getSize()=='wide' || $prev->getSize()=='wide') { $j=0;?>
+			<?php if ($k>1) {?></li><?php }?>
+			<li>
+		<?php }?>
+				<?php if($size_class != "wide"){?>
+				<div class="<?php echo $field_class?>">
+				<?php } ?>
+					
+					<?php if($field->getType()!= 'html'){?>
+					<label for="field_<?php echo $field->getId()?>">
+
+
+						<?php echo $field->getName()?>
+
+						<?php if($field->getRequired()){ ?> 
+							<span class="required">*</span>
+						<?php }?>
+					</label>
+					<?php } ?>
+					
+					<br/>
+				
+					<?php if($size_class != "wide"){?>
+					<div class="input-box">
+					<?php } ?>
+					
+						<?php	echo $field->toHtml();?>
+						
+						<?php if($field->getComment()){?>
+						<p class="webforms-fields-comment">
+							<?php echo nl2br($field->getComment())?>
+						</p>
+						<?php }?>
+						
+					<?php if($size_class != "wide"){?>
+					</div>
+					<?php } ?>
+
+				<?php if($size_class != "wide"){?>
+				</div>
+				<?php } ?>
+		<?php if($k == $fields_count-1){?>
+			</li>
+		<?php } ?>
+		<?php 
+			$k++; $j++;
+			$prev = $field;
+		}?>
+		</ul>
+		
+	</fieldset>
+	
+	<?php
+	} // foreach 'fields_to_fieldsets'
+	?>
+	
+	<?php if(Mage::registry('use_captcha')) { ?>
+	<fieldset class="group-select wide">
+		<h2 class="legend">Captcha</h2>
+		<ul class="form-list">
+			<li>
+				<div class="input-box">
+					<?php echo $this->getCaptcha()->getHTML()?>
+				</div>
+			</li>
+		</ul>
+	</fieldset>
+	<?php }?>
+	
+	<div class="button-set">
+		<p class="required"><?php echo $this->__('* Required Fields')?></p>
+		<button type="submit" class="form-button" title="<?php echo $this->__('submit')?>">
+			<span><?php echo $this->__('Submit')?></span>
+		</button>
+	</div>
+	
+
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+var webform_<?php echo Mage::registry('webform')->getId()?> = new VarienForm('webform_<?php echo Mage::registry('webform')->getId()?>',true);
+//]]>
+</script>
+
+<?php
+} // if(show_success)
+} // is active
+?>

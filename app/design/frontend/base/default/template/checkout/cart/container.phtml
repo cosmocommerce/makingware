@@ -1,0 +1,54 @@
+<div class="clearfix">
+	<?php echo $this->getMessagesBlock()->getGroupedHtml();?>
+	<?php echo $this->getChildHtml('shopcar_guid');?>
+	<?php echo $this->getChildHtml('form_before');?>
+</div>
+<div id="cart-container">
+	<?php echo $this->getChildHtml('checkout.cart');?>
+</div>
+
+<div id="loading" style="display:none"><div class="item">&nbsp;</div></div>
+<script type="text/javascript">
+//<![CDATA[
+  (function($){
+	  $("#loading").ajaxStart(function(){
+          $(this).dialog({modal: true, closeOnEscape: false,stack: false, dialogClass: 'alert'});
+		  $("#send_order").attr("disabled","disabled");
+
+      }).ajaxStop(function(){
+          $(this).dialog('close');
+		  $("#send_order").removeAttr("disabled");
+      });
+      
+	  $("#cart-form .minus").live('click', function(){
+		  var qty = $(this).siblings('.qty');
+          var amount = parseInt(qty.val()) - 1;
+          if (amount > 0) {
+              qty.val(amount).trigger('change');
+          }
+          return false;
+	  });
+	  $("#cart-form .plus").live('click', function(){
+		  var qty = $(this).siblings('.qty');
+	      qty.val(parseInt(qty.val()) + 1).trigger('change');
+          return false;
+	  });
+	  
+	  $('#shopping-cart-table tbody tr .s-amount .qty').live('change', function(){
+		  var formEl = $("#cart-form");
+		  if (formEl.size()) {
+			  $.post("<?php echo $this->getUrl('*/*/modify', array('_current' => true));?>", formEl.serialize(), function(json){
+				  if(json){json = $.parseJSON(json);}else{json = {};}
+				  if (json.error) {
+					  alertDialog(json.error);
+					  return ;
+				  }
+				  if (json.html) {
+				  	$("#cart-container").html(json.html);
+				  }
+			  });
+		  }
+	  });
+  })(jQuery);
+//]]>
+</script>

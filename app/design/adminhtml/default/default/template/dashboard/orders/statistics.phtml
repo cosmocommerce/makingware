@@ -1,0 +1,22 @@
+<style type="text/css">
+#statistics-orders .line{float:left;width:45%;margin:1px 0;}
+#statistics-orders .line span{padding-left:2px;}
+</style>
+<div id="statistics-orders">
+	<div class="line">
+		<strong>待发货订单</strong>
+		<span><?php echo $this->waitShipping();?></span>
+	</div>
+	<div class="line">
+		<strong>待支付订单</strong>
+		<span><?php echo $this->waitPayment();?></span>
+	</div>
+	<div class="line">
+		<strong>已锁定订单</strong>
+		<span><?php echo $this->holded();?></span>
+	</div>
+	<div class="line">
+		<strong>已完成订单</strong>
+		<span><?php echo $this->completed();?></span>
+	</div>
+</div>

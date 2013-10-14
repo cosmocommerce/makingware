@@ -1,0 +1,5 @@
+<fieldset class="payment-set">
+	<img src="<?php echo $this->getSkinUrl('images/media/alipay/logo.jpg');?>" alt="<?php echo $this->__('alipay') ?>" />
+	<?php $_code=$this->getMethodCode() ?>
+	<p id="payment_form_<?php echo $_code ?>"> <?php echo $this->__('You will be redirected to Alipay website when you place an order.') ?> </p>
+</fieldset>

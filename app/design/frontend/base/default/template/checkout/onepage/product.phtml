@@ -1,0 +1,52 @@
+<div class="product clearfix">
+    <table width="100%" class="data-table1" id="my-orders-table">
+        <col width="1"/>
+        <col/>
+        <col width="1"/>
+        <col width="1"/>
+        <col width="1"/>
+        <col width="1"/>
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Product Number');?></th>
+            <th class="a-left"><?php echo $this->__('Product Name');?></th>
+            <th><?php echo $this->__('Unit Price');?></th>
+            <th><?php echo $this->__('Inventory Status');?></th>
+            <th><?php echo $this->__('Product Quantity');?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->getProducts() as $item): ?>
+        <tr>
+            <td><?php echo $item->getSku(); ?></td>
+            <td valign="middle" class="a-left">
+               <dl>
+                    <?php if ($item->getData('product_type') == 'configurable'): ?>
+                    <dd class="pic"><a href="<?php echo $item->getProduct()->getProductUrl() ?>"><img src="<?php echo $item->getThumbnailUrl() ?>" alt="<?php echo $item->getName() ?>"/></a></dd>
+                    <dd class="name"><a href="<?php echo $item->getProduct()->getProductUrl() ?>" target="_blank"><strong><?php echo $item->getName() ?></strong></a></dd>
+                    <?php if ($_options = $this->getOptionList($item)): ?>
+                        <?php foreach ($_options as $_option) : ?>
+                            <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
+                            <dd><span><?php echo $this->htmlEscape($_option['label']) ?></span>：<?php echo $_formatedOptionValue['value'] ?></dd>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php else: ?>
+                   <dd class="pic"> <img src="<?php echo $item->getProduct()->getThumbnailUrl() ?>" alt="<?php echo $item->getName() ?>"/></a></dd>
+                    <dd class="name">
+                        <a href="<?php echo $item->getProduct()->getProductUrl() ?>"><strong><?php echo $item->getName() ?></strong></a>
+                    </dd>
+                    <?php endif;?>
+                </dl>
+            </td>
+            <td><?php echo sprintf('%.2f', $item->getPrice()); ?></td>
+            <td><?php echo (1 == $item->getProduct()->getStockItem()->getStockStatus()) ? $this->__('Spot')
+                    : $this->__('Book'); ?></td>
+            <td><?php echo $item->getQty();?></td>
+        </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <div style="float:right;margin-top:3px;">
+        <a href="<?php echo $this->getUrl('checkout/cart');?>"> &lt;&lt; <?php echo $this->__('Edit Your Cart');?></a>
+    </div>
+</div>

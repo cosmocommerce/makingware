@@ -1,0 +1,19 @@
+<div id="helpNav" class="help-nav">
+    <h4 class="help_title">帮助中心</h4>
+    <ul>
+        <?php
+
+        foreach ($this->getChildren(4) as $_page)
+        {
+            $data = $_page->getData();
+            if (false !== strpos(Mage::app()->getRequest()->getPathInfo(), $data['identifier'])) {
+                echo '<li class="active" ><span>' . $data['title'] . '</span></li>';
+            } else {
+                echo '<li><a href="' . $this->getUrl($_page->getIdentifierPath()) . '" title="' . $data['title'] . '"><span>' . $data['title'] . '</span></a></li>';
+            }
+
+
+        }
+        ?>
+    </ul>
+</div>

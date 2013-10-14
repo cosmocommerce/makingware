@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<layout>
+    <default>
+      <reference name="head">
+        <action method="addJs" ifconfig="makingware_enhancedproductmanager/general/isenabled"><script>makingware/enhancedproductmanager/enhancedproductmanager.js</script></action> 
+        <action method="addJs" ifconfig="makingware_enhancedproductmanager/general/isenabled"><script>makingware/enhancedproductmanager/egsupplemental.js</script></action>
+        <action method="addJs" ifconfig="makingware_enhancedproductmanager/general/isenabled"><script>makingware/enhancedproductmanager/customfunctions/catalog_products.js</script></action>
+        <action method="addItem" ifconfig="makingware_enhancedproductmanager/general/isenabled"><type>js_css</type><name>makingware/enhancedproductmanager/resources/css/enhancedproductmanager.css</name></action>
+      </reference> 
+    </default>
+    <adminhtml_catalog_product_index>
+        <reference name="content">
+            <remove name="products_list"/>
+            <block type="makingware_enhancedproductmanager/catalog_product" name="enhanced_products_list" >
+                <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                    <action method="setUseConfirm"><params>0</params></action>
+                </block>
+            </block>
+        </reference>
+		<!--<reference name="notifications">
+            <block type="adminhtml/notification_window" name="notification_window" as="notification_window" acl="system/adminnotification/show_toolbar" template="notification/window.phtml" />
+        </reference>-->
+    </adminhtml_catalog_product_index>
+</layout>

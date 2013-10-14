@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+	<adminhtml_sales_order_view>
+        <reference name="left">
+        	<reference name="sales_order_tabs">
+        		<reference name="order_tab_info">
+            		<block type="makingware_orderadjuster_adminhtml/sales_order_totals" name="order_totals" template="makingware/orderadjuster/sales/order/totals.phtml" />
+            	</reference>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_view>
+    
+    <adminhtml_sales_order_invoice_new>
+        <reference name="content">
+            <reference name="sales_invoice_create">
+                <reference name="form">
+                    <reference name="order_items">
+                        <block type="makingware_orderadjuster_adminhtml/sales_order_invoice_totals" name="invoice_totals" template="sales/order/totals.phtml" />
+                    </reference>
+                </reference>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+    
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="content">
+            <reference name="sales_creditmemo_create">
+                <reference name="form">
+                    <reference name="order_items">
+                        <block type="makingware_orderadjuster_adminhtml/sales_order_creditmemo_totals" name="creditmemo_totals" template="sales/order/totals.phtml" />
+                    </reference>
+                </reference>
+            </reference>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+	
+    <adminhtml_dashboard_index>
+        <reference name="content">
+        	<remove name="dashboard" />
+        	<block type="makingware_orderadjuster_adminhtml/dashboard" name="dashboard-1" />
+        </reference>
+    </adminhtml_dashboard_index>
+</layout>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+<default>
+	<reference name="js" >
+		<block type="makingware_printhtml/js" />
+	</reference>
+</default>
+<printorder translate="label">
+		<block type="adminhtml/page" name="root" output="toHtml" template="makingware/printhtml/print.phtml">
+			<block type="adminhtml/page_head" name="head" as="head" template="makingware/printhtml/head.phtml">
+				<action method="addCss"><stylesheet>css/styles.css</stylesheet></action>
+				<action method="addCss"><stylesheet>css/print.css</stylesheet><params>media="print"</params></action>
+			</block>
+			<block type="core/text_list" name="content" as="content"/>
+			<block type="makingware_printhtml/logo" name="logo" as="logo" translate="label">
+			</block>
+		</block>
+	</printorder>
+</layout>

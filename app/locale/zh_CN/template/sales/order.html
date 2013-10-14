@@ -1,0 +1,73 @@
+<style type="text/css">
+body,td {font-size:13px; font-family:Tahoma,Geneva,sans-serif,"微软雅黑"}
+</style>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>店铺名称：{{config path="general/store_information/name"}}</td>
+		<td align="right">客户：{{var order.getCustomerName()}}</td>
+	</tr>
+	<tr>
+		<td>网址：{{store url=""}}</td>
+		<td align="right">电话：{{config path="general/store_information/phone"}}</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	style="border-top:2px solid #000; margin-top:10px; padding-top:7px;">
+	<tr>
+		<td width="71%"><strong style="font-size:14px;">订单号：{{var order.increment_id}}</strong></td>
+		<td width="29%" align="right"><strong style="font-size:14px;">订购日期：{{date var=$order.getCreatedAt()}}</strong></td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	style="border-top: 2px solid #000; margin-top: 10px; padding-top: 7px;">
+	<tr>
+		<th height="21" align="left" style="font-size:14px;">货号</th>
+		<th height="21" align="left" style="font-size:14px;">商品名称</th>
+		<th height="21" align="left" style="font-size:14px;">单价</th>
+		<th height="21" align="left" style="font-size:14px;">数量</th>
+		<th height="21" style="font-size: 14px;">小计</th>
+	</tr>
+	{{foreach order.getAllVisibleItems() as item}}
+	<tr>
+		<td height="18" align="left">{{var item.getSku()}}</td>
+		<td height="18" align="left">{{var item.getName()}}</td>
+		<td height="18" align="left">{{price var=$item.getPrice()}}</td>
+		<td height="18" align="left">{{number var=$item.getQtyOrdered()}}</td>
+		<td height="18" align="center">{{price var=$item.getRowTotal()}}</td>
+	</tr>
+	{{/foreach}}
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	style="border-top:2px solid #000; margin-top:10px; padding-top:7px;">
+	<tr>
+		<td height="21" width="40%">赠品：&nbsp;</td>
+		<td height="21" width="30%">商品总数：{{number var=$order.getTotalQtyOrdered()}}</td>
+		<td height="21" width="30%">商品总价：{{price var=$order.getSubtotal()}}</td>
+	</tr>
+	<tr>
+		<td height="21" width="40%">备注：{{htmlescape var=$order.getCustomerComment()}}</td>
+		<td height="21" width="30%">订单优惠: {{price var=$order.getDiscountAmount()}}</td>
+		<td height="21" width="30%">配送费用：{{price var=$order.getShippingAmount()}}</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	style="border-top:2px solid #000; margin-top:10px; padding-top:7px;">
+	<tr>
+		<td width="25%" height="21">配送：{{var order.getPayment().getMethodInstance().getTitle()}}</td>
+		<td>电话：{{var order.getShippingAddress().getTelephone()}}</td>
+		<td rowspan="3" align="right">
+			<div style="float:right; width:180px; font-size:14px; text-align:left">
+				<strong style="display:block; border-bottom:1px solid #ccc; padding-bottom:5px; margin-bottom:5px;">应付金额：{{price var=$order.getGrandTotal()}}</strong>
+				<strong style="font-size:18px;">签字：&nbsp;____________</strong>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td height="21">收货人：{{var order.getShippingAddress().getName()}}</td>
+		<td>手机：{{var order.getShippingAddress().getMobile()}}</td>
+	</tr>
+	<tr>
+		<td height="21">邮 编：{{var order.getShippingAddress().getPostcode()}}</td>
+		<td style="margin-right:10px;">地址：{{address var=$order.getShippingAddress()}}</td>
+	</tr>
+</table>

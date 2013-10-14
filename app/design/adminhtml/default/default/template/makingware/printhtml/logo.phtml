@@ -1,0 +1,9 @@
+<?php
+?>
+<?php if ($this->getHtmlLogo()):?>
+	<img src="<?php echo $this->getHtmlLogo()?>" class="logo" alt="" />
+<?php endif;?>
+
+<?php if ($this->getHtmlAddress()):?>
+	<address><?php echo nl2br($this->htmlEscape($this->getHtmlAddress())) ?></address>
+<?php endif;?>

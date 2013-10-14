@@ -1,0 +1,17 @@
+<?php
+?>
+<?php echo $this->getChildHtml('notification_window'); ?>
+<div class="content-header">
+<table cellspacing="0">
+    <tr>
+        <td style="width:50%;"><h3 class="icon-head head-products"><?php echo $this->_headerText ?></h3></td>
+        <td class="a-right">
+            <?php echo $this->getAddNewButtonHtml() ?>
+        </td>
+    </tr>
+</table>
+</div>
+<?php echo $this->getStoreSwitcherHtml() ?>
+<div>
+    <?php echo $this->getGridHtml() ?>
+</div>

@@ -1,0 +1,32 @@
+<?php foreach ($this->getMethods() as $method):?>
+<div class="order-block">
+	<input type="radio" name="payment[method]" value="<?php echo $method->getCode();?>" <?php if($this->getSelectedMethodCode()===$method->getCode()){echo 'checked="checked"';}?> class="radio"/>
+	<label class="title"><?php echo $method->getTitle();?></label>
+	<div class="order-block-info"><?php echo $this->getChildHtml('payment.method.'.$method->getCode());?></div>
+</div>
+<?php endforeach;?>
+<script type="text/javascript">
+//<![CDATA[
+	$(function(){
+		$(".order-block").hover(function(){
+			$(this).addClass("order-hover");
+		},function(){
+			$(this).removeClass("order-hover");
+		});
+		$(".order-block").click(function(){
+			var $this = $(this);
+			if ($this.hasClass("order-click")) {
+				return true;	
+			}
+			$this.addClass("order-click").siblings().removeClass('order-click');
+			$this.find('input[type="radio"]')[0].checked = true;			
+			$(this).parent().find('.order-block-info').slideUp('fast');
+			$(this).find('.order-block-info').slideDown('fast')
+		});
+		
+		$(".order-block :checked").each(function() {
+			$(this).parents('.order-block').trigger('click');
+		});
+	});
+//]]>
+</script>

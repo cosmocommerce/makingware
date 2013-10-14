@@ -1,0 +1,20 @@
+<?php if (($_products = $this->getProductCollection()) && $_products->getSize()): ?>
+<?php $suffix = $this->getNameInLayout(); ?>
+<?php $_collectionSize = $_products->getSize()?>
+<?php $_columnCount = 4 ?>
+<?php $i=0;foreach ($_products->getItems() as $_product): ?>
+<?php if ($i++%$_columnCount==0): ?>
+
+<div class="products-grid index_products">
+  <?php endif ?>
+  <dl class="item">
+    <dt class="pic"><a class="product-image" href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>"><img src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail')->resize(138) ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>" /></a></dt>
+    <dt><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)"><?php echo $this->htmlEscape($_product->getName()) ?></a></dt>
+    <dd><?php echo $this->getPriceHtml($_product, true, '-widget-new-'.$suffix) ?></dd>
+  </dl>
+  <?php if ($i%$_columnCount==0 || $i==$_collectionSize): ?>
+</div>
+<?php endif ?>
+<?php endforeach; ?>
+<script type="text/javascript">decorateDataList('div.products-grid')</script>
+<?php endif; ?>

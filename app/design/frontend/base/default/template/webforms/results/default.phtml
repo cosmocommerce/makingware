@@ -1,0 +1,55 @@
+<?php
+/**
+ * Feel free to contact me via Facebook
+ * http://www.facebook.com/rebimol
+ *
+ *
+ * @author 		Vladimir Popov
+ * @copyright  	Copyright (c) 2011 Vladimir Popov
+ * @license    	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="webforms-results">
+<?php
+foreach(Mage::registry('results') as $result){
+?>
+	<div class="webforms-results-block">
+	<h2><?php echo $this->formatDate($result->getCreatedTime())?></h2>
+<?php
+	foreach(Mage::registry('fields_to_fieldsets') as $fieldset){
+		foreach($fieldset['fields'] as $field){
+			$text = trim($result->getData('field_'.$field->getId()));
+			if(strlen($text)>1){
+?>
+		<div class="webforms-results-row">
+		
+<?php if(strlen($field->getResultLabel())>1){?>
+			<span class="webforms-results-label"><?php echo $field->getResultLabel()?> : </span>
+<?php }?>
+			<span class="webforms-results-text">
+			<?php echo nl2br($text)?>
+			</span>
+		</div>
+<?php
+			} // if text
+		} // foreach fields
+	} // foreach fields_to_fieldsets
+?>
+	</div>
+<?php
+} // foreach results
+?>
+
+<?php if(Mage::registry('next_url') || Mage::registry('prev_url')){?>
+	<div class="webforms-pager">
+		<?php if(Mage::registry('next_url')) {?> 
+			<a href="<?php echo Mage::registry('next_url')?>"><?php echo Mage::helper('webforms')->__('Newer')?></a>
+		<?php } ?>
+		<?php if(Mage::registry('next_url') && Mage::registry('prev_url')){ echo " | ";}?>
+		<?php if(Mage::registry('prev_url')) {?> 
+			<a href="<?php echo Mage::registry('prev_url')?>"><?php echo Mage::helper('webforms')->__('Older')?></a>
+		<?php } ?>
+	</div>
+<?php } ?>
+
+</div>

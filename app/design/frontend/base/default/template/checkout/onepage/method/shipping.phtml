@@ -1,0 +1,15 @@
+<div id="shipping-method-block-dl">
+<?php $shippingRates = $this->getShippingRates();?>
+<?php if (empty($shippingRates)):?>
+	<div class="no_address" style="float:none"><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></div>
+<?php else:?>
+	<?php foreach ($shippingRates as $code => $rates):?>
+		<?php foreach ($rates as $rate):?>
+			<div class="order-block">
+				<input type="radio" name="shipping_method" value="<?php echo $rate->getCode();?>" <?php if($rate->getCode()===$this->getAddressShippingMethod()) echo 'checked="checked"';?> class="radio"/>
+				<label class="title"><?php echo $rate->getMethodTitle();?>&nbsp;<?php echo $this->getShippingPrice($rate->getPrice(), true);?></label>				
+				<div class="order-block-info"><?php echo $this->getChildHtml('shipping.method.'.$rate->getCarrier()); ?></div>
+			</div>
+		<?php endforeach;?>
+	<?php endforeach;?>
+<?php endif;?>

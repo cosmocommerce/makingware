@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config>
+	<menu>
+		<newsletter>
+			<children>
+				<makingware_emailsender translate="title" module="makingware_emailsender">
+					<title>Makingware EmailSender</title>
+					<action>makingware_emailsender</action>
+				</makingware_emailsender>
+			</children>
+		</newsletter>
+	</menu>
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<newsletter>
+						<children>
+							<makingware_emailsender translate="title" module="makingware_emailsender">
+								<title>Makingware EmailSender</title>
+							</makingware_emailsender>
+						</children>
+					</newsletter>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

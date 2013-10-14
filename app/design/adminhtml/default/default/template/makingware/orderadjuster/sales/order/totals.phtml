@@ -1,0 +1,52 @@
+<?php if (! $this->hasData('ajax')):?>
+	<div id="makingware_orderadjuster-order-totals">
+<?php endif;?>
+	<?php echo $this->setTemplate('sales/order/totals.phtml')->toHtml();?>
+<?php if (! $this->hasData('ajax')):?>
+	</div>
+<?php endif;?>
+
+<script type="text/javascript">
+//<![CDATA[
+    var $el = $('makingware_orderadjuster-order-totals');
+
+ 	// click
+ 	$el.select('.modify').each(function($this){
+ 		$this.observe('mouseover', function(event){
+ 	 		$this.setStyle({backgroundColor: '#278296'});
+ 	 	});
+ 		$this.observe('mouseout', function(event){
+ 			$this.setStyle({backgroundColor: 'transparent'});
+ 	 	});
+ 		$this.observe('click', function(event){
+ 	 		$this.hide().next('.editor').show();
+ 	 	}); 	
+ 	});
+
+    // editor > save
+    $el.select('button.save').each(function($this){
+        $this.observe('click', function(event){
+        	var $operator = $el.select('select[name="operator\['+this.name+'\]"]');
+    		var $input = $el.select('input[name="'+this.name+'"]');
+    		if ($operator.size() && $input.size() && $input[0].getValue() != "" && ! isNaN(Number($input[0].getValue()))) {
+    			new Ajax.Request("<?php echo $this->getModifyAdjusterUrl();?>", {
+        			method: 'post',
+    		        parameters: 'operator='+$operator[0].getValue()+'&'+$input[0].name+'='+$input[0].getValue(),
+    		        onSuccess: function(transport){
+        		        if (transport.responseText) {
+            		        $el.update(transport.responseText);
+    			        }
+    		        }
+    		    });
+    		}
+        });
+    });
+ 	// editor > cancel
+ 	$el.select('button.cancel').each(function($this){
+        $this.observe('click', function(event){
+            this.up('.editor').hide().previous('.modify').show();
+        });
+ 	});
+ 	
+//]]>
+</script>

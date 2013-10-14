@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout>
+	<makingware_searchorder_order_index>
+		<reference name="content">
+			<block type="core/template" name="searchorderindex" template="makingware/searchorder/searchorder.phtml" />
+		</reference>
+	</makingware_searchorder_order_index>
+	<makingware_searchorder_order_order>
+		<reference name="content">
+			<block type="makingware_searchorder/info" name="searchorderindex" template="makingware/searchorder/info.phtml" >
+				<block type="makingware_searchorder/items" name="searchorder_items" template="makingware/searchorder/items.phtml"  as="searchorder_items">
+				    <action method="addItemRender"><type>default</type><block>sales/order_item_renderer_default</block><template>sales/order/items/renderer/default.phtml</template></action>
+					<block type="makingware_searchorder/totals" name="searchorder_totals" template="makingware/searchorder/totals.phtml"></block>
+				</block>
+			</block>
+		</reference>
+	</makingware_searchorder_order_order>
+</layout>
